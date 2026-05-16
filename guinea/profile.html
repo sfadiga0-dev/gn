@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fiche d'Identification Officielle - A4</title>
+    <style>
+        :root {
+            --brand-dark: #0f172a;
+            --brand-gold: #eab308;
+            --guinea-green: #009460;
+            --guinea-yellow: #fcd116;
+            --guinea-red: #ce1126;
+        }
+        @page { size: A4; margin: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #475569; margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .no-print-zone {
+            background: white; padding: 15px 30px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-bottom: 20px;
+            text-align: center; width: 100%; max-width: 21cm; box-sizing: border-box;
+        }
+        .btn {
+            padding: 10px 25px; font-size: 15px; font-weight: bold; border: none;
+            border-radius: 6px; cursor: pointer; background: var(--brand-dark); color: white;
+        }
+        .a4-container {
+            width: 21cm; min-height: 29.7cm; padding: 1.5cm;
+            background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-sizing: border-box; position: relative;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+        .top-flag-bar { position: absolute; top: 0; left: 0; width: 100%; height: 6px; display: flex; }
+        .flag-r { flex: 1; background: var(--guinea-red); }
+        .flag-y { flex: 1; background: var(--guinea-yellow); }
+        .flag-g { flex: 1; background: var(--guinea-green); }
+        
+        .profile-watermark {
+            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            width: 65%; opacity: 0.04; z-index: 0; pointer-events: none;
+        }
+
+        /* ترويسة ثلاثية متوازنة حسب الطلب */
+        .profile-header {
+            position: relative; z-index: 1; display: flex;
+            justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--brand-dark); padding-bottom: 15px; margin-bottom: 35px;
+        }
+        .header-left-en { width: 35%; font-size: 9.5pt; font-weight: bold; color: var(--brand-dark); line-height: 1.4; text-align: left; }
+        .header-center-logo { width: 30%; text-align: center; }
+        .header-right-ar { width: 35%; font-size: 10.5pt; font-weight: bold; color: var(--guinea-green); line-height: 1.5; text-align: right; direction: rtl; }
+
+        /* نظام الشبكة الثلاثي: فرنسي يسار | صورة سنتر | عربي يمين */
+        .profile-grid-system {
+            display: grid; grid-template-columns: 1fr 160px 1fr;
+            grid-gap: 14px 25px; align-items: center; position: relative; z-index: 1;
+        }
+        .fr-column { text-align: left; font-size: 10.5pt; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+        .fr-column strong { color: #64748b; font-weight: 700; display: block; font-size: 8.5pt; text-transform: uppercase; margin-bottom: 2px; }
+        
+        .ar-column { text-align: right; font-size: 11.5pt; color: #000000; direction: rtl; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+        .ar-column strong { color: #64748b; font-weight: 700; display: block; font-size: 9pt; margin-bottom: 2px; }
+        
+        .center-photo-column { display: flex; justify-content: center; align-items: center; }
+        
+        .photo-frame {
+            width: 3.2cm; height: 4.2cm; border: 2px solid var(--brand-dark);
+            border-radius: 4px; background: #f1f5f9; overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .signature-zone {
+            position: relative; z-index: 1; margin-top: 60px;
+            display: flex; justify-content: space-between; font-weight: bold; font-size: 11px;
+        }
+        .sig-box { text-align: center; width: 240px; border-top: 1px dashed #000; padding-top: 8px; }
+
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .no-print { display: none !important; }
+            .a4-container { box-shadow: none !important; margin: 0 !important; padding: 1.5cm !important; width: 21cm !important; min-height: 29.7cm !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="no-print-zone no-print">
+        <button class="btn" onclick="window.print()">🖨️ بدء طباعة الاستمارة الرسمية</button>
+        <button class="btn" style="background:#64748b;" onclick="window.history.back()">📋 العودة للسجل</button>
+    </div>
+
+    <div class="a4-container" id="profile-render-zone"></div>
+
+    <script src="app.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const citizenId = urlParams.get('id');
+        const localDb = JSON.parse(localStorage.getItem('citizens_db_v5')) || [];
+        const person = localDb.find(c => c.id == citizenId) || localDb[0];
+
+        if (person) {
+            document.getElementById('profile-render-zone').innerHTML = `
+                <div class="top-flag-bar"><div class="flag-r"></div><div class="flag-y"></div><div class="flag-g"></div></div>
+                <img src="image_5321de.png" class="profile-watermark">
+                
+                <div class="profile-header">
+                    <div class="header-left-en">
+                        REPUBLIC OF GUINEA<br>
+                        MINISTRY OF FOREIGN AFFAIRS<br>
+                        <span style="color:#64748b; font-size:8.5pt; font-weight:normal;">Honorary Consulate - Damascus</span>
+                    </div>
+                    <div class="header-center-logo">
+                        <img src="image_5321de.png" height="85">
+                        <div style="font-size:10pt; font-weight:900; color:var(--brand-dark); margin-top:5px; letter-spacing:0.5px;">FICHE D'IDENTIFICATION</div>
+                    </div>
+                    <div class="header-right-ar">
+                        جمهورية غينيا<br>
+                        وزارة الشؤون الخارجية والمغتربين<br>
+                        <span style="font-weight:normal; color:#475569;">القنصلية الفخرية - دمشق</span>
+                    </div>
+                </div>
+
+                <div class="profile-grid-system">
+                    <div class="fr-column"><strong>Nom et Prénom</strong>${person.firstName} ${person.lastName}</div>
+                    <div class="center-photo-column" style="grid-row: span 5;">
+                        <div class="photo-frame">
+                            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>">
+                        </div>
+                    </div>
+                    <div class="ar-column"><strong>الاسم الكامل والكنية</strong>${person.nameAr}</div>
+
+                    <div class="fr-column"><strong>Groupe Familial</strong>Famille ${person.family}</div>
+                    <div class="ar-column"><strong>المجموعة العائلية</strong>عائلة ${person.family}</div>
+
+                    <div class="fr-column"><strong>Filiation Paternelle (Père)</strong>${person.father || '---'}</div>
+                    <div class="ar-column"><strong>اسم الأب الكامل</strong>${person.father || '---'}</div>
+
+                    <div class="fr-column"><strong>Filiation Maternelle (Mère)</strong>${person.mother || '---'}</div>
+                    <div class="ar-column"><strong>اسم الأم الكامل</strong>${person.mother || '---'}</div>
+
+                    <div class="fr-column"><strong>Date de Naissance</strong>${person.dob || '---'}</div>
+                    <div class="ar-column"><strong>تاريخ الولادة</strong>${person.dob || '---'}</div>
+
+                    <div class="fr-column"><strong>Lieu de Naissance</strong>${person.pob || '---'}</div>
+                    <div></div>
+                    <div class="ar-column"><strong>مكان الولادة والأصل</strong>${person.pob || '---'}</div>
+
+                    <div class="fr-column"><strong>Numéro de Passeport</strong><span style="font-family:monospace; font-weight:bold; color:var(--guinea-red);">${person.passport}</span></div>
+                    <div></div>
+                    <div class="ar-column"><strong>رقم جواز السفر</strong><span style="font-family:monospace; font-weight:bold; color:var(--guinea-red);">${person.passport}</span></div>
+
+                    <div class="fr-column"><strong>Statut du Document</strong>${person.passStatus || '---'}</div>
+                    <div></div>
+                    <div class="ar-column"><strong>وضعية وصلاحية الوثيقة</strong>${person.passStatus || '---'}</div>
+
+                    <div class="fr-column"><strong>Profession Actuelle</strong>${person.profession || '---'}</div>
+                    <div></div>
+                    <div class="ar-column"><strong>المهنة والنشاط الحالي</strong>${person.profession || '---'}</div>
+
+                    <div class="fr-column"><strong>État Civil</strong>${person.marital || '---'}</div>
+                    <div></div>
+                    <div class="ar-column"><strong>الحالة الاجتماعية المدنية</strong>${person.marital || '---'}</div>
+
+                    <div class="fr-column"><strong>Couleur des Yeux</strong>${person.eyes || 'Marron'}</div>
+                    <div></div>
+                    <div class="ar-column"><strong>لون العينين المميز</strong>${person.eyes || 'بني'}</div>
+
+                    <div class="fr-column"><strong>Adresse de Résidence (Syrie)</strong>${person.residence || '---'}</div>
+                    <div></div>
+                    <div class="ar-column"><strong>العنوان السكني في سوريا</strong>${person.residence || '---'}</div>
+
+                    <div class="fr-column"><strong>Numéro de Téléphone</strong>${person.phone || '---'}</div>
+                    <div></div>
+                    <div class="ar-column"><strong>رقم الهاتف الفعال</strong>${person.phone || '---'}</div>
+                </div>
+
+                <div class="signature-zone">
+                    <div class="sig-box">Signature du Citoyen / توقيع صاحب الاستمارة</div>
+                    <div class="sig-box">Sceau du Consulat d'Honneur / الختم القنصلي الرسمي للبعثة</div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

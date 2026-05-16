@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Console d'Administration Centrale</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .family-section { background: white; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e2e8f0; overflow: hidden; }
+        .family-summary { background: var(--brand-dark); color: var(--brand-gold); padding: 16px; font-size: 17px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .family-counter { font-size: 12px; background: var(--brand-gold); color: var(--brand-dark); padding: 3px 12px; border-radius: 50px; font-weight: 800; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { padding: 12px; background: #f8fafc; text-align: left; font-size: 11px; color: #64748b; }
+        .data-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13.5px; }
+    </style>
+</head>
+<body>
+    <img src="image_5321de.png" class="bg-watermark">
+
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="image_5321de.png" height="40">
+            <strong>CONSOLE D'ADMINISTRATION CONSULAIRE</strong>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-gold" onclick="window.location.href='consul.html'">🔍 واجهة تصفح القنصل</button>
+            <button class="btn btn-danger" onclick="if(confirm('سيتم تهيئة قاعدة البيانات للمصنع، هل أنت متأكد؟')){localStorage.clear(); location.reload();}">🔄 ضبط مصنع</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card" dir="rtl" style="text-align: right;">
+            <h3 style="margin-top:0; color:var(--brand-dark); border-bottom: 2px solid var(--brand-gold); padding-bottom: 8px;">📑 تسجيل جديد / تعديل ملف مواطن</h3>
+            <form id="citizen-form" onsubmit="saveCitizen(event)">
+                <input type="hidden" id="citizen-id">
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:15px; margin-top: 15px;">
+                    <div><label>الاسم الكامل باللغة العربية</label><input type="text" id="f-nameAr" required></div>
+                    <div><label>Prénom (En Français)</label><input type="text" id="f-firstName" required></div>
+                    <div><label>Nom (En Français)</label><input type="text" id="f-lastName" required></div>
+                    <div><label>Groupe Familial (العائلة برمجي)</label><input type="text" id="f-family" required></div>
+                    <div><label>Nom Complet du Père</label><input type="text" id="f-father"></div>
+                    <div><label>Nom Complet de la Mère</label><input type="text" id="f-mother"></div>
+                    <div><label>Date de Naissance</label><input type="text" id="f-dob" placeholder="JJ/MM/AAAA"></div>
+                    <div><label>Lieu de Naissance</label><input type="text" id="f-pob"></div>
+                    <div><label>Numéro de Passeport</label><input type="text" id="f-passport" required></div>
+                    <div><label>Statut du Passeport</label><input type="text" id="f-passStatus" value="Valide / ساري"></div>
+                    <div><label>Profession Actuelle</label><input type="text" id="f-profession"></div>
+                    <div><label>État Civil</label><input type="text" id="f-marital"></div>
+                    <div><label>Couleur des Yeux</label><input type="text" id="f-eyes" value="Marron / بني"></div>
+                    <div><label>Adresse en Syrie</label><input type="text" id="f-residence"></div>
+                    <div><label>Numéro de Téléphone</label><input type="text" id="f-phone"></div>
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-green">💾 حفظ البيانات وتحديث السجل</button>
+                    <button type="button" class="btn btn-primary" style="background:#64748b;" onclick="resetForm()">تفريغ الخانات</button>
+                </div>
+            </form>
+        </div>
+
+        <div style="margin-bottom: 25px;" dir="rtl">
+            <input type="text" id="search-bar" class="search-input" style="padding:15px; font-size:15px;" placeholder="🔍 بحث فوري في السجلات الحية للجالية..." onkeyup="executeLiveSearch()">
+        </div>
+
+        <div id="admin-families-container" dir="rtl" style="text-align: right;"></div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        let db = JSON.parse(localStorage.getItem('citizens_db_v5')) || [];
+
+        function renderAdminPanel() {
+            const container = document.getElementById('admin-families-container');
+            const uniqueFamilies = [...new Set(db.map(c => c.family).filter(f => f))];
+            
+            container.innerHTML = uniqueFamilies.map(fam => {
+                const members = db.filter(c => c.family === fam);
+                return `
+                <details class="family-section" open>
+                    <summary class="family-summary">
+                        <span>📋 عائلة ${fam.toUpperCase()}</span>
+                        <span class="family-counter">${members.length} أفراد مسجلين</span>
+                    </summary>
+                    <div class="family-content" dir="ltr" style="text-align:left;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom et Prénom / الاسم</th>
+                                    <th>Passeport</th>
+                                    <th>Téléphone</th>
+                                    <th style="text-align:right;">الخيارات السيادية</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${members.map(c => `
+                                <tr>
+                                    <td><strong>${c.firstName} ${c.lastName}</strong><br><small dir="rtl" style="display:block; text-align:left; font-weight:bold; color:var(--guinea-green);">${c.nameAr}</small></td>
+                                    <td><span style="font-family:monospace; font-weight:bold;">${c.passport}</span></td>
+                                    <td>${c.phone}</td>
+                                    <td style="text-align:right;" dir="rtl">
+                                        <button class="btn btn-primary" style="padding:5px 10px; font-size:11px;" onclick="window.location.href='profile.html?id=${c.id}'">📄 استمارة A4</button>
+                                        <button class="btn btn-gold" style="padding:5px 10px; font-size:11px;" onclick="window.location.href='card.html?id=${c.id}'">🪪 الهوية</button>
+                                        <button class="btn" style="background:#cbd5e1; color:#0f172a; padding:5px 10px; font-size:11px;" onclick="loadToEdit(${c.id})">✏️ تعديل</button>
+                                        <button class="btn btn-danger" style="padding:5px 10px; font-size:11px;" onclick="deleteCitizen(${c.id})">🗑️ حذف</button>
+                                    </td>
+                                </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+                `;
+            }).join('');
+        }
+
+        function saveCitizen(e) {
+            e.preventDefault();
+            const id = document.getElementById('citizen-id').value;
+            
+            const citizen = {
+                id: id ? parseInt(id) : Date.now(),
+                nameAr: document.getElementById('f-nameAr').value,
+                firstName: document.getElementById('f-firstName').value,
+                lastName: document.getElementById('f-lastName').value,
+                family: document.getElementById('f-family').value,
+                father: document.getElementById('f-father').value,
+                mother: document.getElementById('f-mother').value,
+                dob: document.getElementById('f-dob').value,
+                pob: document.getElementById('f-pob').value,
+                passport: document.getElementById('f-passport').value,
+                passStatus: document.getElementById('f-passStatus').value,
+                profession: document.getElementById('f-profession').value,
+                marital: document.getElementById('f-marital').value,
+                eyes: document.getElementById('f-eyes').value,
+                residence: document.getElementById('f-residence').value,
+                phone: document.getElementById('f-phone').value
+            };
+
+            if(id) {
+                db = db.map(c => c.id === parseInt(id) ? citizen : c);
+            } else {
+                db.push(citizen);
+            }
+
+            localStorage.setItem('citizens_db_v5', JSON.stringify(db));
+            resetForm();
+            renderAdminPanel();
+        }
+
+        function loadToEdit(id) {
+            const c = db.find(x => x.id === id);
+            if(!c) return;
+            document.getElementById('citizen-id').value = c.id;
+            document.getElementById('f-nameAr').value = c.nameAr || '';
+            document.getElementById('f-firstName').value = c.firstName || '';
+            document.getElementById('f-lastName').value = c.lastName || '';
+            document.getElementById('f-family').value = c.family || '';
+            document.getElementById('f-father').value = c.father || '';
+            document.getElementById('f-mother').value = c.mother || '';
+            document.getElementById('f-dob').value = c.dob || '';
+            document.getElementById('f-pob').value = c.pob || '';
+            document.getElementById('f-passport').value = c.passport || '';
+            document.getElementById('f-passStatus').value = c.passStatus || '';
+            document.getElementById('f-profession').value = c.profession || '';
+            document.getElementById('f-marital').value = c.marital || '';
+            document.getElementById('f-eyes').value = c.eyes || '';
+            document.getElementById('f-residence').value = c.residence || '';
+            document.getElementById('f-phone').value = c.phone || '';
+            document.getElementById('form-card').scrollIntoView({behavior: 'smooth'});
+        }
+
+        function deleteCitizen(id) {
+            if(confirm('هل أنت متأكد من مسح هذا السجل نهائياً؟')) {
+                db = db.filter(c => c.id !== id);
+                localStorage.setItem('citizens_db_v5', JSON.stringify(db));
+                renderAdminPanel();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('citizen-form').reset();
+            document.getElementById('citizen-id').value = '';
+        }
+
+        function executeLiveSearch() {
+            const query = document.getElementById('search-bar').value.toLowerCase();
+            document.querySelectorAll('.family-section').forEach(section => {
+                let match = false;
+                section.querySelectorAll('tbody tr').forEach(row => {
+                    if(row.innerText.toLowerCase().includes(query)) { row.style.display = ''; match = true; }
+                    else { row.style.display = 'none'; }
+                });
+                section.style.display = match ? 'block' : 'none';
+            });
+        }
+
+        renderAdminPanel();
+    </script>
+</body>
+</html>

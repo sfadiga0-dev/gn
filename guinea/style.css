@@ -1,0 +1,95 @@
+:root {
+    --brand-dark: #0f172a;
+    --brand-gold: #eab308;
+    --guinea-green: #009460;
+    --guinea-yellow: #fcd116;
+    --guinea-red: #ce1126;
+    --bg-slate: #f8fafc;
+}
+
+body {
+    background-color: #f1f5f9;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: var(--brand-dark);
+}
+
+.navbar {
+    background: var(--brand-dark);
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.container {
+    max-width: 1250px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.btn {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary { background: var(--brand-dark); color: white; }
+.btn-primary:hover { background: #1e293b; }
+.btn-gold { background: var(--brand-gold); color: var(--brand-dark); }
+.btn-gold:hover { background: #ca8a04; }
+.btn-green { background: var(--guinea-green); color: white; }
+.btn-green:hover { background: #007a4f; }
+.btn-danger { background: var(--guinea-red); color: white; }
+
+.bg-watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40vw;
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 13px;
+}
+
+input:focus {
+    border-color: var(--brand-gold);
+    outline: none;
+}
