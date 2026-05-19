@@ -2,175 +2,266 @@
 <html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>Gabarit d'Impression Consulaire - قالب الطباعة الشفاف</title>
+    <title>طباعة البطاقة القنصلية - الوجهين</title>
     <style>
-        /* ضبط المقاس الميلمتري لكرت الهوية القياسي CR80 ليتوافق مع درج التلقيم اليدوي للطابعة */
+        /* إعدادات صفحة الطباعة بمقاس الهوية */
         @page {
             size: 86mm 54mm;
             margin: 0;
         }
+
         body {
-            font-family: 'Times New Roman', Arial, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            background: #ffffff; /* خلفية بيضاء بالكامل لعدم طباعة أي حبر زائد فوق تصميم الكرتون */
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
+            padding: 20px;
+            background-color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        /* شريط التعديل العلوي للشاشة (يختفي كلياً أثناء الطباعة) */
-        .toolbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #1e293b;
+        /* أدوات التحكم العلوية */
+        .no-print-toolbar {
+            background: #0f172a;
             color: white;
-            padding: 10px 20px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            z-index: 100;
+        }
+        .btn-group {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            z-index: 9999;
-            font-family: sans-serif;
-            font-size: 13px;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
         }
         .btn {
-            background-color: #009460;
+            background-color: #334155;
             color: white;
             border: none;
-            padding: 6px 15px;
-            border-radius: 4px;
+            padding: 10px 20px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
+            transition: 0.2s;
         }
-        .btn-print { background-color: #CE1126; margin-left: 10px;}
+        .btn:hover { background-color: #475569; }
+        .btn-front { background-color: #009460; }
+        .btn-front:hover { background-color: #007a4f; }
+        .btn-back { background-color: #CE1126; }
+        .btn-back:hover { background-color: #a80e1f; }
 
-        /* حاوية أبعاد بطاقة الهوية الشفافة */
-        .id-card-print-area {
+        /* حاوية البطاقات (تعرض الوجهين بجانب بعض بالشاشة) */
+        .cards-wrapper {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* التصميم المشترك للبطاقتين */
+        .card-container {
             width: 86mm;
             height: 54mm;
             position: relative;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             overflow: hidden;
-            background: transparent;
             box-sizing: border-box;
-            margin: 80px auto 0 auto; /* مسافة لرؤيتها بالشاشة فقط */
-            border: 1px dashed #ccc; /* إطار وهمي للشاشة يختفي بالطباعة */
+            background-color: white;
         }
 
-        /* ميزة التعديل الفوري بالكيبورد قبل الكبس على زر الطباعة */
-        [contenteditable="true"] {
-            outline: none;
-            border: 1px dotted transparent;
-            display: inline-block;
-        }
-        [contenteditable="true"]:hover {
-            border-color: #94a3b8;
-            background: #f8fafc;
+        /* خلفية الوجه الأمامي */
+        #front-card {
+            background-image: url('image_9ed7e8.jpg'); /* اسم صورة الوجه الأمامي */
         }
 
-        /* تحديد الإحداثيات الهندسية للنصوص لتسقط بدقة فوق فراغات الكرتون الأصلي */
-        
-        /* 1. موضع الصورة الشخصية على اليسار */
-        .photo-slot {
+        /* خلفية الوجه الخلفي */
+        #back-card {
+            background-image: url('image_9ed80b.jpg'); /* اسم صورة الوجه الخلفي */
+        }
+
+        /* العناصر القابلة للسحب والتعديل */
+        .draggable {
             position: absolute;
-            top: 10mm;
+            cursor: move;
+            font-size: 9pt;
+            font-weight: bold;
+            color: #000;
+            white-space: nowrap;
+            padding: 2px 4px;
+            border: 1px dashed transparent;
+            border-radius: 3px;
+        }
+        .draggable:hover {
+            border-color: #3b82f6;
+            background-color: rgba(255,255,255,0.9);
+            z-index: 50;
+        }
+        .draggable[contenteditable="true"]:focus {
+            outline: none;
+            border-color: #10b981;
+            background-color: white;
+            cursor: text;
+            z-index: 50;
+        }
+
+        /* إطار الصورة الشخصية في الوجه الأمامي */
+        .photo-box {
+            position: absolute;
+            top: 12mm;
             left: 4mm;
-            width: 20mm;
-            height: 25mm;
-            border: 1px solid #ddd;
+            width: 22mm;
+            height: 28mm;
+            border: 1.5px solid #111;
+            background: rgba(255,255,255,0.8);
+            cursor: move;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
-            color: #aaa;
-        }
-        .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* 2. كتلة البيانات الفرنسية والإنجليزية والبرمجية */
-        .text-block-fr {
-            position: absolute;
-            top: 10mm;
-            left: 27mm;
-            font-size: 8.5pt;
-            line-height: 1.4;
-            color: #000000; /* حبر أسود خالص للطباعة الليزرية الواضحة */
-            font-weight: bold;
-        }
-        
-        /* 3. كتلة البيانات العربية المتناسقة بسطور الهوية */
-        .text-block-ar {
-            position: absolute;
-            top: 10mm;
-            right: 5mm;
-            font-size: 9.5pt;
-            line-height: 1.4;
-            text-align: right;
-            direction: rtl;
-            color: #000000;
+            font-size: 10px;
+            color: #444;
             font-weight: bold;
         }
 
-        /* قوانين إخفاء العناصر غير المرغوب طباعتها في طابعة HP الكرتونية */
+        /* إعدادات الطباعة: إخفاء كل شيء باستثناء الوجه المطلوب طباعته! */
         @media print {
-            .toolbar { display: none !important; }
-            .id-card-print-area {
+            body { 
+                background-color: white; 
+                padding: 0; 
+                margin: 0; 
+                display: block; 
+            }
+            .no-print-toolbar { display: none !important; }
+            .cards-wrapper { display: block; gap: 0; }
+            
+            .card-container {
+                box-shadow: none !important;
+                background-image: none !important; /* إلغاء طباعة صورة الكرتون */
                 margin: 0 !important;
                 border: none !important;
-                page-break-inside: avoid;
+                position: absolute;
+                top: 0;
+                left: 0;
             }
-            [contenteditable="true"]:hover { background: transparent; }
+            
+            .draggable { border: none !important; background: transparent !important; padding: 0 !important; }
+            .photo-box { border: none !important; background: transparent !important; color: transparent !important;}
+
+            /* الكود السحري: التحكم بمن يطبع بناءً على الكلاس */
+            body.print-front #back-card { display: none !important; }
+            body.print-back #front-card { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <div class="toolbar">
-        <div>ℹ️ يمكنك الضغط على أي نص وتعديله مباشرةً قبل الطباعة.</div>
-        <div>
+    <div class="no-print-toolbar">
+        <h2 style="margin: 0 0 5px 0;">نظام طباعة الهوية القنصلية - الوجهين</h2>
+        <p style="margin: 0 0 15px 0; font-size: 13px; color: #94a3b8;">اضبط النصوص بالماوس، ثم اطبع الوجه الأول، اقلب الكرتونة واطبع الوجه الثاني.</p>
+        
+        <div class="btn-group">
             <button class="btn" onclick="window.history.back()">⬅️ رجوع للوحة</button>
-            <button class="btn btn-print" onclick="window.print()">🖨️ أمر الطباعة الفورية فوق الكرتون</button>
+            <button class="btn btn-front" onclick="printSide('front')">🖨️ طباعة الوجه الأمامي</button>
+            <button class="btn btn-back" onclick="printSide('back')">🖨️ طباعة الوجه الخلفي</button>
         </div>
     </div>
 
-    <div class="id-card-print-area" id="identity-card-holder">
+    <div class="cards-wrapper">
+        
+        <div class="card-container" id="front-card">
+            <div class="photo-box" style="top: 12mm; left: 4mm;" title="اسحبني">صورة (Photo)</div>
+
+            <div class="draggable" contenteditable="true" style="top: 14mm; left: 30mm;" id="fr-name"></div>
+            <div class="draggable" contenteditable="true" style="top: 21mm; left: 30mm;" id="fr-passport"></div>
+            <div class="draggable" contenteditable="true" style="top: 28mm; left: 30mm;" id="fr-birth"></div>
+
+            <div class="draggable" contenteditable="true" style="top: 14mm; right: 4mm; direction: rtl;" id="ar-name"></div>
+            <div class="draggable" contenteditable="true" style="top: 21mm; right: 4mm; direction: rtl;" id="ar-family"></div>
+            <div class="draggable" contenteditable="true" style="top: 28mm; right: 4mm; direction: rtl;" id="ar-address"></div>
         </div>
 
+        <div class="card-container" id="back-card">
+            <div class="draggable" contenteditable="true" style="top: 15mm; left: 10mm;">Date de Délivrance: <span id="issue-date"></span></div>
+            <div class="draggable" contenteditable="true" style="top: 22mm; left: 10mm;">Date d'Expiration: <span id="expiry-date"></span></div>
+            <div class="draggable" contenteditable="true" style="top: 30mm; left: 10mm; color: #CE1126;">Signature du Consul</div>
+        </div>
+
+    </div>
+
     <script>
-        // استرجاع قاعدة البيانات الحية الموحدة
+        // 1. جلب بيانات المواطن المختار
         const db = JSON.parse(localStorage.getItem('guinea_citizens_db')) || [];
-        
-        // قراءة الـ ID المبعوث من لوحة التحكم الرئيسية عبر الرابط
         const urlParams = new URLSearchParams(window.location.search);
         const citizenId = parseInt(urlParams.get('id'));
+        const citizen = db.find(c => c.id === citizenId) || {
+            nameFr: "Nom Prenom", nameAr: "الاسم الكامل", family: "العائلة", passport: "G000000", birth: "01/01/2000 - Damas", address: "Damas"
+        };
 
-        // إيجاد الشخص المطلوب
-        const citizen = db.find(c => c.id === citizenId) || db[0];
+        // 2. تعبئة البيانات في الوجه الأمامي
+        document.getElementById('fr-name').innerText = citizen.nameFr;
+        document.getElementById('fr-passport').innerText = citizen.passport;
+        document.getElementById('fr-birth').innerText = citizen.birth.split(' - ')[0]; // تاريخ فقط
+        
+        document.getElementById('ar-name').innerText = citizen.nameAr;
+        document.getElementById('ar-family').innerText = citizen.family;
+        document.getElementById('ar-address').innerText = citizen.address;
 
-        if (citizen) {
-            const cardHolder = document.getElementById('identity-card-holder');
-            cardHolder.innerHTML = `
-                <div class="photo-slot">
-                    <span style="text-align:center;">اسحب الصورة هنا أو ستطبع فارغة للصق اليدوي</span>
-                </div>
+        // 3. تعبئة تواريخ افتراضية في الوجه الخلفي (تاريخ اليوم وتاريخ بعد 5 سنوات)
+        const today = new Date();
+        const expiry = new Date(); expiry.setFullYear(today.getFullYear() + 5);
+        document.getElementById('issue-date').innerText = today.toLocaleDateString('fr-FR');
+        document.getElementById('expiry-date').innerText = expiry.toLocaleDateString('fr-FR');
 
-                <div class="text-block-fr">
-                    <div>Nom: <span contenteditable="true">${citizen.nameFr.split(' ').pop()}</span></div>
-                    <div>Prénom: <span contenteditable="true">${citizen.nameFr.split(' ').slice(0, -1).join(' ')}</span></div>
-                    <div>N° Passeport: <span contenteditable="true" style="color: #000;">${citizen.passport}</span></div>
-                    <div>Date de Naissance: <span contenteditable="true">${citizen.birth.split(' - ')[0]}</span></div>
-                </div>
-
-                <div class="text-block-ar">
-                    <div>الاسم: <span contenteditable="true">${citizen.nameAr}</span></div>
-                    <div>العائلة: <span contenteditable="true">${citizen.family}</span></div>
-                    <div>مكان التولد: <span contenteditable="true">${citizen.birth.split(' - ')[1] || 'دمشق'}</span></div>
-                    <div style="font-size:7.5pt; margin-top:4px;">العنوان: <span contenteditable="true">${citizen.address}</span></div>
-                </div>
-            `;
-        } else {
-            document.getElementById('identity-card-holder').innerHTML = `<p style='text-align:center; padding-top:20px;'>خطأ: لم يتم اختيار مواطن بشكل صحيح.</p>`;
+        // 4. نظام الطباعة المنفصل (سحر الـ CSS)
+        function printSide(side) {
+            // إزالة أي كلاسات سابقة
+            document.body.classList.remove('print-front', 'print-back');
+            // إضافة كلاس الوجه المطلوب ليقوم الـ CSS بإخفاء الوجه الآخر
+            document.body.classList.add('print-' + side);
+            // استدعاء نافذة الطباعة
+            window.print();
         }
+
+        // 5. سكربت السحب والإفلات لتعديل أماكن الكلمات بالماوس
+        let activeEl = null;
+        let startX, startY, initialLeft, initialTop;
+
+        document.querySelectorAll('.draggable, .photo-box').forEach(el => {
+            el.addEventListener('mousedown', function(e) {
+                // منع السحب إذا كنا نضغط لنكتب نصاً
+                if (document.activeElement === el) return;
+                
+                activeEl = el;
+                startX = e.clientX;
+                startY = e.clientY;
+                initialLeft = el.offsetLeft;
+                initialTop = el.offsetTop;
+            });
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if(activeEl) {
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                activeEl.style.left = (initialLeft + dx) + 'px';
+                activeEl.style.top = (initialTop + dy) + 'px';
+                // إزالة خاصية right إذا سحبنا عنصراً عربياً ليتحرك بحرية
+                if(activeEl.style.right) activeEl.style.right = 'auto';
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            activeEl = null;
+        });
     </script>
 </body>
 </html>
