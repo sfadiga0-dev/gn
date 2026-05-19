@@ -2,9 +2,9 @@
 <html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>طباعة البطاقة القنصلية - الوجهين</title>
+    <title>تجرية واجهات الطباعة القنصلية - دمشق</title>
     <style>
-        /* إعدادات صفحة الطباعة بمقاس الهوية */
+        /* إعدادات صفحة الطباعة القياسية CR80 */
         @page {
             size: 86mm 54mm;
             margin: 0;
@@ -14,48 +14,50 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
 
-        /* أدوات التحكم العلوية */
-        .no-print-toolbar {
+        /* 🛠️ لوحة تحكم الاختيار (تختفي عند الطباعة) */
+        .demo-controls {
             background: #0f172a;
             color: white;
-            padding: 15px 30px;
-            border-radius: 10px;
+            padding: 15px 25px;
+            border-radius: 12px;
             margin-bottom: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             text-align: center;
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             z-index: 100;
         }
-        .btn-group {
+        .control-group {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin-top: 15px;
+            flex-wrap: wrap;
         }
-        .btn {
+        .btn-mode {
             background-color: #334155;
             color: white;
-            border: none;
-            padding: 10px 20px;
+            border: 2px solid transparent;
+            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
-            transition: 0.2s;
+            font-size: 13px;
         }
-        .btn:hover { background-color: #475569; }
-        .btn-front { background-color: #009460; }
-        .btn-front:hover { background-color: #007a4f; }
-        .btn-back { background-color: #CE1126; }
-        .btn-back:hover { background-color: #a80e1f; }
+        .btn-mode:hover { background-color: #475569; }
+        .btn-mode.active {
+            border-color: #eab308;
+            background-color: #1e293b;
+        }
+        .print-actions { margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px;}
+        .btn-print { background-color: #CE1126; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 0 5px;}
 
         /* حاوية البطاقات (تعرض الوجهين بجانب بعض بالشاشة) */
         .cards-wrapper {
@@ -63,9 +65,10 @@
             gap: 40px;
             flex-wrap: wrap;
             justify-content: center;
+            position: relative;
         }
 
-        /* التصميم المشترك للبطاقتين */
+        /* التصميم الأساسي للبطاقة */
         .card-container {
             width: 86mm;
             height: 54mm;
@@ -79,16 +82,6 @@
             background-color: white;
         }
 
-        /* خلفية الوجه الأمامي */
-        #front-card {
-            background-image: url('image_9ed7e8.jpg'); /* اسم صورة الوجه الأمامي */
-        }
-
-        /* خلفية الوجه الخلفي */
-        #back-card {
-            background-image: url('image_9ed80b.jpg'); /* اسم صورة الوجه الخلفي */
-        }
-
         /* العناصر القابلة للسحب والتعديل */
         .draggable {
             position: absolute;
@@ -99,146 +92,145 @@
             white-space: nowrap;
             padding: 2px 4px;
             border: 1px dashed transparent;
-            border-radius: 3px;
+            z-index: 10;
         }
-        .draggable:hover {
-            border-color: #3b82f6;
-            background-color: rgba(255,255,255,0.9);
-            z-index: 50;
-        }
-        .draggable[contenteditable="true"]:focus {
-            outline: none;
-            border-color: #10b981;
-            background-color: white;
-            cursor: text;
-            z-index: 50;
-        }
+        .draggable:hover { border-color: #3b82f6; background-color: rgba(255,255,255,0.8); }
+        .draggable[contenteditable="true"]:focus { outline: none; border-color: #10b981; background-color: white; cursor: text;}
 
-        /* إطار الصورة الشخصية في الوجه الأمامي */
         .photo-box {
             position: absolute;
-            top: 12mm;
-            left: 4mm;
-            width: 22mm;
-            height: 28mm;
+            top: 12mm; left: 4mm;
+            width: 22mm; height: 28mm;
             border: 1.5px solid #111;
             background: rgba(255,255,255,0.8);
             cursor: move;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: #444;
-            font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; color: #444; font-weight: bold;
+            z-index: 5;
         }
 
-        /* إعدادات الطباعة: إخفاء كل شيء باستثناء الوجه المطلوب طباعته! */
+        /* ============================================================
+           🔬 تطبيق الـ 3 خطوات (MODES) عبر الـ CSS
+        ============================================================ */
+
+        /* 1️⃣ الخطوة الأولى: الفلاتر البرمجية البسيطة (CSS Filters) */
+        /* تزيد التباين والسطوع وتحسن الألوان تلقائياً */
+        body.mode-filters .card-container {
+            filter: contrast(120%) brightness(110%) saturate(130%);
+        }
+
+        /* 2️⃣ الخطوة الثانية: المعالجة المتقدمة (AI Enhanced) */
+        /* نفترض هنا أننا قمنا بتحسين الصور خارجياً ورفعناها بأسماء جديدة */
+        /* للتدليل، سنقوم بعمل معالجة قوية جداً بالـ CSS لتبدو كالصور المعالجة */
+        body.mode-enhanced .card-container {
+            filter: contrast(150%) brightness(120%) saturate(180%) sharp(1px);
+            box-shadow: 0 10px 25px rgba(0,148,96,0.3); /* توهج أخضر للتمييز */
+        }
+
+        /* 3️⃣ الخطوة الثالثة: هيكلية المسح الضوئي (Scanner) */
+        /* هذه هي النتيجة المثالية: خلفية بيضاء تماماً، والكرتون مطبوع مسبقاً */
+        body.mode-scanner .card-container {
+            background-image: none !important; /* نلغي صورة الخلفية كلياً بالشاشة */
+            background-color: #ffffff;
+            border: 2px solid var(--guinea-green); /* إطار أخضر للتدليل على حدود الكرتون */
+        }
+        /* في وضع المسح الضوئي، نغير لون الحقول مؤقتاً للشاشة لنرى أماكنها */
+        body.mode-scanner .draggable { color: #000; border-color: #ccc; }
+        body.mode-scanner .photo-box { background: #f8fafc; border-color: #000; }
+
+
+        /* الخلفيات الأصلية */
+        #front-card { background-image: url('image_9ed7e8.jpg'); }
+        #back-card { background-image: url('image_9ed80b.jpg'); }
+
+        /* ============================================================
+           🖨️ إعدادات الطباعة النهائية (ميكانيكية فوق الكرتون)
+        ============================================================ */
         @media print {
-            body { 
-                background-color: white; 
-                padding: 0; 
-                margin: 0; 
-                display: block; 
-            }
-            .no-print-toolbar { display: none !important; }
+            .demo-controls { display: none !important; }
             .cards-wrapper { display: block; gap: 0; }
-            
             .card-container {
                 box-shadow: none !important;
-                background-image: none !important; /* إلغاء طباعة صورة الكرتون */
+                background-image: none !important; /* حتمياً: لا نطبع صورة الكرتون أبداً */
                 margin: 0 !important;
                 border: none !important;
-                position: absolute;
-                top: 0;
-                left: 0;
+                position: absolute; top: 0; left: 0;
+                filter: none !important; /* نلغي كافة الفلاتر عند الطباعة */
             }
-            
             .draggable { border: none !important; background: transparent !important; padding: 0 !important; }
             .photo-box { border: none !important; background: transparent !important; color: transparent !important;}
 
-            /* الكود السحري: التحكم بمن يطبع بناءً على الكلاس */
+            /* نظام الطباعة المنفصل للوجهين */
             body.print-front #back-card { display: none !important; }
             body.print-back #front-card { display: none !important; }
         }
     </style>
 </head>
-<body>
-
-    <div class="no-print-toolbar">
-        <h2 style="margin: 0 0 5px 0;">نظام طباعة الهوية القنصلية - الوجهين</h2>
-        <p style="margin: 0 0 15px 0; font-size: 13px; color: #94a3b8;">اضبط النصوص بالماوس، ثم اطبع الوجه الأول، اقلب الكرتونة واطبع الوجه الثاني.</p>
+<body class="mode-filters"> <div class="demo-controls no-print">
+        <h2 style="margin: 0 0 5px 0; color: #eab308;">اختبر وقارن بين الطرق الثلاث للوضوح</h2>
+        <p style="margin: 0 0 15px 0; font-size: 13px; color: #94a3b8;">اختر الطريقة التي تريح عينك في المعاينة والمطابقة، ثم اطبع فوق كرتون القنصلية الملون.</p>
         
-        <div class="btn-group">
-            <button class="btn" onclick="window.history.back()">⬅️ رجوع للوحة</button>
-            <button class="btn btn-front" onclick="printSide('front')">🖨️ طباعة الوجه الأمامي</button>
-            <button class="btn btn-back" onclick="printSide('back')">🖨️ طباعة الوجه الخلفي</button>
+        <div class="control-group">
+            <button class="btn-mode active" onclick="setMode('filters', this)" title="تحسين تلقائي لألوان وسطوع الصور الحالية">1️⃣ الخطوة الأولى: فلاتر برمجية</button>
+            <button class="btn-mode" onclick="setMode('enhanced', this)" title="معالجة قوية جداً للتباين تشبه معالجة الذكاء الاصطناعي">2️⃣ الخطوة الثانية: معالجة متقدمة</button>
+            <button class="btn-mode" onclick="setMode('scanner', this)" title="النتيجة المثالية: مسح ضوئي حقيقي (Scanner)">3️⃣ الخطوة الثالثة: النتيجة المثالية</button>
+        </div>
+
+        <div class="print-actions">
+            <button class="btn-print" onclick="printSide('front')" style="background-color: #009460;">🖨️ طباعة الوجه الأمامي فوق الكرتون</button>
+            <button class="btn-print" onclick="printSide('back')" style="background-color: #CE1126;">🖨️ طباعة الوجه الخلفي فوق الكرتون</button>
         </div>
     </div>
 
     <div class="cards-wrapper">
         
         <div class="card-container" id="front-card">
-            <div class="photo-box" style="top: 12mm; left: 4mm;" title="اسحبني">صورة (Photo)</div>
+            <div class="photo-box draggable" style="top: 15mm; left: 5mm;" title="اسحبني">صورة</div>
 
-            <div class="draggable" contenteditable="true" style="top: 14mm; left: 30mm;" id="fr-name"></div>
-            <div class="draggable" contenteditable="true" style="top: 21mm; left: 30mm;" id="fr-passport"></div>
-            <div class="draggable" contenteditable="true" style="top: 28mm; left: 30mm;" id="fr-birth"></div>
+            <div class="draggable" contenteditable="true" style="top: 15mm; left: 30mm;">Alpha Oumar BALDE</div>
+            <div class="draggable" contenteditable="true" style="top: 22mm; left: 30mm;">G0023941</div>
+            <div class="draggable" contenteditable="true" style="top: 29mm; left: 30mm;">12/05/1988</div>
 
-            <div class="draggable" contenteditable="true" style="top: 14mm; right: 4mm; direction: rtl;" id="ar-name"></div>
-            <div class="draggable" contenteditable="true" style="top: 21mm; right: 4mm; direction: rtl;" id="ar-family"></div>
-            <div class="draggable" contenteditable="true" style="top: 28mm; right: 4mm; direction: rtl;" id="ar-address"></div>
+            <div class="draggable" contenteditable="true" style="top: 15mm; right: 4mm; direction: rtl;">ألفا عمر بالدي</div>
+            <div class="draggable" contenteditable="true" style="top: 22mm; right: 4mm; direction: rtl;">Balde</div>
+            <div class="draggable" contenteditable="true" style="top: 29mm; right: 4mm; direction: rtl;">دمشق، المزة</div>
         </div>
 
         <div class="card-container" id="back-card">
-            <div class="draggable" contenteditable="true" style="top: 15mm; left: 10mm;">Date de Délivrance: <span id="issue-date"></span></div>
-            <div class="draggable" contenteditable="true" style="top: 22mm; left: 10mm;">Date d'Expiration: <span id="expiry-date"></span></div>
-            <div class="draggable" contenteditable="true" style="top: 30mm; left: 10mm; color: #CE1126;">Signature du Consul</div>
+            <div class="draggable" contenteditable="true" style="top: 15mm; left: 10mm;">Délivré le: 20/05/2026</div>
+            <div class="draggable" contenteditable="true" style="top: 22mm; left: 10mm;">Expire le: 20/05/2031</div>
+            <div class="draggable" contenteditable="true" style="top: 30mm; left: 10mm; color: #CE1126; font-style: italic;">Signature et Sceau</div>
         </div>
 
     </div>
 
     <script>
-        // 1. جلب بيانات المواطن المختار
-        const db = JSON.parse(localStorage.getItem('guinea_citizens_db')) || [];
-        const urlParams = new URLSearchParams(window.location.search);
-        const citizenId = parseInt(urlParams.get('id'));
-        const citizen = db.find(c => c.id === citizenId) || {
-            nameFr: "Nom Prenom", nameAr: "الاسم الكامل", family: "العائلة", passport: "G000000", birth: "01/01/2000 - Damas", address: "Damas"
-        };
+        // سكربت تبديل الأوضاع (Modes)
+        function setMode(mode, btnEl) {
+            // إزالة الكلاس النشط من كافة الأوضاع في الـ body والأزرار
+            document.body.classList.remove('mode-filters', 'mode-enhanced', 'mode-scanner');
+            document.querySelectorAll('.btn-mode').forEach(btn => btn.classList.remove('active'));
+            
+            // إضافة الكلاس الجديد النشط
+            document.body.classList.add('mode-' + mode);
+            btnEl.classList.add('active');
+        }
 
-        // 2. تعبئة البيانات في الوجه الأمامي
-        document.getElementById('fr-name').innerText = citizen.nameFr;
-        document.getElementById('fr-passport').innerText = citizen.passport;
-        document.getElementById('fr-birth').innerText = citizen.birth.split(' - ')[0]; // تاريخ فقط
-        
-        document.getElementById('ar-name').innerText = citizen.nameAr;
-        document.getElementById('ar-family').innerText = citizen.family;
-        document.getElementById('ar-address').innerText = citizen.address;
-
-        // 3. تعبئة تواريخ افتراضية في الوجه الخلفي (تاريخ اليوم وتاريخ بعد 5 سنوات)
-        const today = new Date();
-        const expiry = new Date(); expiry.setFullYear(today.getFullYear() + 5);
-        document.getElementById('issue-date').innerText = today.toLocaleDateString('fr-FR');
-        document.getElementById('expiry-date').innerText = expiry.toLocaleDateString('fr-FR');
-
-        // 4. نظام الطباعة المنفصل (سحر الـ CSS)
+        // نظام الطباعة المنفصل للوجهين
         function printSide(side) {
-            // إزالة أي كلاسات سابقة
             document.body.classList.remove('print-front', 'print-back');
-            // إضافة كلاس الوجه المطلوب ليقوم الـ CSS بإخفاء الوجه الآخر
             document.body.classList.add('print-' + side);
-            // استدعاء نافذة الطباعة
             window.print();
         }
 
-        // 5. سكربت السحب والإفلات لتعديل أماكن الكلمات بالماوس
+        // سكربت السحب والإفلات لتعديل أماكن الكلمات بالماوس
         let activeEl = null;
         let startX, startY, initialLeft, initialTop;
 
-        document.querySelectorAll('.draggable, .photo-box').forEach(el => {
+        document.querySelectorAll('.draggable').forEach(el => {
             el.addEventListener('mousedown', function(e) {
                 // منع السحب إذا كنا نضغط لنكتب نصاً
-                if (document.activeElement === el) return;
+                if (document.activeElement === el && el.getAttribute('contenteditable') === 'true') return;
                 
                 activeEl = el;
                 startX = e.clientX;
@@ -259,9 +251,7 @@
             }
         });
 
-        document.addEventListener('mouseup', function() {
-            activeEl = null;
-        });
+        document.addEventListener('mouseup', function() { activeEl = null; });
     </script>
 </body>
 </html>
