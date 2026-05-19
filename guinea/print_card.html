@@ -2,16 +2,16 @@
 <html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>تجرية واجهات الطباعة القنصلية - دمشق</title>
+    <title>Qalb Al-Hawiya Al-Qonsoliya - قالب البطاقة القنصلية الحرفي</title>
     <style>
-        /* إعدادات صفحة الطباعة القياسية CR80 */
+        /* إعدادات صفحة الطباعة بمقاس الهوية المزدوجة (للطي) */
         @page {
-            size: 86mm 54mm;
-            margin: 0;
+            size: 172mm 54mm; /* مقاس وجهين بجانب بعض للطي (86mm * 2) */
+            margin: 0; /* إلغاء هوامش المتصفح */
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Times New Roman', serif; /* خط رسمي يحاكي الأصل */
             margin: 0;
             padding: 20px;
             background-color: #f1f5f9;
@@ -21,237 +21,234 @@
             min-height: 100vh;
         }
 
-        /* 🛠️ لوحة تحكم الاختيار (تختفي عند الطباعة) */
-        .demo-controls {
+        /* أدوات تحكم الشاشة (تختفي بالطباعة) */
+        .toolbar {
             background: #0f172a;
             color: white;
-            padding: 15px 25px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             text-align: center;
-            width: 100%;
-            max-width: 800px;
             z-index: 100;
         }
-        .control-group {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        .btn-mode {
-            background-color: #334155;
+        .btn {
+            background-color: #009460; /* أخضر غيني */
             color: white;
-            border: 2px solid transparent;
-            padding: 8px 16px;
+            border: none;
+            padding: 10px 20px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 14px;
+            margin: 0 5px;
         }
-        .btn-mode:hover { background-color: #475569; }
-        .btn-mode.active {
-            border-color: #eab308;
-            background-color: #1e293b;
-        }
-        .print-actions { margin-top: 15px; border-top: 1px solid #334155; padding-top: 10px;}
-        .btn-print { background-color: #CE1126; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 0 5px;}
+        .btn-print { background-color: #CE1126; } /* أحمر غيني */
 
-        /* حاوية البطاقات (تعرض الوجهين بجانب بعض بالشاشة) */
-        .cards-wrapper {
+        /* حاوية البطاقة الكاملة (الوجهين معاً للطي) */
+        .card-fold-wrapper {
             display: flex;
-            gap: 40px;
-            flex-wrap: wrap;
-            justify-content: center;
+            width: 172mm; /* 86mm + 86mm */
+            height: 54mm;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             position: relative;
+            background: white;
+            overflow: hidden;
+            border-radius: 2mm; /* زوايا مدورة خفيفة للشاشة */
         }
 
-        /* التصميم الأساسي للبطاقة */
-        .card-container {
+        /* خط الطي الوهمي بالشاشة */
+        .card-fold-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 86mm;
+            width: 1px;
+            height: 100%;
+            background: rgba(0,0,0,0.1);
+            z-index: 20;
+        }
+
+        /* التصميم المشترك للأوجه */
+        .card-face {
             width: 86mm;
             height: 54mm;
             position: relative;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-position: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            overflow: hidden;
             box-sizing: border-box;
-            background-color: white;
+            padding: 3mm;
+            overflow: hidden;
         }
 
-        /* العناصر القابلة للسحب والتعديل */
-        .draggable {
+        /* ============================================================
+           🔴 الوجه الخارجي (الخلف والترويسة) - حسب الصورة الأصلية
+        ============================================================ */
+        .face-external {
+            background: white;
+            border-right: 1px solid #eee;
+        }
+        .flag-bar-top {
+            height: 4mm;
+            display: flex;
             position: absolute;
-            cursor: move;
-            font-size: 9pt;
+            top: 0; left: 0; width: 100%;
+        }
+        .flag-red { flex: 1; background: #CE1126; }
+        .flag-yellow { flex: 1; background: #FCD116; }
+        .flag-green { flex: 1; background: #009460; }
+
+        .header-external {
+            text-align: center;
+            margin-top: 5mm;
+            font-size: 8pt;
             font-weight: bold;
             color: #000;
-            white-space: nowrap;
-            padding: 2px 4px;
-            border: 1px dashed transparent;
-            z-index: 10;
         }
-        .draggable:hover { border-color: #3b82f6; background-color: rgba(255,255,255,0.8); }
-        .draggable[contenteditable="true"]:focus { outline: none; border-color: #10b981; background-color: white; cursor: text;}
 
-        .photo-box {
+        /* ============================================================
+           🟢 الوجه الداخلي (البيانات والصورة) - حسب الصورة الأصلية
+        ============================================================ */
+        .face-internal {
+            background: white;
+        }
+
+        /* شريط الترويسة الملون العلوي */
+        .internal-header-bar {
+            background-color: #009460; /* أخضر غيني */
+            color: white;
+            height: 8mm;
             position: absolute;
-            top: 12mm; left: 4mm;
-            width: 22mm; height: 28mm;
-            border: 1.5px solid #111;
-            background: rgba(255,255,255,0.8);
-            cursor: move;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 10px; color: #444; font-weight: bold;
+            top: 0; left: 0; width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10pt;
+            letter-spacing: 1px;
+        }
+
+        /* مربع الصورة الشخصية الشفاف */
+        .photo-slot {
+            position: absolute;
+            top: 10mm;
+            left: 4mm;
+            width: 22mm;
+            height: 28mm;
+            border: 1.5px solid #000; /* إطار أسود نقي */
+            background: #fdfdfd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: #aaa;
             z-index: 5;
         }
 
-        /* ============================================================
-           🔬 تطبيق الـ 3 خطوات (MODES) عبر الـ CSS
-        ============================================================ */
-
-        /* 1️⃣ الخطوة الأولى: الفلاتر البرمجية البسيطة (CSS Filters) */
-        /* تزيد التباين والسطوع وتحسن الألوان تلقائياً */
-        body.mode-filters .card-container {
-            filter: contrast(120%) brightness(110%) saturate(130%);
+        /* تنسيق خانات البيانات القابلة للتعديل (الأصلية الفارغة) */
+        .data-field-group {
+            position: absolute;
+            top: 10mm;
+            left: 28mm;
+            font-size: 9pt;
+            color: #000;
+            line-height: 1.5;
         }
 
-        /* 2️⃣ الخطوة الثانية: المعالجة المتقدمة (AI Enhanced) */
-        /* نفترض هنا أننا قمنا بتحسين الصور خارجياً ورفعناها بأسماء جديدة */
-        /* للتدليل، سنقوم بعمل معالجة قوية جداً بالـ CSS لتبدو كالصور المعالجة */
-        body.mode-enhanced .card-container {
-            filter: contrast(150%) brightness(120%) saturate(180%) sharp(1px);
-            box-shadow: 0 10px 25px rgba(0,148,96,0.3); /* توهج أخضر للتمييز */
+        .data-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5mm;
         }
 
-        /* 3️⃣ الخطوة الثالثة: هيكلية المسح الضوئي (Scanner) */
-        /* هذه هي النتيجة المثالية: خلفية بيضاء تماماً، والكرتون مطبوع مسبقاً */
-        body.mode-scanner .card-container {
-            background-image: none !important; /* نلغي صورة الخلفية كلياً بالشاشة */
-            background-color: #ffffff;
-            border: 2px solid var(--guinea-green); /* إطار أخضر للتدليل على حدود الكرتون */
+        .label-fr { font-weight: bold; margin-right: 2mm; }
+        .label-ar { font-weight: bold; margin-left: 2mm; direction: rtl; color: #009460;}
+
+        /* الحقول القابلة للتعديل (كانت فارغة بالأصل) */
+        .editable-value {
+            border-bottom: 1px solid #000; /* سطر التعبئة الأسود النقي */
+            min-width: 30mm;
+            display: inline-block;
+            color: #0000FF; /* لون أزرق للتمييز أثناء الكتابة بالشاشة */
+            font-weight: bold;
         }
-        /* في وضع المسح الضوئي، نغير لون الحقول مؤقتاً للشاشة لنرى أماكنها */
-        body.mode-scanner .draggable { color: #000; border-color: #ccc; }
-        body.mode-scanner .photo-box { background: #f8fafc; border-color: #000; }
 
-
-        /* الخلفيات الأصلية */
-        #front-card { background-image: url('image_9ed7e8.jpg'); }
-        #back-card { background-image: url('image_9ed80b.jpg'); }
-
-        /* ============================================================
-           🖨️ إعدادات الطباعة النهائية (ميكانيكية فوق الكرتون)
-        ============================================================ */
+        /* تنسيق الطباعة: إخفاء أدوات التحكم وإلغاء الزوايا المدورة */
         @media print {
-            .demo-controls { display: none !important; }
-            .cards-wrapper { display: block; gap: 0; }
-            .card-container {
+            .toolbar { display: none !important; }
+            body { background: white; padding: 0; margin: 0; }
+            .card-fold-wrapper {
                 box-shadow: none !important;
-                background-image: none !important; /* حتمياً: لا نطبع صورة الكرتون أبداً */
+                border-radius: 0 !important;
                 margin: 0 !important;
-                border: none !important;
-                position: absolute; top: 0; left: 0;
-                filter: none !important; /* نلغي كافة الفلاتر عند الطباعة */
+                page-break-inside: avoid;
             }
-            .draggable { border: none !important; background: transparent !important; padding: 0 !important; }
-            .photo-box { border: none !important; background: transparent !important; color: transparent !important;}
-
-            /* نظام الطباعة المنفصل للوجهين */
-            body.print-front #back-card { display: none !important; }
-            body.print-back #front-card { display: none !important; }
+            .card-fold-wrapper::after { display: none !important; } /* إخفاء خط الطي */
+            .editable-value { color: #000000 !important; border-bottom: 1px solid #000; } /* طباعة سوداء */
         }
     </style>
 </head>
-<body class="mode-filters"> <div class="demo-controls no-print">
-        <h2 style="margin: 0 0 5px 0; color: #eab308;">اختبر وقارن بين الطرق الثلاث للوضوح</h2>
-        <p style="margin: 0 0 15px 0; font-size: 13px; color: #94a3b8;">اختر الطريقة التي تريح عينك في المعاينة والمطابقة، ثم اطبع فوق كرتون القنصلية الملون.</p>
-        
-        <div class="control-group">
-            <button class="btn-mode active" onclick="setMode('filters', this)" title="تحسين تلقائي لألوان وسطوع الصور الحالية">1️⃣ الخطوة الأولى: فلاتر برمجية</button>
-            <button class="btn-mode" onclick="setMode('enhanced', this)" title="معالجة قوية جداً للتباين تشبه معالجة الذكاء الاصطناعي">2️⃣ الخطوة الثانية: معالجة متقدمة</button>
-            <button class="btn-mode" onclick="setMode('scanner', this)" title="النتيجة المثالية: مسح ضوئي حقيقي (Scanner)">3️⃣ الخطوة الثالثة: النتيجة المثالية</button>
-        </div>
+<body>
 
-        <div class="print-actions">
-            <button class="btn-print" onclick="printSide('front')" style="background-color: #009460;">🖨️ طباعة الوجه الأمامي فوق الكرتون</button>
-            <button class="btn-print" onclick="printSide('back')" style="background-color: #CE1126;">🖨️ طباعة الوجه الخلفي فوق الكرتون</button>
-        </div>
+    <div class="toolbar no-print">
+        <h2 style="margin: 0 0 10px 0;">القالب الرقمي الحرفي للبطاقة القنصلية</h2>
+        <p style="margin: 0 0 15px 0; font-size: 13px; color: #cbd5e1;">اضغط على أي حقل (بالأزرق) لتعبئته بالكيبورد، ثم اطبع على ورقة واحدة وقم بطيها.</p>
+        <button class="btn btn-print" onclick="window.print()">🖨️ طباعة القالب مسموح التعبئة</button>
     </div>
 
-    <div class="cards-wrapper">
+    <div class="card-fold-wrapper">
         
-        <div class="card-container" id="front-card">
-            <div class="photo-box draggable" style="top: 15mm; left: 5mm;" title="اسحبني">صورة</div>
-
-            <div class="draggable" contenteditable="true" style="top: 15mm; left: 30mm;">Alpha Oumar BALDE</div>
-            <div class="draggable" contenteditable="true" style="top: 22mm; left: 30mm;">G0023941</div>
-            <div class="draggable" contenteditable="true" style="top: 29mm; left: 30mm;">12/05/1988</div>
-
-            <div class="draggable" contenteditable="true" style="top: 15mm; right: 4mm; direction: rtl;">ألفا عمر بالدي</div>
-            <div class="draggable" contenteditable="true" style="top: 22mm; right: 4mm; direction: rtl;">Balde</div>
-            <div class="draggable" contenteditable="true" style="top: 29mm; right: 4mm; direction: rtl;">دمشق، المزة</div>
+        <div class="card-face face-external">
+            <div class="flag-bar-top"><div class="flag-red"></div><div class="flag-yellow"></div><div class="flag-green"></div></div>
+            <div class="header-external">
+                RÉPUBLIQUE DE GUINÉE<br>
+                Travail - Justice - Solidarité<br>
+                <br>
+                <span style="font-size:10pt; color:#009460;">CONSULAT DE DAMAS</span>
+            </div>
+            <div style="position:absolute; bottom:3mm; left:3mm; font-size:7pt; color:#666;">
+                Carte d'identité consulaire n°: <span class="editable-value" contenteditable="true" style="min-width:15mm; color:#000;"></span>
+            </div>
         </div>
 
-        <div class="card-container" id="back-card">
-            <div class="draggable" contenteditable="true" style="top: 15mm; left: 10mm;">Délivré le: 20/05/2026</div>
-            <div class="draggable" contenteditable="true" style="top: 22mm; left: 10mm;">Expire le: 20/05/2031</div>
-            <div class="draggable" contenteditable="true" style="top: 30mm; left: 10mm; color: #CE1126; font-style: italic;">Signature et Sceau</div>
-        </div>
-
-    </div>
-
-    <script>
-        // سكربت تبديل الأوضاع (Modes)
-        function setMode(mode, btnEl) {
-            // إزالة الكلاس النشط من كافة الأوضاع في الـ body والأزرار
-            document.body.classList.remove('mode-filters', 'mode-enhanced', 'mode-scanner');
-            document.querySelectorAll('.btn-mode').forEach(btn => btn.classList.remove('active'));
+        <div class="card-face face-internal">
+            <div class="internal-header-bar">CARTE D'IDENTITÉ CONSULAIRE</div>
             
-            // إضافة الكلاس الجديد النشط
-            document.body.classList.add('mode-' + mode);
-            btnEl.classList.add('active');
-        }
+            <div class="photo-slot">صورة (Photo)</div>
 
-        // نظام الطباعة المنفصل للوجهين
-        function printSide(side) {
-            document.body.classList.remove('print-front', 'print-back');
-            document.body.classList.add('print-' + side);
-            window.print();
-        }
+            <div class="data-field-group">
+                <div class="data-row">
+                    <span class="label-fr">Nom:</span>
+                    <span class="editable-value" contenteditable="true"></span>
+                    <span class="label-ar">اللقب:</span>
+                </div>
+                <div class="data-row">
+                    <span class="label-fr">Prénom:</span>
+                    <span class="editable-value" contenteditable="true"></span>
+                    <span class="label-ar">الاسم:</span>
+                </div>
+                <div class="data-row">
+                    <span class="label-fr">Né(e) le:</span>
+                    <span class="editable-value" contenteditable="true"></span>
+                    <span class="label-ar">تولد:</span>
+                </div>
+                <div class="data-row">
+                    <span class="label-fr">Passeport:</span>
+                    <span class="editable-value" contenteditable="true"></span>
+                    <span class="label-ar">الجواز:</span>
+                </div>
+                <div class="data-row">
+                    <span class="label-fr">Sexe:</span>
+                    <span class="editable-value" contenteditable="true" style="min-width:10mm;"></span>
+                    <span class="label-ar" style="margin-left:0;">الجنس:</span>
+                </div>
+            </div>
 
-        // سكربت السحب والإفلات لتعديل أماكن الكلمات بالماوس
-        let activeEl = null;
-        let startX, startY, initialLeft, initialTop;
+            <div style="position:absolute; bottom:2mm; right:4mm; font-size:7pt; font-weight:bold; color:#CE1126; text-align:right;">
+                Valable jusqu'au:<br>
+                <span class="editable-value" contenteditable="true" style="min-width:20mm; color:#000;"></span>
+            </div>
+        </div>
 
-        document.querySelectorAll('.draggable').forEach(el => {
-            el.addEventListener('mousedown', function(e) {
-                // منع السحب إذا كنا نضغط لنكتب نصاً
-                if (document.activeElement === el && el.getAttribute('contenteditable') === 'true') return;
-                
-                activeEl = el;
-                startX = e.clientX;
-                startY = e.clientY;
-                initialLeft = el.offsetLeft;
-                initialTop = el.offsetTop;
-            });
-        });
+    </div>
 
-        document.addEventListener('mousemove', function(e) {
-            if(activeEl) {
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-                activeEl.style.left = (initialLeft + dx) + 'px';
-                activeEl.style.top = (initialTop + dy) + 'px';
-                // إزالة خاصية right إذا سحبنا عنصراً عربياً ليتحرك بحرية
-                if(activeEl.style.right) activeEl.style.right = 'auto';
-            }
-        });
-
-        document.addEventListener('mouseup', function() { activeEl = null; });
-    </script>
 </body>
 </html>
