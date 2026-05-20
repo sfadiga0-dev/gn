@@ -3,314 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carte Consulaire de Guinée - Template</title>
+    <title>تعبئة وطباعة بيانات البطاقة القنصلية - الجالية الغينية بسوريا</title>
     <style>
-        /* تنسيقات عامة */
+        /* تنسيقات عامة - تظهر على الشاشة فقط */
         body {
-            font-family: serif; /* لمحاكاة الخطوط الكلاسيكية في الصور */
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f0f0f0; /* خلفية خفيفة للشاشة فقط */
+            background-color: #f4f4f4;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-sizing: border-box;
+            gap: 20px;
         }
 
-        /* حاوية البطاقة */
-        #card-container {
-            width: 85mm; /* مقاس بطاقة قياسي */
-            height: 54mm; /* مقاس بطاقة قياسي */
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
+        /* زر الطباعة */
+        .print-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #007bff;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
         }
 
-        /* تنسيقات الوجهين */
-        .card-face {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            backface-visibility: hidden;
+        /* تعليمات الاستخدام */
+        .instructions {
             background-color: white;
-            box-sizing: border-box;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            max-width: 600px;
+            text-align: right;
+            direction: rtl;
+        }
+
+        /* حاوية البطاقة - ضبط المقاس المادي القياسي */
+        .card-container {
+            width: 85mm; /* مقاس البطاقة القياسي */
+            height: 54mm; /* مقاس البطاقة القياسي */
+            position: relative;
+            background-color: white;
+            border: 1px solid black; /* دليل فقط للشاشة، يختفي عند الطباعة */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
-            display: none; /* إخفاء جميع الأوجه افتراضياً */
         }
 
-        /* الوجه (image_0.png) */
-        #card-front {
-            display: block; /* إظهار الوجه افتراضياً */
-            border: 4px solid;
-            border-image: linear-gradient(to right, #ce1126 33.3%, #fcd116 33.3% 66.6%, #009460 66.6%) 1;
-            padding: 5px;
+        /* إظهار خلفية البطاقة على الشاشة فقط للمساعدة في التعبئة */
+        @media screen {
+            /* استخدم الصورة المطبوعة مسبقاً (الفارغة) كخلفية على الشاشة */
+            .card-container {
+                /* ملاحظة: الصورة أدناه هي مجرد تمثيل، سأستخدم خلفية بيضاء وخطوط دليلية شفافة */
+                background-color: rgba(255, 255, 255, 0.95);
+            }
+            
+            /* تلميحات توجيهية خلف الحقول على الشاشة */
+            .field::before {
+                content: attr(data-placeholder);
+                position: absolute;
+                left: 5px;
+                color: #ccc;
+                font-size: 10px;
+                top: -12px;
+                direction: ltr;
+            }
         }
 
-        /* الخلف (image_1.png) */
-        #card-back {
-            border: 4px solid;
-            border-image: linear-gradient(to right, #009460 33.3%, #fcd116 33.3% 66.6%, #ce1126 33.3%) 1; /* عكس ترتيب الألوان للخلف */
-            padding: 10px;
-            display: none; /* إخفاء الخلف افتراضياً */
-        }
-
-        /* تفعيل الوجهين */
-        #card-container.flipped #card-front { display: none; }
-        #card-container.flipped #card-back { display: block; }
-
-        /* تنسيقات حقول الإدخال لتبدو حرفية كشرطات */
-        input[type="text"] {
+        /* تنسيق حقول الإدخال لتظهر كجزء من البطاقة */
+        .field {
+            position: absolute;
+            background: transparent;
             border: none;
-            border-bottom: 1px dashed black;
-            font-family: inherit;
-            font-size: 11px;
-            width: 100%;
             padding: 0;
             margin: 0;
-            background-color: transparent;
+            font-family: inherit;
+            font-size: 11px; /* مقاس الخط المقارب للأصل */
             color: black;
             outline: none;
-            box-sizing: content-box;
         }
 
-        /* تنسيق الوجه (image_0.png) - الأقسام */
-        #card-front .top-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
-            height: 40px;
-        }
-        #card-front .validity { width: 30%; font-weight: bold; }
-        #card-front .passport { width: 40%; font-weight: bold; }
-        #card-front .consul-seal { width: 30%; text-align: right; color: blue; font-weight: bold; }
-
-        #card-front .middle-section {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: calc(100% - 70px);
-            text-align: center;
-        }
-        #card-front h1 { font-size: 18px; margin: 0; font-weight: bold; }
-        #card-front h2 { font-size: 14px; margin: 0; font-weight: bold; }
-        #card-front .arabic { font-family: 'Times New Roman', serif; font-size: 14px; margin: 0; }
-        #card-front .title { text-decoration: underline; font-weight: bold; font-size: 14px; margin: 5px 0; }
-        #card-front .residence { width: 80%; display: flex; align-items: center; justify-content: center; }
-
-        #card-front .bottom-section { font-size: 11px; height: 30px; display: flex; align-items: flex-end; }
-
-        /* تنسيق الخلف (image_1.png) - الأقسام */
-        #card-back .header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        #card-back .header-left { width: 60%; }
-        #card-back .header-right { width: 40%; text-align: right; }
-        
-        #card-back .main {
-            font-size: 11px;
-            font-weight: bold;
-            margin-top: 5px;
-            line-height: 1.4;
-        }
-        #card-back .photo-box {
-            width: 20mm;
-            height: 25mm;
-            border: 1px solid black;
-            background-color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: #ccc;
-            float: right;
-            margin-left: 10px;
-            margin-bottom: 10px;
-        }
-        
-        #card-back .signalement {
-            width: 100%;
-            border-top: 1px solid black;
-            margin-top: 10px;
-            padding-top: 5px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        #card-back .signalement-vertical {
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            float: left;
-            margin-right: 5px;
-            height: 50px;
+        /* تمييز الحقول عند التركيز عليها على الشاشة */
+        @media screen {
+            .field:focus {
+                background-color: rgba(0, 123, 255, 0.05);
+                border-bottom: 1px solid #007bff;
+            }
         }
 
-        #card-back .footer {
-            clear: both;
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        #card-back .signature-box { border: 1px solid black; width: 40%; height: 25px; }
-        #card-back .seal-box { width: 50%; color: blue; text-align: right; }
+        /* =========================================================================
+           تحديد المواقع الدقيقة (بالمليمتر) لطباعة البيانات فوق الفراغات المادية
+           تحتاج إلى ضبط هذه الأرقام بناءً على قياسات بطاقتك الفعلية
+           ========================================================================= */
 
-        /* تنسيق الأزرار */
-        #controls {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            background-color: white;
-            color: black;
-            border-radius: 5px;
-        }
-        button:hover { background-color: #eee; }
+        /* الوجه (image_0.png) */
+        .card-face { margin-top: 0; }
 
-        /* تنسيق الطباعة */
+        /* Valable pour [___] ans */
+        #validity-years { top: 7mm; left: 23mm; width: 5mm; text-align: center; } 
+
+        /* PASSEPORT NO. [___________] */
+        #passport-no { top: 6mm; left: 45mm; width: 35mm; }
+
+        /* TEL. [___________] */
+        #tel { top: 12mm; left: 45mm; width: 35mm; }
+
+        /* Résidence : [___________] */
+        #residence { top: 29mm; left: 35mm; width: 30mm; }
+
+        /* Ville de : [___________] */
+        #city { top: 34mm; left: 35mm; width: 30mm; }
+
+
+        /* الخلف (image_1.png) */
+        .card-back { margin-top: 20mm; } /* مسافة للطباعة تحت بعضهما أو جنباً إلى جنب */
+
+        /* No. : [___________] /AGD/2022 */
+        #doc-no { top: 4mm; left: 63mm; width: 10mm; text-align: right; }
+
+        /* مربع الصورة - يبقى فارغاً لتقوم أنت بلصق الصورة لاحقاً */
+        /* التوقيع - يوقعه القنصل لاحقاً */
+
+        /* البيانات الشخصية - الخلف */
+        #A-value { top: 11mm; left: 7mm; width: 70mm; }
+        #prenoms { top: 16mm; left: 16mm; width: 60mm; }
+        #nom { top: 21mm; left: 12mm; width: 65mm; }
+        #birth-date { top: 26mm; left: 12mm; width: 30mm; }
+        #birth-place { top: 26mm; left: 55mm; width: 25mm; }
+        #father-name { top: 31mm; left: 10mm; width: 35mm; }
+        #mother-name { top: 31mm; left: 55mm; width: 25mm; }
+        #domicile { top: 36mm; left: 16mm; width: 60mm; }
+        #profession { top: 41mm; left: 17mm; width: 60mm; }
+
+        /* قسم Signalement */
+        #taille { top: 48mm; left: 20mm; width: 60mm; }
+        #teint { top: 51mm; left: 18mm; width: 60mm; }
+        #cheveux { top: 54mm; left: 22mm; width: 60mm; }
+        #special-marks { top: 57mm; left: 37mm; width: 45mm; }
+        #done-date { top: 60mm; left: 18mm; width: 60mm; }
+
+
+        /* =========================================================================
+           إعدادات الطباعة - حاسمة لطابعة LaserJet P1005
+           ========================================================================= */
         @media print {
-            body { padding: 0; background-color: white; display: block; }
-            #controls { display: none; }
-            #card-container { box-shadow: none; width: 100vw; height: auto; display: block; position: static; }
-            
-            /* طباعة الوجه والخلف جنباً إلى جنب أو تحت بعضهما */
-            .card-face {
-                width: 85mm;
-                height: 54mm;
-                position: relative;
-                top: 0;
-                left: 0;
-                backface-visibility: visible;
-                display: block !important; /* إظهار كلا الوجهين للطباعة */
+            /* إخفاء واجهة الشاشة */
+            body { 
+                background: none; 
+                padding: 0; 
+                margin: 0; 
+                display: block;
+                direction: ltr; /* لضمان صحة المواقع */
+            }
+            .no-print { display: none; }
+            .card-container {
+                border: none;
                 box-shadow: none;
-                margin-bottom: 20mm; /* مسافة بين الوجهين عند الطباعة تحت بعضهما */
-                page-break-after: always; /* كل وجه على صفحة منفصلة */
+                background-image: none !important;
+                background-color: transparent !important;
+                position: absolute;
             }
 
-            input[type="text"] {
-                border: none;
-                border-bottom: 1px dashed black;
+            /* تحديد صفحة A4 لضبط مواقع الطباعة بدقة */
+            @page { margin: 0; size: A4; } 
+
+            /* طباعة الوجه على موضع محدد (مثلاً أعلى اليسار) */
+            #card-front-print {
+                top: 0; left: 0;
+            }
+
+            /* طباعة الخلف على موضع آخر إذا لزم الأمر، أو يمكنك طباعتهما كل واحد على حدة */
+            #card-back-print {
+                top: 0; left: 0;
+                display: none; /* قم بإزالة هذا السطر لطباعة الوجهين معاً على نفس الورقة إذا كان ذلك مناسباً لاتجاه التغذية */
             }
             
-            input[type="text"]::placeholder {
-                color: transparent; /* إخفاء الشرطات الافتراضية عند الطباعة */
+            /* إخفاء حدود الإدخال لطباعة النص النظيف فقط */
+            .field {
+                border: none;
+                color: black !important;
+                -webkit-appearance: none;
+                appearance: none;
             }
+
+            /* إخفاء تلميحات التوجيه */
+            .field::before { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <div id="card-container">
-        
-        <div id="card-front" class="card-face">
-            <div class="top-section">
-                <div class="validity">
-                    Valable pour <input type="text" placeholder="___" style="width: 20px;"> ans<br>
-                    Renouvelable
-                </div>
-                <div class="passport">
-                    <p style="margin: 0;">PASSEPORT NO. <input type="text" placeholder="___________"></p>
-                    <p style="margin: 0;">TEL. <input type="text" placeholder="___________"></p>
-                </div>
-                <div class="consul-seal">
-                    Le Consul Honoraire de<br>
-                    La République De Guinée<br>
-                    <strong><input type="text" placeholder="HASAN JAWAD" style="width: 100px;"></strong>
-                </div>
-            </div>
-            
-            <div class="middle-section">
-                <h1>REP. DE GUINEE</h1>
-                <h2>TRAVAIL JUSTICE SOLIDARITE</h2>
-                <p class="arabic">القُنْصُلِيَّة - العَدَالَة - التَّضَامُن</p>
-                <div class="title">CARTE D'IMMATRICULATION CONSULAIRE</div>
-                
-                <div class="residence">
-                    <label>Résidence : </label><input type="text" placeholder="___________" style="width: 100px;">
-                </div>
-                <div class="residence">
-                    <label>Ville de : </label><input type="text" placeholder="___________" style="width: 100px;">
-                </div>
-            </div>
+    <div class="instructions no-print">
+        <h3>تعليمات الطباعة للجالية:</h3>
+        <p>املأ البيانات الشخصية للفرد أدناه. ضع البطاقة المادية الفارغة في طابعة LaserJet P1005. انقر فوق زر الطباعة. تأكد من ضبط اتجاه البطاقة بشكل صحيح في درج الورق.</p>
+        <p><strong>ملاحظة هامة جداً:</strong> لضمان دقة موقع الطباعة، في نافذة الطباعة المنبثقة، تأكد من ضبط <strong>الهوامش على "None" (لا شيء)</strong> أو "تصفيرها" وضبط <strong>المقياس على 100%</strong>.</p>بالتأكيد، أتفهم ذلك تماماً. بصفتك مسؤولاً عن الجالية، لديك بالفعل البطاقة المطبوعة مسبقاً (البطانة) وهي تحتوي على كافة النصوص والأختام الثابتة، وأنت بحاجة إلى طريقة دقيقة لملء "الفراغات" ببيانات الشخص الجديد فقط، ثم طباعة *هذا النص المضاف* بدقة فوق الفراغات الموجودة على البطاقة المادية.
 
-            <div class="bottom-section">
-                </div>
-        </div>
+الحل الأمثل لذلك هو كود HTML/CSS تفاعلي مصمم بتقنية (Overprint). هذا الكود سيعرض لك البطاقة (الوجه والخلف) على الشاشة بدقة مع حقول إدخال فارغة (تظهر كشرطات) فوق الفراغات الموجودة في الصورة الأصلية. عند تعبئة البيانات والنقر على زر الطباعة، سيقوم المتصفح بإخفاء صورة البطاقة تماماً، ويقوم بطباعة *النص الذي قمت بإدخاله فقط* في أماكنه المحددة بالمليمتر، مما يسمح لك بوضع البطاقة المادية المطبوعة مسبقاً في الطابعة LaserJet P1005 وطباعة البيانات عليها مباشرة.
 
-        <div id="card-back" class="card-face">
-            <div class="header">
-                <div class="header-left">
-                    <p style="margin: 0;">REPUBLIQUE DE GUINEE</p>
-                    <p style="margin: 0;">MINISTERE DES AFFAIRES ETRANGERES</p>
-                    <p style="margin: 0;">AMBASSADE EN SYRIE</p>
-                    <p style="margin: 0;">CONSULAT HONORAIRE A DAMAS</p>
-                </div>
-                <div class="header-right">
-                    <p class="arabic">قنصلية غينيا الفخرية</p>
-                    <p style="margin: 0;">No. : <input type="text" placeholder="___________" style="width: 80px;">/AGD/2022</p>
-                </div>
-            </div>
+لقد قمت بإعداد الكود البرمجي بناءً على الصور التي قدمتها (`image_0.png` و `image_1.png`). قمت بإزالة كافة البيانات الشخصية من الكود واستبدالها بحقول إدخال فارغة، مع الحفاظ على النصوص الرسمية الأخرى (مثل "Résidence:"، "Nom:"، إلخ) لأنها مطبوعة مسبقاً على بطاقتك.
 
-            <div class="main">
-                <div class="photo-box">صورة (Photo)</div>
-                <p style="margin: 0;">A : <input type="text" placeholder="___________"></p>
-                <p style="margin: 0;">Prénoms : <input type="text" placeholder="___________"></p>
-                <p style="margin: 0;">Nom : <input type="text" placeholder="___________"></p>
-                <p style="margin: 0;">Date : <input type="text" placeholder="___________"> Lieu de Naissance : <input type="text" placeholder="___________" style="width: 80px;"></p>
-                <p style="margin: 0;">De : <input type="text" placeholder="___________"> et de : <input type="text" placeholder="___________" style="width: 80px;"></p>
-                <p style="margin: 0;">Domicile : <input type="text" placeholder="___________"></p>
-                <p style="margin: 0;">Profession : <input type="text" placeholder="___________"></p>
-            </div>
+### كيفية استخدامه:
 
-            <div class="signalement">
-                <div class="signalement-vertical">SIGNALEMENT</div>
-                <p style="margin: 0 0 0 50px;">Taille : <input type="text" placeholder="___________"></p>
-                <p style="margin: 0 0 0 50px;">Teint : <input type="text" placeholder="___________"></p>
-                <p style="margin: 0 0 0 50px;">Cheveux : <input type="text" placeholder="___________"></p>
-                <p style="margin: 0 0 0 50px;">Signes particuliers : <input type="text" placeholder="___________"></p>
-                <p style="margin: 0 0 0 50px;">Fait le : <input type="text" placeholder="___________"></p>
-            </div>
+1.  **حفظ الملف:** انسخ الكود أدناه واحفظه في ملف جديد باسم `consular_card_overprint.html`.
+2.  **فتح الملف:** افتح الملف باستخدام متصفح ويب (يفضل Google Chrome).
+3.  **التعبئة:** سترى واجهة تُظهر البطاقة كاملة (الوجه والخلف) مع حقول بيضاء شفافة فوق أماكن البيانات الفارغة. املأ بيانات الشخص الجديد.
+4.  **الطباعة:** ضع البطاقة المادية الفارغة في طابعة LaserJet P1005 الخاصة بك. انقر على زر "طباعة البيانات فقط".
 
-            <div class="footer">
-                <div class="signature-box">Signature ou Empreinte Index gauche</div>
-                <div class="seal-box">
-                    <p style="margin: 0;">Le Consul Honoraire de La République De Guinée</p>
-                    <p style="margin: 0;"><strong><input type="text" placeholder="HASAN JAWAD" style="width: 100px;"></strong></p>
-                </div>
-            </div>
-        </div>
+---
 
-    </div>
+### الكود البرمجي (HTML/CSS):
 
-    <div id="controls">
-        <button onclick="toggleFace()">تبديل (وجه/خلف)</button>
-        <button onclick="printCard()">طباعة البطاقات</button>
-    </div>
-
-    <script>
-        // دالة لتبديل العرض بين الوجه والخلف
-        function toggleFace() {
-            const card = document.getElementById('card-container');
-            card.classList.toggle('flipped');
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Consulaire - Template d'Impression</title>
+    <style>
+        /* تنسيقات عامة - تظهر على الشاشة فقط */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
         }
 
-        // دالة للطباعة
-        function printCard() {
-            window.print();
+        /* زر الطباعة - للشاشة فقط */
+        .print-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
         }
-    </script>
 
-</body>
-</html>
+        /* حاوية البطاقة - ضبط المقاس المادي القياسي */
+        .card-container {
+            width: 85mm; /* مقاس البطاقة القياسي */
+            height: 54mm; /* مقاس البطاقة القياسي */
+            position: relative;
+            background-color: white;
+            border: 1px solid black; /* دليل للشاشة، يختفي عند الطباعة */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* تنسيقات حقول الإدخال لتظهر كشرطات شفافة على البطاقة */
+        input[type="text"] {
+            border: none;
+            background: transparent;
+            font-family: "Courier New", Courier, monospace; /* خط مقارب لحروف الآلة الكاتبة/القديمة */
+            font-size: 11px; /* مقاس الخط المقارب للأصل */
+            color: black;
+            outline: none;
+            position: absolute;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* تلميحات توجيهية خلف الحقول على الشاشة فقط */
+        input[type="text"]::placeholder {
+            color: #ddd; /* لون فاتح جداً للشرطات */
+        }
+
+        /* تمييز الحقول عند التركيز عليها على الشاشة */
+        input[type="text"]:focus {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        /* =========================================================================
+           تحديد المواقع الدقيقة (بالمليمتر) لطباعة البيانات فوق الفراغات المادية
+           تحتاج إلى ضبط هذه الأرقام بناءً على قياسات بطاقتك الفعلية
+           ========================================================================= */
+
+        /* الوجه (image_0.png) */
+        #card-front-print { margin-top: 0; }
+
+        /* Valable pour [___] ans */
+        #validity-years { top: 7mm; left: 23mm; width: 5mm; text-align: center; } 
+
+        /* PASSEPORT NO. [___________] */
+        #passport-no { top: 6mm; left: 45mm; width: 35mm; }
+
+        /* TEL. [___________] */
+        #tel { top: 12mm; left: 45mm; width: 35mm; }
+
+        /* Résidence : [___________] */
+        #residence { top: 29mm; left: 35mm; width: 30mm; }
+
+        /* Ville de : [___________]
