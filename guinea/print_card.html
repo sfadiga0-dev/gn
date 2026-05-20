@@ -3,6 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعبئة وطباعة بيانات البطاقة القنصلية - الجالية الغينية بسوريا</title>
+    <style>
+        /* تنسيقات عامة - تظهر على الشاشة فقط */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* زر الطباعة */
+        .print-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #007bff;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* تعليمات الاستخدام */
+        .instructions {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            max-width: 600px;
+            text-align: right;
+            direction: rtl;
+        }
+
+        /* حاوية البطاقة - ضبط المقاس المادي القياسي */
+        .card-container {
+            width: 85mm; /* مقاس البطاقة القياسي */
+            height: 54mm; /* مقاس البطاقة القياسي */
+            position: relative;
+            background-color: white;
+            border: 1px solid black; /* دليل فقط للشاشة، يختفي عند الطباعة */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* إظهار خلفية البطاقة على الشاشة فقط للمساعدة في التعبئة */
+        @media screen {
+            /* استخدم الصورة المطبوعة مسبقاً (الفارغة) كخلفية على الشاشة */
+            .card-container {
+                /* ملاحظة: الصورة أدناه هي مجرد تمثيل، سأستخدم خلفية بيضاء وخطوط دليلية شفافة */
+                background-color: rgba(255, 255, 255, 0.95);
+            }
+            
+            /* تلميحات توجيهية خلف الحقول على الشاشة */
+            .field::before {
+                content: attr(data-placeholder);
+                position: absolute;
+                left: 5px;
+                color: #ccc;
+                font-size: 10px;
+                top: -12px;
+                direction: ltr;
+            }
+        }
+
+        /* تنسيق حقول الإدخال لتظهر كجزء من البطاقة */
+        .field {
+            position: absolute;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font-family: inherit;
+            font-size: 11px; /* مقاس الخط المقارب للأصل */
+            color: black;
+            outline: none;
+        }
+
+        /* تمييز الحقول عند التركيز عليها على الشاشة */
+        @media screen {
+            .field:focus {
+                background-color: rgba(0, 123, 255, 0.05);
+                border-bottom: 1px solid #007bff;
+            }
+        }
+
+        /* =========================================================================
+           تحديد المواقع الدقيقة (بالمليمتر) لطباعة البيانات فوق الفراغات المادية
+           تحتاج إلى ضبط هذه الأرقام بناءً على قياسات بطاقتك الفعلية
+           ========================================================================= */
+
+        /* الوجه (image_0.png) */
+        .card-face { margin-top: 0; }
+
+        /* Valable pour [___] ans */
+        #validity-years { top: 7mm; left: 23mm; width: 5mm; text-align: center; } 
+
+        /* PASSEPORT NO. [___________] */
+        #passport-no { top: 6mm; left: 45mm; width: 35mm; }
+
+        /* TEL. [___________] */
+        #tel { top: 12mm; left: 45mm; width: 35mm; }
+
+        /* Résidence : [___________] */
+        #residence { top: 29mm; left: 35mm; width: 30mm; }
+
+        /* Ville de : [___________] */
+        #city { top: 34mm; left: 35mm; width: 30mm; }
+
+
+        /* الخلف (image_1.png) */
+        .card-back { margin-top: 20mm; } /* مسافة للطباعة تحت بعضهما أو جنباً إلى جنب */
+
+        /* No. : [___________] /AGD/2022 */
+        #doc-no { top: 4mm; left: 63mm; width: 10mm; text-align: right; }
+
+        /* مربع الصورة - يبقى فارغاً لتقوم أنت بلصق الصورة لاحقاً */
+        /* التوقيع - يوقعه القنصل لاحقاً */
+
+        /* البيانات الشخصية - الخلف */
+        #A-value { top: 11mm; left: 7mm; width: 70mm; }
+        #prenoms { top: 16mm; left: 16mm; width: 60mm; }
+        #nom { top: 21mm; left: 12mm; width: 65mm; }
+        #birth-date { top: 26mm; left: 12mm; width: 30mm; }
+        #birth-place { top: 26mm; left: 55mm; width: 25mm; }
+        #father-name { top: 31mm; left: 10mm; width: 35mm; }
+        #mother-name { top: 31mm; left: 55mm; width: 25mm; }
+        #domicile { top: 36mm; left: 16mm; width: 60mm; }
+        #profession { top: 41mm; left: 17mm; width: 60mm; }
+
+        /* قسم Signalement */
+        #taille { top: 48mm; left: 20mm; width: 60mm; }
+        #teint { top: 51mm; left: 18mm; width: 60mm; }
+        #cheveux { top: 54mm; left: 22mm; width: 60mm; }
+        #special-marks { top: 57mm; left: 37mm; width: 45mm; }
+        #done-date { top: 60mm; left: 18mm; width: 60mm; }
+
+
+        /* =========================================================================
+           إعدادات الطباعة - حاسمة لطابعة LaserJet P1005
+           ========================================================================= */
+        @media print {
+            /* إخفاء واجهة الشاشة */
+            body { 
+                background: none; 
+                padding: 0; 
+                margin: 0; 
+                display: block;
+                direction: ltr; /* لضمان صحة المواقع */
+            }
+            .no-print { display: none; }
+            .card-container {
+                border: none;
+                box-shadow: none;
+                background-image: none !important;
+                background-color: transparent !important;
+                position: absolute;
+            }
+
+            /* تحديد صفحة A4 لضبط مواقع الطباعة بدقة */
+            @page { margin: 0; size: A4; } 
+
+            /* طباعة الوجه على موضع محدد (مثلاً أعلى اليسار) */
+            #card-front-print {
+                top: 0; left: 0;
+            }
+
+            /* طباعة الخلف على موضع آخر إذا لزم الأمر، أو يمكنك طباعتهما كل واحد على حدة */
+            #card-back-print {
+                top: 0; left: 0;
+                display: none; /* قم بإزالة هذا السطر لطباعة الوجهين معاً على نفس الورقة إذا كان ذلك مناسباً لاتجاه التغذية */
+            }
+            
+            /* إخفاء حدود الإدخال لطباعة النص النظيف فقط */
+            .field {
+                border: none;
+                color: black !important;
+                -webkit-appearance: none;
+                appearance: none;
+            }
+
+            /* إخفاء تلميحات التوجيه */
+            .field::before { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carte Consulaire - Template d'Impression</title>
     <style>
         /* تنسيقات عامة - تظهر على الشاشة فقط */
