@@ -2,11 +2,11 @@
 <html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>قالب البطاقة القنصلية - صفحتين منفصلتين</title>
+    <title>البطاقة القنصلية - قالب الطباعة والطي</title>
     <style>
-        /* إعدادات الطباعة بمقاس الهوية القياسي */
+        /* إعدادات الطباعة: مقاس البطاقة وهي مفتوحة تماماً (تقريباً 172mm × 60mm) */
         @page {
-            size: 86mm 54mm;
+            size: 172mm 60mm;
             margin: 0;
         }
 
@@ -14,276 +14,353 @@
             font-family: 'Times New Roman', serif;
             margin: 0;
             padding: 20px;
-            background-color: #f1f5f9;
+            background-color: #e2e8f0; /* لون خلفية للمعاينة بالشاشة */
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 25px;
             min-height: 100vh;
         }
 
-        /* لوحة التحكم العلوية بالشاشة */
+        /* أدوات تحكم الشاشة (تختفي بالطباعة) */
         .toolbar {
             background: #0f172a;
             color: white;
             padding: 15px 30px;
             border-radius: 10px;
-            text-align: center;
-            width: 100%;
-            max-width: 700px;
+            margin-bottom: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
             z-index: 100;
         }
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
-        }
-        .btn {
+        .btn-print {
+            background-color: #009460;
             color: white;
             border: none;
-            padding: 10px 18px;
+            padding: 10px 20px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 13px;
-            transition: 0.2s;
+            font-size: 14px;
+            margin-top: 10px;
         }
-        .btn-front { background-color: #009460; } /* أخضر غيني */
-        .btn-front:hover { background-color: #007a4f; }
-        .btn-back { background-color: #CE1126; } /* أحمر غيني */
-        .btn-back:hover { background-color: #a80e1f; }
 
-        /* حاوية البطاقات المتفصلة */
-        .card-container {
-            width: 86mm;
-            height: 54mm;
+        /* حاوية البطاقة المفتوحة (الوجهين بجانب بعضهما) */
+        .card-wrapper {
+            display: flex;
+            width: 172mm;  /* العرض الكلي للبطاقة المفتوحة */
+            height: 60mm;  /* ارتفاع البطاقة */
             background: white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            overflow: hidden;
             box-sizing: border-box;
-            border: 1px solid #e2e8f0;
+            border: 2px solid #ccc; /* إطار خفيف للقص إن لزم الأمر */
+        }
+
+        /* خط الطي (يظهر بالشاشة كدليل فقط) */
+        .fold-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 100%;
+            border-left: 1px dashed #cbd5e1;
+            z-index: 50;
+        }
+
+        /* التصميم الأساسي لكل وجه (نصف البطاقة المفتوحة) */
+        .card-half {
+            width: 50%; /* 86mm */
+            height: 100%;
+            position: relative;
+            box-sizing: border-box;
+            padding: 2mm 4mm;
         }
 
         /* ============================================================
-           🔴 الصفحة الأولى: الوجه الخارجي (الخلف والترويسة الرسمية)
+           🔴 الوجه الخارجي (الجزء الأيمن عند فتح البطاقة)
         ============================================================ */
-        .flag-bar {
-            height: 5mm;
-            display: flex;
-            position: absolute;
-            top: 0; left: 0; width: 100%;
+        .external-face {
+            border-left: 1px solid transparent;
         }
-        .flag-red { flex: 1; background: #CE1126; }
-        .flag-yellow { flex: 1; background: #FCD116; }
-        .flag-green { flex: 1; background: #009460; }
 
-        .header-external {
+        /* الإطار المزدوج المستنسخ من الصورة */
+        .border-frame {
+            position: absolute;
+            top: 2mm; left: 2mm; right: 2mm; bottom: 2mm;
+            border: 1px solid #000;
+            padding: 1mm;
+        }
+        .border-inner {
+            width: 100%; height: 100%;
+            border: 1px solid #000;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .flag-strip {
+            height: 3mm;
+            display: flex;
+            width: 100%;
+        }
+        .c-red { flex: 1; background: #CE1126; }
+        .c-yellow { flex: 1; background: #FCD116; }
+        .c-green { flex: 1; background: #009460; }
+
+        .header-text {
             text-align: center;
-            margin-top: 7mm;
+            margin-top: 2mm;
+            font-size: 8pt;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+        .header-ar { font-size: 9pt; margin-top: 1mm; }
+
+        .consulat-title {
+            text-align: center;
+            margin-top: 2mm;
             font-size: 9pt;
             font-weight: bold;
-            line-height: 1.3;
             color: #000;
         }
-        .republique-text {
-            font-size: 10pt;
-            letter-spacing: 0.5px;
-        }
-        .motto-text {
-            font-size: 8pt;
-            font-style: italic;
-            font-weight: normal;
-            margin-top: 1mm;
-        }
-        .consulat-title {
-            margin-top: 3mm;
+
+        .card-title {
+            text-align: center;
+            margin-top: 4mm;
             font-size: 11pt;
-            color: #009460;
             font-weight: bold;
+            text-decoration: underline;
         }
 
-        .card-number-box {
+        .card-number {
             position: absolute;
-            bottom: 4mm;
-            left: 5mm;
+            bottom: 3mm;
+            left: 3mm;
             font-size: 8pt;
             font-weight: bold;
         }
 
         /* ============================================================
-           🟢 الصفحة الثانية: الوجه الداخلي (البيانات الخانات والصورة)
+           🟢 الوجه الداخلي (الجزء الأيسر عند فتح البطاقة)
         ============================================================ */
-        .internal-header-bar {
-            background-color: #009460;
-            color: white;
-            height: 8mm;
-            position: absolute;
-            top: 0; left: 0; width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 9pt;
-            letter-spacing: 0.5px;
+        .internal-face {
+            /* هذا الوجه يحتوي على الصورة والبيانات */
         }
 
-        .photo-slot {
+        /* إطار الصورة الشخصية */
+        .photo-box {
             position: absolute;
-            top: 11mm;
+            top: 5mm;
             left: 4mm;
-            width: 22mm;
-            height: 28mm;
-            border: 1.5px solid #000;
-            background: #fafafa;
+            width: 25mm;
+            height: 32mm;
+            border: 1px solid #000;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 8px;
             color: #999;
-            font-weight: bold;
         }
 
-        /* مصفوفة حقول البيانات الحرفية */
-        .fields-container {
+        /* الختم (مساحة دائرية للختم) */
+        .seal-space {
             position: absolute;
-            top: 10mm;
-            left: 28mm;
-            width: 55mm;
-            font-size: 8.5pt;
-            color: #000;
-        }
-        .field-row {
+            bottom: 5mm;
+            left: 8mm;
+            width: 15mm;
+            height: 15mm;
+            border: 1px dashed #ccc;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            margin-bottom: 1.2mm;
-        }
-        .lbl-fr { font-weight: bold; margin-right: 1.5mm; min-width: 12mm; }
-        .lbl-ar { font-weight: bold; margin-left: 1.5mm; direction: rtl; color: #009460; flex-grow: 1; text-align: right; }
-        
-        /* الخط الأسود المخصص للكتابة فوقه */
-        .editable-line {
-            border-bottom: 1px solid #000;
-            min-width: 22mm;
-            display: inline-block;
-            color: #0000FF; /* يظهر باللون الأزرق على الشاشة لتعرف أين تكتب */
-            font-weight: bold;
+            justify-content: center;
+            font-size: 7px;
+            color: #ccc;
             text-align: center;
         }
 
-        .expiry-box {
+        /* حقول البيانات المستنسخة من الصورة */
+        .data-fields {
             position: absolute;
-            bottom: 2mm;
+            top: 5mm;
+            left: 32mm;
+            right: 4mm;
+            font-size: 8.5pt;
+            line-height: 1.6;
+            color: #000;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end; /* لكي يكون الخط السفلي بمحاذاة النص */
+            margin-bottom: 1.5mm;
+        }
+
+        .lbl-fr { font-weight: bold; white-space: nowrap; }
+        .lbl-ar { font-weight: bold; direction: rtl; white-space: nowrap; }
+        
+        /* الحقول القابلة للتعبئة */
+        .val-input {
+            flex-grow: 1;
+            border-bottom: 1px dotted #000;
+            margin: 0 2mm;
+            outline: none;
+            color: #0000FF; /* لون أزرق للتمييز بالشاشة */
+            font-weight: bold;
+            text-align: center;
+            min-height: 4mm;
+            display: inline-block;
+        }
+        .val-input:focus { border-bottom: 1px solid #CE1126; }
+
+        /* التوقيع وتاريخ الانتهاء */
+        .footer-data {
+            position: absolute;
+            bottom: 3mm;
+            left: 32mm;
             right: 4mm;
             font-size: 7.5pt;
             font-weight: bold;
-            color: #CE1126;
-            text-align: right;
-            line-height: 1.2;
         }
 
         /* ============================================================
-           🖨️ إعدادات التحكم بالطباعة المنفصلة تلقائياً
+           🖨️ إعدادات الطباعة: إخفاء الأدوات والألوان المؤقتة
         ============================================================ */
         @media print {
             .toolbar { display: none !important; }
-            body { padding: 0; margin: 0; background: white; display: block; }
-            .card-container {
+            body { background: white; padding: 0; margin: 0; }
+            .card-wrapper {
                 box-shadow: none !important;
-                border: none !important;
+                border: none !important; /* نلغي الإطار الخارجي للطباعة النظيفة */
                 margin: 0 !important;
-                position: absolute;
-                top: 0; left: 0;
             }
-            .editable-line { color: #000000 !important; } /* يتحول النص للأسود الكامل عند الطباعة */
-            
-            /* إخفاء الصفحة غير المطلوبة أثناء أمر الطباعة المحدد */
-            body.print-page1 #page-internal { display: none !important; }
-            body.print-page2 #page-external { display: none !important; }
+            .fold-line { display: none !important; } /* نلغي خط الطي الوهمي */
+            .val-input { color: #000 !important; } /* يتحول النص الأزرق لأسود عند الطباعة */
+            .seal-space { border: none !important; color: transparent !important; }
         }
     </style>
 </head>
-<body class="print-page1">
+<body>
 
     <div class="toolbar no-print">
-        <h2 style="margin: 0 0 5px 0; color: #FCD116;">نظام الصفحات المنفصلة للهوية القنصلية</h2>
-        <p style="margin: 0 0 15px 0; font-size: 13px; color: #94a3b8;">اضغط على الخطوط الزرقاء لتعديل البيانات مباشرة، ثم اختر الصفحة المراد طباعتها.</p>
-        
-        <div class="btn-group">
-            <button class="btn btn-front" onclick="printCardPage(1)">🖨️ طباعة الصفحة 1 (الوجه الخارجي)</button>
-            <button class="btn btn-back" onclick="printCardPage(2)">🖨️ طباعة الصفحة 2 (الوجه الداخلي)</button>
-        </div>
+        <h2 style="margin: 0 0 5px 0;">قالب البطاقة القنصلية المطوية (نسخة مطابقة)</h2>
+        <p style="margin: 0 0 10px 0; font-size: 13px; color: #cbd5e1;">هذا التصميم يطبع على ورقة واحدة ثم يُطوى من المنتصف. اضغط على الخطوط المنقطة لتعبئة البيانات.</p>
+        <button class="btn-print" onclick="window.print()">🖨️ أمر الطباعة (يطبع الوجهين معاً)</button>
     </div>
 
-    <div class="card-container" id="page-external">
-        <div class="flag-bar">
-            <div class="flag-red"></div><div class="flag-yellow"></div><div class="flag-green"></div>
-        </div>
+    <div class="card-wrapper" id="card-render-zone">
         
-        <div class="header-external">
-            <div class="republique-text">RÉPUBLIQUE DE GUINÉE</div>
-            <div class="motto-text">Travail - Justice - Solidarité</div>
-            <div class="consulat-title">CONSULAT À DAMAS</div>
+        <div class="fold-line no-print"></div>
+
+        <div class="card-half internal-face">
+            <div class="border-frame">
+                <div class="border-inner">
+                    <div class="photo-box">PHOTO</div>
+                    <div class="seal-space no-print">Cachet<br>الختم</div>
+
+                    <div class="data-fields">
+                        <div class="row">
+                            <span class="lbl-fr">Nom</span>
+                            <span class="val-input" contenteditable="true" id="f-name"></span>
+                            <span class="lbl-ar">اللقب</span>
+                        </div>
+                        <div class="row">
+                            <span class="lbl-fr">Prénom</span>
+                            <span class="val-input" contenteditable="true" id="f-prenom"></span>
+                            <span class="lbl-ar">الاسم</span>
+                        </div>
+                        <div class="row">
+                            <span class="lbl-fr">Né(e) le</span>
+                            <span class="val-input" contenteditable="true" id="f-dob"></span>
+                            <span class="lbl-ar">تولد</span>
+                        </div>
+                        <div class="row">
+                            <span class="lbl-fr">à</span>
+                            <span class="val-input" contenteditable="true" id="f-pob"></span>
+                            <span class="lbl-ar">في</span>
+                        </div>
+                        <div class="row">
+                            <span class="lbl-fr">Profession</span>
+                            <span class="val-input" contenteditable="true" id="f-prof"></span>
+                            <span class="lbl-ar">المهنة</span>
+                        </div>
+                        <div class="row">
+                            <span class="lbl-fr">Adresse</span>
+                            <span class="val-input" contenteditable="true" id="f-addr"></span>
+                            <span class="lbl-ar">العنوان</span>
+                        </div>
+                    </div>
+
+                    <div class="footer-data">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2mm;">
+                            <span>Délivré le: <span class="val-input" contenteditable="true" style="min-width:15mm;"></span></span>
+                            <span dir="rtl">بتاريخ:</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:#CE1126;">Signature du Titulaire</span>
+                            <span dir="rtl" style="color:#CE1126;">توقيع صاحب العلاقة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="card-number-box">
-            Carte d'identité consulaire n°: 
-            <span class="editable-line" contenteditable="true" style="min-width: 25mm;"></span>
-        </div>
-    </div>
+        <div class="card-half external-face">
+            <div class="border-frame">
+                <div class="border-inner">
+                    <div class="flag-strip"><div class="c-red"></div><div class="c-yellow"></div><div class="c-green"></div></div>
+                    
+                    <div class="header-text">
+                        RÉPUBLIQUE DE GUINÉE<br>
+                        Travail - Justice - Solidarité
+                    </div>
+                    <div class="header-text header-ar" dir="rtl">
+                        جمهورية غينيا<br>
+                        عمل - عدالة - تضامن
+                    </div>
 
-    <div class="card-container" id="page-internal">
-        <div class="internal-header-bar">CARTE D'IDENTITÉ CONSULAIRE</div>
-        
-        <div class="photo-slot">PHOTO</div>
+                    <div class="consulat-title">
+                        CONSULAT HONORAIRE À DAMAS<br>
+                        القنصلية الفخرية في دمشق
+                    </div>
 
-        <div class="fields-container">
-            <div class="field-row">
-                <span class="lbl-fr">Nom:</span>
-                <span class="editable-line" contenteditable="true"></span>
-                <span class="lbl-ar">اللقب:</span>
-            </div>
-            <div class="field-row">
-                <span class="lbl-fr">Prénom:</span>
-                <span class="editable-line" contenteditable="true"></span>
-                <span class="lbl-ar">الاسم:</span>
-            </div>
-            <div class="field-row">
-                <span class="lbl-fr">Né(e) le:</span>
-                <span class="editable-line" contenteditable="true"></span>
-                <span class="lbl-ar">تولد:</span>
-            </div>
-            <div class="field-row">
-                <span class="lbl-fr">Passport:</span>
-                <span class="editable-line" contenteditable="true"></span>
-                <span class="lbl-ar">الجواز:</span>
-            </div>
-            <div class="field-row">
-                <span class="lbl-fr">Sexe:</span>
-                <span class="editable-line" contenteditable="true" style="min-width: 12mm;"></span>
-                <span class="lbl-ar">الجنس:</span>
+                    <div class="card-title">
+                        CARTE D'IDENTITÉ CONSULAIRE<br>
+                        بطاقة هوية قنصلية
+                    </div>
+
+                    <div class="card-number">
+                        N°: <span class="val-input" contenteditable="true" style="min-width: 25mm;" id="f-pass"></span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="expiry-box">
-            Valable jusqu'au:<br>
-            <span class="editable-line" contenteditable="true" style="min-width: 20mm; margin-top: 1mm;"></span>
-        </div>
     </div>
 
     <script>
-        // دالة سحرية للتحكم في تحديد الصفحة المراد طباعتها بدقة
-        function printCardPage(pageNumber) {
-            // إزالة الكلاسات السابقة لمنع التداخل
-            document.body.classList.remove('print-page1', 'print-page2');
+        // قراءة البيانات من الرابط (إذا تم توجيهك من لوحة الإدارة)
+        const db = JSON.parse(localStorage.getItem('guinea_citizens_db')) || [];
+        const urlParams = new URLSearchParams(window.location.search);
+        const citizenId = parseInt(urlParams.get('id'));
+        const citizen = db.find(c => c.id === citizenId);
+
+        // التعبئة التلقائية إذا وجدنا المواطن
+        if (citizen) {
+            // فصل الاسم إلى فرنسي وعربي إن أمكن
+            let nom = citizen.nameFr.split(' ').pop();
+            let prenom = citizen.nameFr.split(' ').slice(0, -1).join(' ');
             
-            // تعيين كلاس الصفحة المطلوبة فقط ليقوم المتصفح بإخفاء الأخرى أثناء إرسال الأمر للطابعة
-            document.body.classList.add('print-page' + pageNumber);
+            document.getElementById('f-name').innerText = nom;
+            document.getElementById('f-prenom').innerText = prenom;
             
-            // تنفيذ أمر الطباعة المباشر
-            window.print();
+            // التولد
+            let dobParts = citizen.birth.split(' - ');
+            document.getElementById('f-dob').innerText = dobParts[0] || '';
+            document.getElementById('f-pob').innerText = dobParts[1] || '';
+            
+            document.getElementById('f-addr').innerText = citizen.address;
+            document.getElementById('f-pass').innerText = citizen.passport !== 'لا يوجد' ? citizen.passport : '';
         }
     </script>
 </body>
