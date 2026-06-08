@@ -1,72 +1,131 @@
-/* style.css */
+/* style.css - V2 Premium */
 :root {
-    --primary: #009460; /* الأخضر الغيني */
-    --danger: #ce1126;  /* الأحمر الغيني */
-    --warning: #fcd116; /* الأصفر الغيني */
-    --dark: #2c3e50;
-    --bg: #f4f7f6;
+    --primary: #008542; /* أخضر غيني داكن ورسمي */
+    --danger: #ce1126;  /* أحمر غيني */
+    --warning: #fcd116; /* أصفر غيني */
+    --dark: #1e293b;
+    --light: #f8fafc;
+    --border: #e2e8f0;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg);
+    background-color: #eef2f6;
     margin: 0;
     padding: 20px;
     direction: rtl;
+    color: #334155;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
+/* الترويسة (Header) */
 .header {
-    background: var(--dark);
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    margin-bottom: 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border-top: 4px solid var(--primary);
 }
 
+.header h2 { margin: 0; color: var(--dark); }
+
+/* البطاقات (Cards) */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+/* شريط البحث الذكي */
+.search-bar {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+.search-bar:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,133,66,0.1); }
+
+/* الجداول (Tables) */
 table {
     width: 100%;
     border-collapse: collapse;
     background: white;
-    font-size: 14px;
-    margin-top: 15px;
+    font-size: 14.5px;
 }
+th, td { 
+    padding: 15px; 
+    text-align: center; 
+    border-bottom: 1px solid var(--border);
+}
+th { 
+    background: var(--light); 
+    color: var(--dark); 
+    font-weight: 600; 
+    border-bottom: 2px solid var(--border);
+}
+tr:hover { background-color: var(--light); transition: 0.2s; }
 
-th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-th { background: var(--primary); color: white; }
-
-.fr-text { direction: ltr; text-align: left; font-family: Arial, sans-serif; }
-
+/* الأزرار (Buttons) */
 .btn {
-    padding: 8px 15px;
-    margin: 2px;
+    padding: 10px 20px;
     cursor: pointer;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     color: white;
-    font-weight: bold;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     text-decoration: none;
-    display: inline-block;
 }
-
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .btn-primary { background: var(--primary); }
 .btn-dark { background: var(--dark); }
+.btn-edit { background: #f59e0b; padding: 6px 12px; font-size: 13px; }
+.btn-delete { background: var(--danger); padding: 6px 12px; font-size: 13px; }
 
-/* إعدادات الطباعة (إخفاء الأزرار عند الطباعة) */
+/* النصوص الفرنسية */
+.fr-text { direction: ltr; text-align: left; font-family: Arial, sans-serif; }
+
+/* النوافذ المنبثقة (Modals) */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1000; }
+.modal-content { 
+    background: white; 
+    width: 85%; 
+    max-width: 800px; 
+    margin: 40px auto; 
+    padding: 30px; 
+    border-radius: 16px; 
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); 
+    animation: slideIn 0.3s ease-out;
+}
+@keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+.form-group { display: flex; flex-direction: column; }
+.form-group label { margin-bottom: 8px; font-weight: 600; color: var(--dark); font-size: 14px; }
+.form-group input { padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; transition: 0.3s; }
+.form-group input:focus { outline: none; border-color: var(--primary); }
+
+/* إعدادات الطباعة */
 @media print {
     body { background: white; padding: 0; }
-    .btn, .no-print { display: none !important; }
-    .container { box-shadow: none; max-width: 100%; padding: 0; }
-    .header { color: black; background: none; border-bottom: 2px solid black; }
+    .btn, .search-bar, .no-print { display: none !important; }
+    .header, .card { box-shadow: none; border: none; padding: 0; margin-bottom: 10px; }
+    th { background: #eee !important; color: black !important; }
 }
