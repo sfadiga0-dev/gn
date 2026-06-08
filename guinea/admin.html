@@ -3,81 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <title>لوحة الإدارة - القنصلية</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
-        .header { background: #2c3e50; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; direction: rtl; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background: #009460; color: white; }
-        .fr-text { direction: ltr; text-align: left; font-family: Arial, sans-serif; }
-        .btn { padding: 6px 12px; margin: 2px; cursor: pointer; border: none; border-radius: 4px; color: white; font-weight: bold; }
-        .btn-edit { background: #f39c12; }
-        .btn-delete { background: #e74c3c; }
-        .btn-add { background: #2980b9; font-size: 16px; padding: 10px 20px; margin-bottom: 15px; }
-        
-        /* نموذج الإضافة/التعديل */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
-        .modal-content { background: white; width: 80%; max-width: 800px; margin: 50px auto; padding: 20px; border-radius: 8px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { margin-bottom: 5px; font-weight: bold; color: #2c3e50; }
-        .form-group input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        .form-group.fr label { text-align: left; color: #c0392b; direction: ltr; }
-        .form-group.fr input { direction: ltr; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h2>نظام الإدارة القنصلي (Admin)</h2>
+                <span style="color: #64748b; font-size: 14px;">المسؤول: القنصل حسن جواد</span>
+            </div>
+            <div class="no-print">
+                <button class="btn btn-primary" onclick="openModal()">+ إضافة مواطن جديد</button>
+                <button class="btn btn-dark" onclick="window.print()">🖨️ تصدير PDF</button>
+            </div>
+        </div>
 
-    <div class="header">
-        <h2>نظام الإدارة القنصلي (Admin) | المسؤول: Hassan Jawad</h2>
-        <div>
-            <button class="btn btn-add" style="background: #27ae60;" onclick="window.print()">🖨️ طباعة الجدول (PDF)</button>
+        <div class="card">
+            <!-- شريط البحث الذكي -->
+            <input type="text" id="searchInput" class="search-bar no-print" onkeyup="filterTable()" placeholder="🔍 ابحث بالاسم، العائلة، أو رقم الجواز...">
+            
+            <div style="overflow-x: auto;">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>العائلة (Famille)</th>
+                            <th>الاسم الكامل</th>
+                            <th>الأب والأم</th>
+                            <th>التولد والمكان</th>
+                            <th>حالة الجواز</th>
+                            <th class="no-print">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <button class="btn btn-add" onclick="openModal()">+ إضافة مواطن جديد</button>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>العائلة (Famille)</th>
-                <th>الاسم (عربي)</th>
-                <th class="fr-text">Nom (Français)</th>
-                <th>الأب والأم</th>
-                <th>التولد ومكان الولادة</th>
-                <th>الجواز والحالة</th>
-                <th>العنوان</th>
-                <th>إجراءات</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-    </table>
-
-    <!-- نافذة الإضافة والتعديل -->
+    <!-- نافذة الإضافة/التعديل المنبثقة -->
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <h3 id="modalTitle">إضافة / تعديل بيانات</h3>
+            <h2 id="modalTitle" style="margin-top:0; color:var(--dark); border-bottom:2px solid var(--border); padding-bottom:10px;">إضافة / تعديل بيانات</h2>
             <input type="hidden" id="f_id">
             <div class="form-grid">
-                <div class="form-group fr"><label>Groupe Familial</label><input type="text" id="f_family"></div>
-                <div class="form-group fr"><label>Nom Complet (FR)</label><input type="text" id="f_nomFr"></div>
-                
+                <div class="form-group fr-text"><label>Groupe Familial</label><input type="text" id="f_family"></div>
+                <div class="form-group fr-text"><label>Nom Complet (FR)</label><input type="text" id="f_nomFr"></div>
                 <div class="form-group"><label>الاسم الكامل (عربي)</label><input type="text" id="f_nomAr"></div>
                 <div class="form-group"><label>العنوان في سوريا</label><input type="text" id="f_address"></div>
-                
-                <div class="form-group fr"><label>Nom du Père</label><input type="text" id="f_pere"></div>
-                <div class="form-group fr"><label>Nom de la Mère</label><input type="text" id="f_mere"></div>
-                
-                <div class="form-group fr"><label>Date de Naissance</label><input type="text" id="f_dob"></div>
-                <div class="form-group fr"><label>Lieu de Naissance</label><input type="text" id="f_pob"></div>
-                
-                <div class="form-group fr"><label>N° de Passeport</label><input type="text" id="f_pass"></div>
-                <div class="form-group fr"><label>Statut (Valide / À renouveler)</label><input type="text" id="f_statut"></div>
+                <div class="form-group fr-text"><label>Nom du Père</label><input type="text" id="f_pere"></div>
+                <div class="form-group fr-text"><label>Nom de la Mère</label><input type="text" id="f_mere"></div>
+                <div class="form-group fr-text"><label>Date de Naissance</label><input type="text" id="f_dob" placeholder="Ex: 15/03/1998"></div>
+                <div class="form-group fr-text"><label>Lieu de Naissance</label><input type="text" id="f_pob"></div>
+                <div class="form-group fr-text"><label>N° de Passeport</label><input type="text" id="f_pass"></div>
+                <div class="form-group fr-text"><label>Statut</label><input type="text" id="f_statut" placeholder="Valide / À renouveler"></div>
             </div>
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-add" onclick="saveData()">💾 حفظ البيانات</button>
-                <button class="btn btn-delete" style="padding: 10px 20px;" onclick="closeModal()">إلغاء</button>
+            <div style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn btn-dark" onclick="closeModal()">إلغاء</button>
+                <button class="btn btn-primary" onclick="saveData()">💾 حفظ البيانات</button>
             </div>
         </div>
     </div>
@@ -90,18 +73,21 @@
             tbody.innerHTML = '';
             
             db.forEach(p => {
-                let passDisplay = p.pass ? p.pass : '<span style="color:red">لا يوجد</span>';
+                let passColor = p.statut.includes('renouveler') ? 'color: var(--danger); font-weight: bold;' : 'color: var(--primary); font-weight: bold;';
+                let passDisplay = p.pass ? p.pass : '<span style="color:var(--danger)">لا يوجد</span>';
+                
                 tbody.innerHTML += `
                     <tr>
                         <td>${p.id}</td>
-                        <td class="fr-text">${p.family}</td>
-                        <td><strong>${p.nomAr}</strong></td>
-                        <td class="fr-text"><strong>${p.nomFr}</strong></td>
-                        <td class="fr-text">${p.pere} & ${p.mere}</td>
-                        <td class="fr-text">${p.dob} - ${p.pob}</td>
-                        <td class="fr-text">${passDisplay}<br><b>${p.statut}</b></td>
-                        <td>${p.address}</td>
+                        <td class="fr-text" style="font-weight:bold;">${p.family}</td>
                         <td>
+                            <a href="profile.html?id=${p.id}" style="color:var(--dark); text-decoration:none; font-weight:bold;">${p.nomAr}</a><br>
+                            <span class="fr-text" style="font-size:12px; color:#64748b;">${p.nomFr}</span>
+                        </td>
+                        <td class="fr-text">${p.pere} & ${p.mere}</td>
+                        <td class="fr-text">${p.dob}<br><span style="font-size:12px; color:#64748b;">${p.pob}</span></td>
+                        <td class="fr-text">${passDisplay}<br><span style="${passColor}">${p.statut}</span></td>
+                        <td class="no-print">
                             <button class="btn btn-edit" onclick="editData(${p.id})">تعديل</button>
                             <button class="btn btn-delete" onclick="deleteData(${p.id})">حذف</button>
                         </td>
@@ -110,6 +96,23 @@
             });
         }
 
+        // محرك البحث الذكي الفوري
+        function filterTable() {
+            let input = document.getElementById("searchInput").value.toUpperCase();
+            let table = document.getElementById("dataTable");
+            let tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                let textValue = tr[i].textContent || tr[i].innerText;
+                if (textValue.toUpperCase().indexOf(input) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        // وظائف النافذة المنبثقة (Modals)
         function openModal() {
             document.getElementById('editModal').style.display = 'block';
             document.querySelectorAll('.form-group input').forEach(inpt => inpt.value = '');
@@ -138,7 +141,6 @@
         function saveData() {
             let db = APP.getDB();
             const idVal = document.getElementById('f_id').value;
-            
             const newData = {
                 id: idVal ? parseInt(idVal) : (db.length > 0 ? Math.max(...db.map(x => x.id)) + 1 : 1),
                 family: document.getElementById('f_family').value,
@@ -159,14 +161,13 @@
             } else {
                 db.push(newData);
             }
-
             APP.saveDB(db);
             closeModal();
             renderTable();
         }
 
         function deleteData(id) {
-            if(confirm('هل أنت متأكد من حذف هذا الاسم نهائياً؟')) {
+            if(confirm('هل أنت متأكد من حذف هذا السجل نهائياً؟')) {
                 let db = APP.getDB();
                 db = db.filter(x => x.id !== id);
                 APP.saveDB(db);
@@ -174,7 +175,6 @@
             }
         }
 
-        // تشغيل الجدول عند فتح الصفحة
         renderTable();
     </script>
 </body>
