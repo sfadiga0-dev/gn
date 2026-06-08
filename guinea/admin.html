@@ -2,282 +2,180 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم القنصلية - جمهورية غينيا</title>
+    <title>لوحة الإدارة - القنصلية</title>
     <style>
-        :root {
-            --guinea-green: #009460;
-            --guinea-yellow: #FCD116;
-            --guinea-red: #CE1126;
-            --dark-bg: #0f172a;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8fafc;
-            margin: 0;
-            padding: 20px;
-            color: #334155;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        header {
-            background: linear-gradient(135deg, #123524, var(--guinea-green));
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header h1 { margin: 0; font-size: 24px; }
-        header p { margin: 5px 0 0 0; opacity: 0.9; font-size: 14px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+        .header { background: #2c3e50; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; direction: rtl; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background: #009460; color: white; }
+        .fr-text { direction: ltr; text-align: left; font-family: Arial, sans-serif; }
+        .btn { padding: 6px 12px; margin: 2px; cursor: pointer; border: none; border-radius: 4px; color: white; font-weight: bold; }
+        .btn-edit { background: #f39c12; }
+        .btn-delete { background: #e74c3c; }
+        .btn-add { background: #2980b9; font-size: 16px; padding: 10px 20px; margin-bottom: 15px; }
         
-        /* كروت الإحصائيات */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border-right: 5px solid var(--guinea-green);
-        }
-        .stat-card.red { border-right-color: var(--guinea-red); }
-        .stat-card.yellow { border-right-color: var(--guinea-yellow); }
-        .stat-card h3 { margin: 0; font-size: 14px; color: #64748b; }
-        .stat-card .number { font-size: 28px; font-weight: bold; margin: 10px 0 0 0; color: #1e293b; }
-
-        /* أدوات البحث والتصفية */
-        .search-box {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            display: flex;
-            gap: 15px;
-        }
-        .search-box input, .search-box select {
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 14px;
-            flex: 1;
-        }
-
-        /* الجدول */
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            overflow-x: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: right;
-            font-size: 14px;
-        }
-        th {
-            background-color: #f1f5f9;
-            color: #475569;
-            padding: 12px 15px;
-            font-weight: 600;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e2e8f0;
-            vertical-align: middle;
-        }
-        tr:hover { background-color: #f8fafc; }
-        
-        /* أزرار الإجراءات */
-        .btn-print {
-            background-color: var(--dark-bg);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            text-decoration: none;
-        }
-        .btn-print:hover {
-            background-color: var(--guinea-red);
-        }
-        .badge {
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .badge.success { background-color: #dcfce7; color: #166534; }
-        .badge.danger { background-color: #fee2e2; color: #991b1b; }
-        .badge.warning { background-color: #fef9c3; color: #854d0e; }
+        /* نموذج الإضافة/التعديل */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; width: 80%; max-width: 800px; margin: 50px auto; padding: 20px; border-radius: 8px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 5px; font-weight: bold; color: #2c3e50; }
+        .form-group input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .form-group.fr label { text-align: left; color: #c0392b; direction: ltr; }
+        .form-group.fr input { direction: ltr; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
+    <div class="header">
+        <h2>نظام الإدارة القنصلي (Admin) | المسؤول: Hassan Jawad</h2>
         <div>
-            <h1>نظام إدارة الجالية والبطاقات القنصلية 🇬🇳</h1>
-            <p>قاعدة البيانات المركزية الموحدة - دمشق، سوريا</p>
-        </div>
-        <div style="text-align: left; font-size: 12px;">تاريخ التحديث الأخير: 2026</div>
-    </header>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h3>إجمالي المسجلين بالجالية</h3>
-            <div class="number" id="total-citizens">33</div>
-        </div>
-        <div class="stat-card yellow">
-            <h3>عدد العائلات الموثقة</h3>
-            <div class="number">6</div>
-        </div>
-        <div class="stat-card red">
-            <h3>حالات بدون جواز سفر</h3>
-            <div class="number">22</div>
+            <button class="btn btn-add" style="background: #27ae60;" onclick="window.print()">🖨️ طباعة الجدول (PDF)</button>
         </div>
     </div>
 
-    <div class="search-box">
-        <input type="text" id="search-input" placeholder="ابحث بالاسم العربي، الفرنسي، أو رقم الجواز..." oninput="filterData()">
-        <select id="family-filter" onchange="filterData()">
-            <option value="">كل العائلات</option>
-            <option value="Camara">Camara</option>
-            <option value="Kouyate">Kouyate</option>
-            <option value="Soumah">Soumah</option>
-            <option value="Diassy">Diassy</option>
-            <option value="Suleiman Fadiga">Suleiman Fadiga</option>
-            <option value="Youssef Fadiga">Youssef Fadiga</option>
-        </select>
+    <button class="btn btn-add" onclick="openModal()">+ إضافة مواطن جديد</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>العائلة (Famille)</th>
+                <th>الاسم (عربي)</th>
+                <th class="fr-text">Nom (Français)</th>
+                <th>الأب والأم</th>
+                <th>التولد ومكان الولادة</th>
+                <th>الجواز والحالة</th>
+                <th>العنوان</th>
+                <th>إجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    <!-- نافذة الإضافة والتعديل -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">إضافة / تعديل بيانات</h3>
+            <input type="hidden" id="f_id">
+            <div class="form-grid">
+                <div class="form-group fr"><label>Groupe Familial</label><input type="text" id="f_family"></div>
+                <div class="form-group fr"><label>Nom Complet (FR)</label><input type="text" id="f_nomFr"></div>
+                
+                <div class="form-group"><label>الاسم الكامل (عربي)</label><input type="text" id="f_nomAr"></div>
+                <div class="form-group"><label>العنوان في سوريا</label><input type="text" id="f_address"></div>
+                
+                <div class="form-group fr"><label>Nom du Père</label><input type="text" id="f_pere"></div>
+                <div class="form-group fr"><label>Nom de la Mère</label><input type="text" id="f_mere"></div>
+                
+                <div class="form-group fr"><label>Date de Naissance</label><input type="text" id="f_dob"></div>
+                <div class="form-group fr"><label>Lieu de Naissance</label><input type="text" id="f_pob"></div>
+                
+                <div class="form-group fr"><label>N° de Passeport</label><input type="text" id="f_pass"></div>
+                <div class="form-group fr"><label>Statut (Valide / À renouveler)</label><input type="text" id="f_statut"></div>
+            </div>
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-add" onclick="saveData()">💾 حفظ البيانات</button>
+                <button class="btn btn-delete" style="padding: 10px 20px;" onclick="closeModal()">إلغاء</button>
+            </div>
+        </div>
     </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>العائلة</th>
-                    <th>الاسم الكامل (Français)</th>
-                    <th>الاسم الكامل (العربية)</th>
-                    <th>التولد والمكان</th>
-                    <th>رقم الجواز</th>
-                    <th>حالة الوثيقة</th>
-                    <th>العنوان في سوريا</th>
-                    <th>إجراءات الطباعة</th>
-                </tr>
-            </thead>
-            <tbody id="data-rows">
-                </tbody>
-        </table>
-    </div>
-</div>
+    <script src="app.js"></script>
+    <script>
+        function renderTable() {
+            const db = APP.getDB();
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            db.forEach(p => {
+                let passDisplay = p.pass ? p.pass : '<span style="color:red">لا يوجد</span>';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td class="fr-text">${p.family}</td>
+                        <td><strong>${p.nomAr}</strong></td>
+                        <td class="fr-text"><strong>${p.nomFr}</strong></td>
+                        <td class="fr-text">${p.pere} & ${p.mere}</td>
+                        <td class="fr-text">${p.dob} - ${p.pob}</td>
+                        <td class="fr-text">${passDisplay}<br><b>${p.statut}</b></td>
+                        <td>${p.address}</td>
+                        <td>
+                            <button class="btn btn-edit" onclick="editData(${p.id})">تعديل</button>
+                            <button class="btn btn-delete" onclick="deleteData(${p.id})">حذف</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
 
-<script>
-    // قاعدة البيانات الشاملة والمدققة لـ 33 مواطناً غينياً
-    const jaliyaData = [
-        // 1. عائلة كمارا
-        {id: 1, family: "Camara", nameFr: "Kerfalla CAMARA", nameAr: "كرفالا كمارا", father: "Ibrahim", mother: "Yari", birth: "1976 - Kindia", passport: "91", status: "موجود", address: "دف الشوك، دمشق", tel: "0932779075"},
-        {id: 2, family: "Camara", nameFr: "Adama CAMARA", nameAr: "آدم كمارا", father: "Mohamed", mother: "Anser", birth: "1969 - Conakry", passport: "92", status: "بدو تدقيق", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 3, family: "Camara", nameFr: "Nsira CAMARA", nameAr: "انسرا كامارا", father: "Kerfalla", mother: "Adama", birth: "15/03/1998 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 4, family: "Camara", nameFr: "Ibrahima Sory CAMARA", nameAr: "إبراهيم سوري كمارا", father: "Kerfalla", mother: "Adama", birth: "20/09/1999 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 5, family: "Camara", nameFr: "Mouhamed Lamine CAMARA", nameAr: "محمد أمين كمارا", father: "Kerfalla", mother: "Adama", birth: "15/10/2001 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 6, family: "Camara", nameFr: "Aboubacar CAMARA", nameAr: "أبوبكر كمارا", father: "Kerfalla", mother: "Adama", birth: "21/11/2006 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 7, family: "Camara", nameFr: "Aicha CAMARA", nameAr: "عائشة كمارا", father: "Kerfalla", mother: "Adama", birth: "12/05/2010 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        // 2. عائلة كوياتي
-        {id: 8, family: "Kouyate", nameFr: "N'faly KOUYATE", nameAr: "انفالي كوياتي", father: "Moussa", mother: "Mariama", birth: "13/04/1964 - Kankan", passport: "105", status: "بدو تدقيق", address: "ركن الدين، دمشق", tel: "---"},
-        {id: 9, family: "Kouyate", nameFr: "Adama KABA", nameAr: "ادما كابا", father: "Mamadi", mother: "Roukiatou", birth: "04/04/1981 - Kankan", passport: "لا يوجد", status: "بدو تدقيق", address: "ركن الدين، دمشق", tel: "---"},
-        {id: 10, family: "Kouyate", nameFr: "Souleyman KOUYATE", nameAr: "سليمان كوياتي", father: "N'faly", mother: "Adama", birth: "04/09/2002 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "ركن الدين، دمشق", tel: "---"},
-        {id: 11, family: "Kouyate", nameFr: "Zeinab KOUYATE", nameAr: "زينب كوياتي", father: "N'faly", mother: "Adama", birth: "09/04/2007 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "ركن الدين، دمشق", tel: "---"},
-        // 3. عائلة سوما
-        {id: 12, family: "Soumah", nameFr: "Alseny SOUMAH", nameAr: "الحسين موسى سوما", father: "Moussa", mother: "Hawa", birth: "01/01/1978 - Guinée", passport: "RO 00252379", status: "تم تجديده", address: "دف الشوك، دمشق", tel: "0934229739"},
-        {id: 13, family: "Soumah", nameFr: "Fatoumata KAMANO", nameAr: "فاتوماتا كامانو", father: "Kikoura", mother: "Wata", birth: "20/01/1985 - Guinée", passport: "173494", status: "مجدد لسنتين", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 14, family: "Soumah", nameFr: "Hawa SOUMAH", nameAr: "حواء سوما", father: "Alseny", mother: "Fatoumata", birth: "07/11/2004 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 15, family: "Soumah", nameFr: "Mariam SOUMAH", nameAr: "مريم سوما", father: "Alseny", mother: "Fatoumata", birth: "06/10/2005 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 16, family: "Soumah", nameFr: "Aminata SOUMAH", nameAr: "آمنة سوما", father: "Alseny", mother: "Fatoumata", birth: "24/07/2007 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 17, family: "Soumah", nameFr: "Mousah SOUMAH", nameAr: "موسى سوما", father: "Alseny", mother: "Fatoumata", birth: "09/10/2019 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        // 4. عائلة جاسي
-        {id: 18, family: "Diassy", nameFr: "Hassimou DIASSY", nameAr: "هاشمي جاسي", father: "Aboubacar", mother: "Salima", birth: "07/01/1981 - Boké", passport: "RO 080958", status: "منتهي", address: "الميدان، دمشق", tel: "0936864671"},
-        {id: 19, family: "Diassy", nameFr: "Halimatou DIASSY", nameAr: "حليمة جاسي", father: "---", mother: "---", birth: "05/11/2000 - Boké", passport: "موجود", status: "بدو تجديد", address: "الميدان، دمشق", tel: "---"},
-        {id: 20, family: "Diassy", nameFr: "Aboubacar DIASSY", nameAr: "أبوبكر جاسي", father: "Hassimou", mother: "Halimatou", birth: "28/01/2020 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "الميدان، دمشق", tel: "---"},
-        {id: 21, family: "Diassy", nameFr: "Abdallah DIASSY", nameAr: "عبد الله جاسي", father: "Hassimou", mother: "Halimatou", birth: "2023 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "الميدان، دمشق", tel: "---"},
-        {id: 22, family: "Diassy", nameFr: "Salima DIASSY", nameAr: "سليمة جاسي", father: "Hassimou", mother: "Halimatou", birth: "2025 - Damas", passport: "لا يوجد", status: "لا يوجد جواز", address: "الميدان، دمشق", tel: "---"},
-        // 5. عائلة سليمان فاديغا
-        {id: 23, family: "Suleiman Fadiga", nameFr: "Aicha FADIGA", nameAr: "عائشة فاديغا", father: "Mohamed Lamine", mother: "Bentouba", birth: "16/11/1979 - Guinée", passport: "72", status: "موجود ساري", address: "دف الشوك، دمشق", tel: "0999373093"},
-        {id: 24, family: "Suleiman Fadiga", nameFr: "Hawa FADIGA", nameAr: "حواء فاديغا", father: "Suleiman", mother: "Aicha", birth: "01/01/1999 - Damas", passport: "73", status: "ساري", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 25, family: "Suleiman Fadiga", nameFr: "Sankoumba FADIGA", nameAr: "سنكونبا فاديغا", father: "Suleiman", mother: "Aicha", birth: "07/10/2000 - Damas", passport: "74", status: "بدو تجديد", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 26, family: "Suleiman Fadiga", nameFr: "Bentouba FADIGA", nameAr: "بنتوبا فاديغا", father: "Suleiman", mother: "Aicha", birth: "2008 - Damas", passport: "75", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 27, family: "Suleiman Fadiga", nameFr: "Khadiga FADIGA", nameAr: "كديجا فاديغا", father: "Suleiman", mother: "Aicha", birth: "2009 - Damas", passport: "76", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        // 6. عائلة يوسف فاديغا
-        {id: 28, family: "Youssef Fadiga", nameFr: "Safiatou KABA", nameAr: "صفية كابا", father: "Mamadi", mother: "Roukiatou", birth: "02/10/1972 - Guinée", passport: "102", status: "يخلص قريباً", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 29, family: "Youssef Fadiga", nameFr: "Fatoumata FADIGA", nameAr: "فاطمة فاديغا", father: "Youssef", mother: "Safiatou", birth: "12/02/1995 - Damas", passport: "110", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 30, family: "Youssef Fadiga", nameFr: "Rokiatou FADIGA", nameAr: "رقية فاديغا", father: "Youssef", mother: "Safiatou", birth: "22/01/1997 - Damas", passport: "111", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 31, family: "Youssef Fadiga", nameFr: "Mariam FADIGA", nameAr: "مريم فاديغا", father: "Youssef", mother: "Safiatou", birth: "16/12/2004 - Damas", passport: "157", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 32, family: "Youssef Fadiga", nameFr: "Mamadi FADIGA", nameAr: "مامادي فاديغا", father: "Youssef", mother: "Safiatou", birth: "30/11/2001 - Damas", passport: "156", status: "ساري", address: "دف الشوك، دمشق", tel: "---"},
-        {id: 33, family: "Youssef Fadiga", nameFr: "Alpha Sanoussy FADIGA", nameAr: "ألفا سنسي فاديغا", father: "Youssef", mother: "Safiatou", birth: "30/09/2010 - Damas", passport: "116", status: "لا يوجد جواز", address: "دف الشوك، دمشق", tel: "---"}
-    ];
+        function openModal() {
+            document.getElementById('editModal').style.display = 'block';
+            document.querySelectorAll('.form-group input').forEach(inpt => inpt.value = '');
+            document.getElementById('f_id').value = '';
+        }
 
-    // حفظ قاعدة البيانات محلياً للمزامنة مع صفحة الطباعة التلقائية
-    localStorage.setItem('guinea_citizens_db', JSON.stringify(jaliyaData));
+        function closeModal() { document.getElementById('editModal').style.display = 'none'; }
 
-    function renderTable(data) {
-        const tbody = document.getElementById('data-rows');
-        tbody.innerHTML = '';
-        data.forEach(item => {
-            let badgeClass = 'success';
-            if(item.status.includes('لا يوجد') || item.status.includes('منتهي')) badgeClass = 'danger';
-            if(item.status.includes('بدو')) badgeClass = 'warning';
+        function editData(id) {
+            const db = APP.getDB();
+            const p = db.find(item => item.id === id);
+            document.getElementById('f_id').value = p.id;
+            document.getElementById('f_family').value = p.family;
+            document.getElementById('f_nomFr').value = p.nomFr;
+            document.getElementById('f_nomAr').value = p.nomAr;
+            document.getElementById('f_pere').value = p.pere;
+            document.getElementById('f_mere').value = p.mere;
+            document.getElementById('f_dob').value = p.dob;
+            document.getElementById('f_pob').value = p.pob;
+            document.getElementById('f_pass').value = p.pass;
+            document.getElementById('f_statut').value = p.statut;
+            document.getElementById('f_address').value = p.address;
+            document.getElementById('editModal').style.display = 'block';
+        }
 
-            tbody.innerHTML += `
-                <tr>
-                    <td><b>${item.id}</b></td>
-                    <td>${item.family}</td>
-                    <td>${item.nameFr}</td>
-                    <td>${item.nameAr}</td>
-                    <td>${item.birth}</td>
-                    <td><code>${item.passport}</code></td>
-                    <td><span class="badge ${badgeClass}">${item.status}</span></td>
-                    <td>${item.address}</td>
-                    <td>
-                        <a href="print_card.html?id=${item.id}" class="btn-print">🖨️ طباعة فوق كرتون</a>
-                    </td>
-                </tr>
-            `;
-        });
-    }
+        function saveData() {
+            let db = APP.getDB();
+            const idVal = document.getElementById('f_id').value;
+            
+            const newData = {
+                id: idVal ? parseInt(idVal) : (db.length > 0 ? Math.max(...db.map(x => x.id)) + 1 : 1),
+                family: document.getElementById('f_family').value,
+                nomFr: document.getElementById('f_nomFr').value,
+                nomAr: document.getElementById('f_nomAr').value,
+                pere: document.getElementById('f_pere').value,
+                mere: document.getElementById('f_mere').value,
+                dob: document.getElementById('f_dob').value,
+                pob: document.getElementById('f_pob').value,
+                pass: document.getElementById('f_pass').value,
+                statut: document.getElementById('f_statut').value,
+                address: document.getElementById('f_address').value
+            };
 
-    function filterData() {
-        const searchVal = document.getElementById('search-input').value.toLowerCase();
-        const familyVal = document.getElementById('family-filter').value;
+            if (idVal) {
+                const index = db.findIndex(x => x.id === parseInt(idVal));
+                db[index] = newData;
+            } else {
+                db.push(newData);
+            }
 
-        const filtered = jaliyaData.filter(item => {
-            const matchesSearch = item.nameFr.toLowerCase().includes(searchVal) || 
-                                  item.nameAr.includes(searchVal) || 
-                                  item.passport.includes(searchVal);
-            const matchesFamily = familyVal === "" || item.family === familyVal;
-            return matchesSearch && matchesFamily;
-        });
-        renderTable(filtered);
-    }
+            APP.saveDB(db);
+            closeModal();
+            renderTable();
+        }
 
-    // التشغيل الأولي للجدول
-    renderTable(jaliyaData);
-</script>
+        function deleteData(id) {
+            if(confirm('هل أنت متأكد من حذف هذا الاسم نهائياً؟')) {
+                let db = APP.getDB();
+                db = db.filter(x => x.id !== id);
+                APP.saveDB(db);
+                renderTable();
+            }
+        }
+
+        // تشغيل الجدول عند فتح الصفحة
+        renderTable();
+    </script>
 </body>
 </html>
