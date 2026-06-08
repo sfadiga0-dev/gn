@@ -1,114 +1,62 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Registre Consulaire Général</title>
+    <title>سجل القنصلية - العرض الرسمي</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .family-section { background: white; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e2e8f0; overflow: hidden; }
-        .family-summary { background: var(--brand-dark); color: var(--brand-gold); padding: 16px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .family-counter { font-size: 12px; background: var(--brand-gold); color: var(--brand-dark); padding: 3px 14px; border-radius: 50px; font-weight: 800; }
-        .data-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .data-table th { padding: 12px 10px; color: #64748b; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; background: #f8fafc; }
-        .data-table td { padding: 14px 10px; border-bottom: 1px solid #f1f5f9; font-size: 13.5px; vertical-align: middle; }
-    </style>
 </head>
 <body>
-    <img src="image_5321de.png" class="bg-watermark">
-
-    <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <img src="image_5321de.png" height="45">
+    <div class="container">
+        <div class="header">
             <div>
-                <strong style="font-size: 13pt; color: #f8fafc; letter-spacing: 0.5px;">LE REGISTRE CONSULAIRE GÉNÉRAL</strong>
-                <div style="font-size: 9pt; color: #94a3b8; font-weight: bold;" dir="rtl">السجل الإلكتروني العام لأبناء الجالية الغينية في سوريا</div>
+                <h2>سجل الجالية الغينية في سوريا</h2>
+                <span class="fr-text" style="display:block; color:#ddd;">Registre de la Communauté Guinéenne en Syrie</span>
+            </div>
+            <div class="no-print">
+                <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة السجل (PDF)</button>
+                <button class="btn btn-dark" onclick="APP.logout()">خروج</button>
             </div>
         </div>
-        <div style="font-size: 11pt; font-weight: bold; color: var(--brand-gold);">DAMAS, SYRIE</div>
-    </div>
 
-    <div class="container">
-        <div style="margin-bottom: 30px;" dir="rtl">
-            <input type="text" id="search-bar" class="search-input" style="padding:16px; font-size:15px;" placeholder="🔍 ابحث فوراً في سجل الجالية (بالاسم العربي، الفرنسي، الجواز، أو العائلة)..." onkeyup="executeConsulSearch()">
-        </div>
-
-        <div id="consul-families-container" dir="rtl" style="text-align: right;"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>العائلة (Famille)</th>
+                    <th>الاسم (عربي)</th>
+                    <th class="fr-text">Nom (Français)</th>
+                    <th>الأب والأم</th>
+                    <th>التولد ومكان الولادة</th>
+                    <th>الجواز والحالة</th>
+                    <th>العنوان</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
     </div>
 
     <script src="app.js"></script>
     <script>
-        function renderConsulPanel() {
-            const container = document.getElementById('consul-families-container');
-            const localDb = JSON.parse(localStorage.getItem('citizens_db_v5')) || [];
-            
-            const uniqueFamilies = [...new Set(localDb.map(c => c.family).filter(f => f))];
-            
-            if(uniqueFamilies.length === 0) {
-                container.innerHTML = "<div class='card' style='text-align:center;'>Aucune donnée enregistrée.</div>";
-                return;
-            }
+        APP.checkAuth('consul'); // حماية الصفحة
 
-            container.innerHTML = uniqueFamilies.map(fam => {
-                const members = localDb.filter(c => c.family === fam);
-                return `
-                <details class="family-section" open>
-                    <summary class="family-summary">
-                        <span>📋 FAMILLE: ${fam.toUpperCase()}</span>
-                        <span class="family-counter">${members.length} MEMBRES / أفراد</span>
-                    </summary>
-                    <div class="family-content" dir="ltr" style="text-align: left;">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Nom et Prénom / الاسم الكامل</th>
-                                    <th>Passeport / الوثيقة</th>
-                                    <th>Téléphone / الهاتف</th>
-                                    <th>Profession / المهنة</th>
-                                    <th>Adresse / العنوان</th>
-                                    <th style="text-align:right;" dir="rtl">المستندات الرسمية</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${members.map(c => `
-                                <tr>
-                                    <td>
-                                        <strong style="color:var(--brand-dark); font-size:14px;">${c.firstName} ${c.lastName}</strong>
-                                        <div dir="rtl" style="color:#475569; font-weight:bold; text-align:left; font-size:12px; margin-top:2px;">${c.nameAr}</div>
-                                    </td>
-                                    <td>
-                                        <span style="font-family:monospace; font-weight:bold; background:#f1f5f9; padding:2px 6px; border-radius:4px;">${c.passport}</span>
-                                        <div style="color:var(--guinea-green); font-size:10px; font-weight:bold; margin-top:2px;">${c.passStatus}</div>
-                                    </td>
-                                    <td><span style="font-family:sans-serif; font-weight:600; color:#334155;">${c.phone || '---'}</span></td>
-                                    <td><span style="color:#0369a1; font-weight:600;">${c.profession || '---'}</span></td>
-                                    <td><small style="color:#475569;">${c.residence || '---'}</small></td>
-                                    <td style="text-align: right;" dir="rtl">
-                                        <button class="btn btn-green" style="padding:6px 14px; font-size:11px;" onclick="window.location.href='profile.html?id=${c.id}'">📄 استمارة A4</button>
-                                        <button class="btn btn-gold" style="padding:6px 14px; font-size:11px;" onclick="window.location.href='card.html?id=${c.id}'">🪪 الهوية</button>
-                                    </td>
-                                </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </details>
-                `;
-            }).join('');
-        }
-
-        function executeConsulSearch() {
-            const query = document.getElementById('search-bar').value.toLowerCase();
-            document.querySelectorAll('.family-section').forEach(section => {
-                let sectionMatch = false;
-                section.querySelectorAll('tbody tr').forEach(row => {
-                    if(row.innerText.toLowerCase().includes(query)) { row.style.display = ''; sectionMatch = true; }
-                    else { row.style.display = 'none'; }
-                });
-                section.style.display = sectionMatch ? 'block' : 'none';
-            });
-        }
-
-        renderConsulPanel();
+        const db = APP.getDB();
+        const tbody = document.getElementById('tableBody');
+        
+        db.forEach(p => {
+            let passDisplay = p.pass ? p.pass : '<span style="color:red">Pas de passeport / لا يوجد</span>';
+            tbody.innerHTML += `
+                <tr>
+                    <td>${p.id}</td>
+                    <td class="fr-text"><strong>${p.family}</strong></td>
+                    <td>${p.nomAr}</td>
+                    <td class="fr-text">${p.nomFr}</td>
+                    <td class="fr-text">${p.pere} & ${p.mere}</td>
+                    <td class="fr-text">${p.dob} - ${p.pob}</td>
+                    <td class="fr-text">${passDisplay}<br><b>${p.statut}</b></td>
+                    <td>${p.address}</td>
+                </tr>
+            `;
+        });
     </script>
 </body>
 </html>
