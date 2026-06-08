@@ -1,66 +1,69 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Impression de Carte d'Identité Consulaire</title>
+    <title>البطاقة القنصلية</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        :root { --g-red: #ce1126; --g-yellow: #fcd116; --g-green: #009460; --dark: #0f172a; }
-        body { background-color: #475569; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; font-family: system-ui; }
-        .panel { background: white; padding: 12px; border-radius: 6px; text-align: center; width: 86mm; }
-        .btn { padding: 8px 16px; font-weight: bold; border-radius: 4px; border: none; background: var(--dark); color: white; cursor: pointer; }
-        .id-card { width: 86mm; height: 54mm; background: white; border-radius: 4mm; border: 1px solid #94a3b8; position: relative; overflow: hidden; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .card-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; opacity: 0.05; pointer-events: none; }
-        .flag-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: 3mm; display: flex; }
-        .b-r { flex: 1; background: var(--g-red); }
-        .b-y { flex: 1; background: var(--g-yellow); }
-        .b-g { flex: 1; background: var(--g-green); }
-        .layout { padding: 3mm; display: flex; flex-direction: column; height: 100%; box-sizing: border-box; }
-        .hdr { display: flex; justify-content: space-between; border-bottom: 1px solid var(--g-yellow); padding-bottom: 1mm; }
-        .body-zone { display: flex; gap: 3mm; margin-top: 2mm; height: calc(100% - 10mm); }
-        .photo { width: 20mm; height: 26mm; border: 1px solid var(--dark); background: #f1f5f9; }
-        .fields { flex-grow: 1; display: flex; flex-direction: column; gap: 1mm; font-size: 7.5pt; }
-        .row-item { display: flex; justify-content: space-between; border-bottom: 0.5px dashed #e2e8f0; }
-        @media print { .no-print { display: none !important; } body { background: white; padding: 0; } .id-card { border: 1px solid #000; page-break-inside: avoid; } }
+        .id-card {
+            width: 85mm; height: 55mm; /* حجم بطاقة الهوية القياسي */
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 20px auto;
+            background: white;
+            position: relative;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('image_5321de.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-header { text-align: center; border-bottom: 2px solid var(--danger); padding-bottom: 5px; margin-bottom: 10px; }
+        .card-header h4 { margin: 0; color: var(--primary); font-size: 12px; }
+        .card-header p { margin: 0; font-size: 10px; color: var(--dark); direction: ltr; }
+        .card-body { font-size: 11px; line-height: 1.5; }
+        .row { display: flex; justify-content: space-between; margin-bottom: 4px; border-bottom: 1px dotted #ccc;}
+        .label { font-weight: bold; color: var(--dark); }
+        .val.fr { direction: ltr; text-align: left; }
     </style>
 </head>
 <body>
-
-    <div class="panel no-print">
-        <button class="btn" onclick="window.print()">🖨️ طباعة الهوية القنصلية</button>
-        <button class="btn" style="background:#64748b;" onclick="window.history.back()">↩️ عودة</button>
+    <div class="container no-print" style="text-align: center; margin-bottom: 20px;">
+        <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة البطاقة</button>
+        <button class="btn btn-dark" onclick="window.close()">إغلاق</button>
     </div>
 
-    <div id="card-render-zone"></div>
+    <div class="id-card" id="cardArea">
+        <!-- سيتم حقن البيانات هنا -->
+    </div>
 
     <script src="app.js"></script>
     <script>
-        const id = new URLSearchParams(window.location.search).get('id');
-        const db = JSON.parse(localStorage.getItem('citizens_db_v5')) || [];
-        const person = db.find(c => c.id == id) || db[0];
+        // استخراج الـ ID من الرابط (مثال: card.html?id=3)
+        const urlParams = new URLSearchParams(window.location.search);
+        const personId = parseInt(urlParams.get('id'));
+        
+        const db = APP.getDB();
+        const person = db.find(p => p.id === personId);
 
         if (person) {
-            document.getElementById('card-render-zone').innerHTML = `
-                <div class="id-card">
-                    <img src="image_5321de.png" class="card-watermark">
-                    <div class="layout">
-                        <div class="hdr">
-                            <span style="font-size:6.5pt; font-weight:bold; color:var(--dark);">RÉPUBLIQUE DE GUINÉE<br>CONSULAT DE DAMAS</span>
-                            <span dir="rtl" style="font-size:6.5pt; font-weight:bold; color:var(--g-green); text-align:right;">جمهورية غينيا<br>القنصلية في دمشق</span>
-                        </div>
-                        <div class="body-zone">
-                            <div class="photo"><svg viewBox="0 0 24 24" fill="%23cbd5e1" style="margin-top:4px;"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
-                            <div class="fields">
-                                <div class="row-item"><span>Nom: <b>${person.lastName}</b></span><span dir="rtl">الكنية: <b>${person.lastName}</b></span></div>
-                                <div class="row-item"><span>Prénom: <b>${person.firstName}</b></span><span dir="rtl">الاسم: <b>${person.firstName}</b></span></div>
-                                <div class="row-item" style="background:#f8fafc; padding:1px 0;"><span dir="rtl" style="width:100%; text-align:center; font-size:8.5pt; font-weight:bold; color:var(--g-green);">${person.nameAr}</span></div>
-                                <div class="row-item"><span>Né le: <b>${person.dob}</b></span><span dir="rtl">التولد: <b>${person.dob}</b></span></div>
-                                <div class="row-item"><span>N° Pass: <b style="color:var(--g-red); font-family:monospace;">${person.passport}</b></span><span dir="rtl">الجواز: <b>${person.passport}</b></span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flag-bar"><div class="b-r"></div><div class="b-y"></div><div class="b-g"></div></div>
+            document.getElementById('cardArea').innerHTML = `
+                <div class="card-header">
+                    <h4>الجمهورية الغينية - الجالية في سوريا</h4>
+                    <p>République de Guinée - Carte Consulaire</p>
+                </div>
+                <div class="card-body">
+                    <div class="row"><span class="label">الاسم الكامل:</span> <span class="val">${person.nomAr}</span></div>
+                    <div class="row"><span class="label">Nom complet:</span> <span class="val fr"><strong>${person.nomFr}</strong></span></div>
+                    <div class="row"><span class="label">الأب والأم:</span> <span class="val fr">${person.pere} & ${person.mere}</span></div>
+                    <div class="row"><span class="label">تاريخ ومكان الولادة:</span> <span class="val fr">${person.dob} - ${person.pob}</span></div>
+                    <div class="row"><span class="label">رقم الجواز:</span> <span class="val fr">${person.pass || 'N/A'}</span></div>
+                    <div class="row"><span class="label">العائلة:</span> <span class="val fr">${person.family}</span></div>
                 </div>
             `;
+        } else {
+            document.getElementById('cardArea').innerHTML = "<p style='text-align:center;'>لم يتم العثور على المواطن</p>";
         }
     </script>
 </body>
