@@ -1,53 +1,56 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Espace Famille</title>
+    <title>ملف العائلة</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .family-card {
+            border: 1px solid #ddd; padding: 15px; margin-bottom: 15px;
+            border-radius: 8px; display: flex; justify-content: space-between;
+            align-items: center; background: #fafafa;
+        }
+    </style>
 </head>
 <body>
-    <img src="image_5321de.png" class="bg-watermark">
-    <div class="navbar">
-        <div id="welcome-msg"><strong>ESPACE FAMILLE</strong></div>
-        <button class="btn btn-danger" onclick="logout()">خروج</button>
-    </div>
-    
-    <div class="container" dir="rtl">
-        <div class="card">
-            <h3 style="color:var(--brand-dark); border-bottom: 2px solid var(--brand-gold); padding-bottom: 10px; margin-bottom: 20px;">أفراد العائلة المسجلين</h3>
-            <table dir="ltr" style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="border-bottom: 2px solid #ccc; text-align: left;">
-                        <th>Nom / Name</th>
-                        <th>Passeport</th>
-                        <th dir="rtl" style="text-align: right;">خيارات العرض</th>
-                    </tr>
-                </thead>
-                <tbody id="family-table-body"></tbody>
-            </table>
+    <div class="container">
+        <div class="header">
+            <h2>ملف مجموعة عائلة: <span id="familyNameDisplay"></span></h2>
+            <button class="btn btn-dark no-print" onclick="APP.logout()">تسجيل الخروج</button>
         </div>
+
+        <div id="membersList"></div>
     </div>
 
     <script src="app.js"></script>
     <script>
-        if(localStorage.getItem('role') !== 'family') window.location.href = 'index.html';
-        
-        const myFamily = localStorage.getItem('familyGroup');
-        document.getElementById('welcome-msg').innerHTML = `<strong>ESPACE FAMILLE : ${myFamily.toUpperCase()}</strong>`;
-        
-        const tbody = document.getElementById('family-table-body');
-        const familyMembers = citizensData.filter(c => c.family === myFamily);
+        const user = APP.checkAuth('family');
+        document.getElementById('familyNameDisplay').innerText = user.name.toUpperCase();
 
-        tbody.innerHTML = familyMembers.map(c => `
-            <tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 10px 0;"><strong>${c.firstName || ''} ${c.lastName || ''}</strong><br><small dir="rtl" style="color: #666;">${c.nameAr}</small></td>
-                <td>${c.passport || '---'} <br><small>(${c.passStatus || ''})</small></td>
-                <td dir="rtl" style="text-align: right;">
-                    <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="window.location.href='profile.html?id=${c.id}'">عرض البروفايل</button>
-                    <button class="btn btn-gold" style="padding: 4px 10px; font-size: 12px;" onclick="window.location.href='card.html?id=${c.id}'">عرض الهوية</button>
-                </td>
-            </tr>
-        `).join('');
+        const db = APP.getDB();
+        // تصفية البيانات لتطابق اسم العائلة المسجل دخوله (غير حساس لحالة الأحرف)
+        const myFamily = db.filter(p => p.family.toLowerCase() === user.name.toLowerCase());
+        
+        const list = document.getElementById('membersList');
+        
+        if (myFamily.length === 0) {
+            list.innerHTML = "<p>لا يوجد بيانات مسجلة لهذه العائلة.</p>";
+        } else {
+            myFamily.forEach(p => {
+                let statusColor = p.statut.includes('À renouveler') ? 'red' : 'green';
+                list.innerHTML += `
+                    <div class="family-card">
+                        <div>
+                            <h3 style="margin:0 0 5px 0;">${p.nomAr} <span class="fr-text" style="font-size:14px; color:#555;">(${p.nomFr})</span></h3>
+                            <p style="margin:5px 0; font-size:14px;">الجواز: <strong>${p.pass || 'لا يوجد'}</strong> | الحالة: <span style="color:${statusColor}; font-weight:bold;">${p.statut}</span></p>
+                        </div>
+                        <div class="no-print">
+                            <a href="card.html?id=${p.id}" class="btn btn-primary" target="_blank">📄 عرض البطاقة القنصلية</a>
+                        </div>
+                    </div>
+                `;
+            });
+        }
     </script>
 </body>
 </html>
