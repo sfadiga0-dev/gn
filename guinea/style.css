@@ -1,95 +1,72 @@
+/* style.css */
 :root {
-    --brand-dark: #0f172a;
-    --brand-gold: #eab308;
-    --guinea-green: #009460;
-    --guinea-yellow: #fcd116;
-    --guinea-red: #ce1126;
-    --bg-slate: #f8fafc;
+    --primary: #009460; /* الأخضر الغيني */
+    --danger: #ce1126;  /* الأحمر الغيني */
+    --warning: #fcd116; /* الأصفر الغيني */
+    --dark: #2c3e50;
+    --bg: #f4f7f6;
 }
 
 body {
-    background-color: #f1f5f9;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg);
     margin: 0;
-    padding: 0;
-    color: var(--brand-dark);
-}
-
-.navbar {
-    background: var(--brand-dark);
-    color: white;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+    direction: rtl;
 }
 
 .container {
-    max-width: 1250px;
-    margin: 30px auto;
-    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+
+.header {
+    background: var(--dark);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+th { background: var(--primary); color: white; }
+
+.fr-text { direction: ltr; text-align: left; font-family: Arial, sans-serif; }
 
 .btn {
-    padding: 10px 20px;
-    font-size: 13px;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
+    padding: 8px 15px;
+    margin: 2px;
     cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
 }
 
-.btn-primary { background: var(--brand-dark); color: white; }
-.btn-primary:hover { background: #1e293b; }
-.btn-gold { background: var(--brand-gold); color: var(--brand-dark); }
-.btn-gold:hover { background: #ca8a04; }
-.btn-green { background: var(--guinea-green); color: white; }
-.btn-green:hover { background: #007a4f; }
-.btn-danger { background: var(--guinea-red); color: white; }
+.btn-primary { background: var(--primary); }
+.btn-dark { background: var(--dark); }
 
-.bg-watermark {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40vw;
-    opacity: 0.02;
-    pointer-events: none;
-    z-index: -1;
-}
-
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-    border: 1px solid #e2e8f0;
-    margin-bottom: 25px;
-}
-
-label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    color: #64748b;
-    margin-bottom: 5px;
-}
-
-input, select {
-    width: 100%;
-    padding: 11px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    box-sizing: border-box;
-    font-size: 13px;
-}
-
-input:focus {
-    border-color: var(--brand-gold);
-    outline: none;
+/* إعدادات الطباعة (إخفاء الأزرار عند الطباعة) */
+@media print {
+    body { background: white; padding: 0; }
+    .btn, .no-print { display: none !important; }
+    .container { box-shadow: none; max-width: 100%; padding: 0; }
+    .header { color: black; background: none; border-bottom: 2px solid black; }
 }
