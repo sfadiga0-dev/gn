@@ -1,45 +1,54 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <title>الملف الشخصي</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .profile-header { text-align: center; border-bottom: 2px solid var(--border); padding-bottom: 20px; margin-bottom: 20px; }
+        .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .info-box { background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
+        .info-box span { display: block; font-size: 12px; color: gray; margin-bottom: 5px; }
+        .info-box strong { font-size: 16px; }
+    </style>
 </head>
 <body>
     <div class="container" style="max-width: 800px;">
-        <div class="no-print" style="margin-bottom: 20px;">
+        <div class="no-print" style="margin-bottom: 20px; display: flex; justify-content: space-between;">
             <button class="btn btn-dark" onclick="window.history.back()">رجوع</button>
+            <button class="btn btn-primary" onclick="window.print()" data-i18n="print">طباعة</button>
         </div>
-        <div class="card-glass" id="profileContent">
-            <!-- يملأ عبر الجافاسكربت -->
+
+        <div class="card" id="profileCard">
+            <!-- Data injected via JS -->
         </div>
     </div>
     <script src="app.js"></script>
     <script>
-        const personId = parseInt(new URLSearchParams(window.location.search).get('id'));
-        const p = APP.getDB().find(x => x.id === personId);
-        
-        if(p) {
-            document.getElementById('profileContent').innerHTML = `
-                <div style="text-align: center; border-bottom: 2px solid var(--gn-yellow); padding-bottom: 20px; margin-bottom: 20px;">
-                    <img src="image_5321de.png" width="80" style="margin-bottom: 10px;">
-                    <h1 style="margin:0; color:var(--gn-green);">${p.nomAr}</h1>
-                    <h2 class="fr-text" style="margin:5px 0 0 0; color:#555; text-align:center;">${p.nomFr}</h2>
+        const urlParams = new URLSearchParams(window.location.search);
+        const personId = parseInt(urlParams.get('id'));
+        const p = APP.getDB().find(item => item.id === personId);
+
+        if (p) {
+            document.getElementById('profileCard').innerHTML = `
+                <div class="profile-header">
+                    <img src="image_5321de.png" width="80" style="margin-bottom:10px;">
+                    <h1 style="margin:0; color:var(--gn-green);">${p.nom} ${p.family}</h1>
+                    <p style="margin:5px 0; font-weight:bold; color:var(--gn-red);">${p.statut}</p>
                 </div>
-                <div class="form-grid">
-                    <div><b>العائلة / Famille:</b> <span class="fr-text">${p.family}</span></div>
-                    <div><b>تاريخ ومكان الولادة:</b> <span class="fr-text">${p.dob} - ${p.pob}</span></div>
-                    <div><b>اسم الأب:</b> <span class="fr-text">${p.pere}</span></div>
-                    <div><b>اسم الأم:</b> <span class="fr-text">${p.mere}</span></div>
-                    <div><b>رقم الجواز:</b> <span class="fr-text">${p.pass || 'N/A'}</span></div>
-                    <div><b>حالة الجواز:</b> <span class="fr-text" style="color: ${p.statut.includes('Valide')?'green':'red'}; font-weight:bold;">${p.statut}</span></div>
-                    <div style="grid-column: span 2;"><b>العنوان في سوريا:</b> ${p.address}</div>
-                </div>
-                <div class="no-print" style="margin-top: 30px; text-align: center;">
-                    <a href="card.html?id=${p.id}" class="btn btn-primary">إصدار البطاقة القنصلية</a>
-                    <button class="btn btn-dark" onclick="window.print()">طباعة البروفايل</button>
+                <div class="grid-info">
+                    <div class="info-box"><span>Famille / العائلة</span><strong>${p.family}</strong></div>
+                    <div class="info-box"><span>Date et Lieu de Naissance / التولد</span><strong>${p.dob} - ${p.pob}</strong></div>
+                    <div class="info-box"><span>Père / الأب</span><strong>${p.pere}</strong></div>
+                    <div class="info-box"><span>Mère / الأم</span><strong>${p.mere}</strong></div>
+                    <div class="info-box"><span>Profession / المهنة</span><strong>${p.prof}</strong></div>
+                    <div class="info-box"><span>N° Passeport / رقم الجواز</span><strong>${p.pass}</strong></div>
+                    <div class="info-box"><span>Expiration / الانتهاء</span><strong>${p.exp}</strong></div>
+                    <div class="info-box"><span>Observations / ملاحظات</span><strong>${p.obs}</strong></div>
                 </div>
             `;
+        } else {
+            document.getElementById('profileCard').innerHTML = "<h3 style='text-align:center;'>المواطن غير موجود</h3>";
         }
     </script>
 </body>
