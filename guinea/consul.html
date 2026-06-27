@@ -1,44 +1,63 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>سجل القنصلية الرسمي</title>
+    <title>بوابة القنصل</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div class="card-glass">
-            <div class="header-panel">
-                <div>
-                    <h2>السجل القنصلي الرسمي</h2>
-                    <p class="fr-text" style="margin:0;">Registre Consulaire Officiel</p>
-                </div>
-                <div class="no-print">
-                    <button class="btn btn-primary" onclick="window.print()">طباعة السجل كامل</button>
-                    <button class="btn btn-dark" onclick="APP.logout()">خروج</button>
-                </div>
+        <div class="top-nav">
+            <h2 data-i18n="title_consul" style="margin:0; color:var(--dark);">بوابة القنصل - عرض وطباعة</h2>
+            <div class="no-print">
+                <button class="btn btn-dark" onclick="window.print()" data-i18n="print">طباعة</button>
+                <select class="lang-selector" onchange="APP.setLang(this.value)">
+                    <option value="ar">العربية</option>
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                </select>
             </div>
+        </div>
+
+        <div class="card">
             <table>
                 <thead>
-                    <tr><th>ID</th><th>العائلة</th><th>الاسم</th><th>الأب والأم</th><th>الجواز</th></tr>
+                    <tr>
+                        <th>ID</th>
+                        <th data-i18n="family">العائلة</th>
+                        <th data-i18n="name">الاسم</th>
+                        <th>N° Passeport</th>
+                        <th>Observations</th>
+                        <th data-i18n="actions" class="no-print">إجراءات</th>
+                    </tr>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="consulTableBody"></tbody>
             </table>
         </div>
     </div>
     <script src="app.js"></script>
     <script>
-        APP.checkAuth('consul');
-        const db = APP.getDB();
-        const tbody = document.getElementById('tableBody');
-        db.forEach(p => {
-            tbody.innerHTML += `<tr>
-                <td>${p.id}</td><td class="fr-text"><b>${p.family}</b></td>
-                <td><a href="profile.html?id=${p.id}">${p.nomAr}</a></td>
-                <td class="fr-text">${p.pere} & ${p.mere}</td>
-                <td class="fr-text">${p.pass || 'N/A'}<br><b>${p.statut}</b></td>
-            </tr>`;
-        });
+        function renderTable() {
+            const db = APP.getDB();
+            const tbody = document.getElementById('consulTableBody');
+            tbody.innerHTML = '';
+            db.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td>${p.family}</td>
+                        <td>${p.nom}</td>
+                        <td>${p.pass}</td>
+                        <td>${p.obs}</td>
+                        <td class="no-print">
+                            <a href="profile.html?id=${p.id}" class="btn btn-primary btn-sm" data-i18n="view">عرض</a>
+                            <a href="print_card.html?id=${p.id}" class="btn btn-dark btn-sm" data-i18n="print">طباعة</a>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        window.onload = renderTable;
     </script>
 </body>
 </html>
