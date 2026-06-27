@@ -1,90 +1,55 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>ملف العائلة</title>
+    <title>إدارة العائلات</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div class="card-glass">
-            <div class="header-panel">
-                <h2>إدارة عائلة: <span id="famName" class="fr-text"></span></h2>
-                <div class="no-print">
-                    <button class="btn btn-primary" onclick="openAddModal()">+ إضافة فرد للعائلة</button>
-                    <button class="btn btn-dark" onclick="APP.logout()">خروج</button>
-                </div>
-            </div>
-            <div id="familyList"></div>
+        <div class="top-nav">
+            <h2 data-i18n="title_family" style="margin:0; color:var(--gn-red);">إدارة العائلات</h2>
+            <select class="lang-selector no-print" onchange="APP.setLang(this.value)">
+                <option value="ar">العربية</option>
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+            </select>
         </div>
-    </div>
 
-    <!-- نافذة إضافة فرد للعائلة -->
-    <div id="addFamModal" class="modal">
-        <div class="modal-content">
-            <h3>إضافة فرد جديد</h3>
-            <div class="form-grid">
-                <div class="form-group"><label>الاسم الكامل (عربي)</label><input type="text" id="fm_nomAr"></div>
-                <div class="form-group fr-text"><label>Nom Complet (FR)</label><input type="text" id="fm_nomFr"></div>
-                <div class="form-group fr-text"><label>Date de Naissance</label><input type="text" id="fm_dob"></div>
-            </div>
-            <div style="margin-top: 20px; text-align: left;">
-                <button class="btn btn-primary" onclick="saveFamilyMember()">حفظ</button>
-                <button class="btn btn-dark" onclick="document.getElementById('addFamModal').style.display='none'">إلغاء</button>
-            </div>
-        </div>
+        <div id="familiesContainer"></div>
     </div>
-
     <script src="app.js"></script>
     <script>
-        const user = APP.checkAuth('family');
-        document.getElementById('famName').innerText = user.name;
-        
-        function renderFamily() {
+        function renderFamilies() {
             const db = APP.getDB();
-            const myFamily = db.filter(p => p.family.toLowerCase() === user.name.toLowerCase());
-            const list = document.getElementById('familyList');
-            list.innerHTML = '';
-            myFamily.forEach(p => {
-                list.innerHTML += `
-                <div style="border: 1px solid var(--border-color); padding: 15px; margin-bottom: 10px; border-radius: 8px; display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <h3 style="margin:0;">${p.nomAr} <span class="fr-text" style="font-size:14px;">(${p.nomFr})</span></h3>
-                        <p style="margin:5px 0; font-size:14px;">تاريخ الولادة: ${p.dob} | الجواز: ${p.pass || 'لا يوجد'}</p>
-                    </div>
-                    <div class="no-print">
-                        <a href="card.html?id=${p.id}" class="btn btn-primary" style="padding: 6px 12px;">البطاقة</a>
-                        <button class="btn btn-danger" style="padding: 6px 12px;" onclick="removeMember(${p.id})">حذف</button>
-                    </div>
-                </div>`;
+            // تجميع ذكي للعائلات
+            const families = {};
+            db.forEach(p => {
+                if(!families[p.family]) families[p.family] = [];
+                families[p.family].push(p);
             });
-        }
 
-        function openAddModal() { document.getElementById('addFamModal').style.display = 'block'; }
-        
-        function saveFamilyMember() {
-            const db = APP.getDB();
-            const newMem = {
-                id: Date.now(),
-                family: user.name, // يُجبر على اسم العائلة المسجل دخوله
-                nomAr: document.getElementById('fm_nomAr').value,
-                nomFr: document.getElementById('fm_nomFr').value,
-                dob: document.getElementById('fm_dob').value,
-                pere: "", mere: "", pob: "", pass: "", statut: "À renouveler", address: ""
-            };
-            db.push(newMem);
-            APP.saveDB(db);
-            document.getElementById('addFamModal').style.display = 'none';
-            renderFamily();
-        }
+            const container = document.getElementById('familiesContainer');
+            container.innerHTML = '';
 
-        function removeMember(id) {
-            if(confirm('هل تريد إزالة هذا الفرد؟')) {
-                APP.saveDB(APP.getDB().filter(x => x.id !== id));
-                renderFamily();
+            for (const [famName, members] of Object.entries(families)) {
+                let rows = members.map(m => `<tr><td>${m.id}</td><td><a href="profile.html?id=${m.id}">${m.nom}</a></td><td>${m.dob}</td><td>${m.pere} & ${m.mere}</td></tr>`).join('');
+                
+                container.innerHTML += `
+                    <div class="card" style="border-left: 4px solid var(--gn-yellow);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+                            <h3 style="margin:0;">Famille: ${famName} <span style="font-size:12px; color:gray;">(${members.length} members)</span></h3>
+                            <button class="btn btn-primary btn-sm no-print">+ إضافة فرد للعائلة</button>
+                        </div>
+                        <table>
+                            <thead><tr><th>ID</th><th data-i18n="name">الاسم</th><th data-i18n="dob">تاريخ الولادة</th><th>Père & Mère</th></tr></thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                `;
             }
         }
-        renderFamily();
+        window.onload = renderFamilies;
     </script>
 </body>
 </html>
