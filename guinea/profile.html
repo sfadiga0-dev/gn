@@ -4,108 +4,42 @@
     <meta charset="UTF-8">
     <title>الملف الشخصي</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .profile-wrapper { max-width: 800px; margin: 0 auto; }
-        .profile-header {
-            background: linear-gradient(135deg, var(--primary) 0%, #005a2d 100%);
-            color: white;
-            padding: 40px 30px;
-            border-radius: 12px 12px 0 0;
-            text-align: center;
-        }
-        .profile-header h1 { margin: 0 0 10px 0; font-size: 28px; }
-        .profile-header p { margin: 0; font-size: 18px; opacity: 0.9; }
-        .profile-body {
-            background: white;
-            padding: 30px;
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 30px; }
-        .info-item { border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .info-label { display: block; color: #64748b; font-size: 13px; margin-bottom: 5px; font-weight: 600; }
-        .info-value { display: block; font-size: 16px; font-weight: bold; color: var(--dark); }
-        .info-value.fr { direction: ltr; text-align: left; font-family: Arial, sans-serif; }
-        .status-badge {
-            display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: bold;
-        }
-    </style>
 </head>
 <body>
-    <div class="container profile-wrapper">
+    <div class="container" style="max-width: 800px;">
         <div class="no-print" style="margin-bottom: 20px;">
-            <button class="btn btn-dark" onclick="window.history.back()">🔙 العودة للقائمة</button>
+            <button class="btn btn-dark" onclick="window.history.back()">رجوع</button>
         </div>
-
-        <div id="profileContent">
-            <!-- سيتم حقن بيانات البروفايل هنا -->
+        <div class="card-glass" id="profileContent">
+            <!-- يملأ عبر الجافاسكربت -->
         </div>
     </div>
-
     <script src="app.js"></script>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const personId = parseInt(urlParams.get('id'));
-        const db = APP.getDB();
-        const p = db.find(item => item.id === personId);
-
-        if (p) {
-            let passColor = p.statut.includes('renouveler') ? 'background:#fee2e2; color:var(--danger);' : 'background:#dcfce7; color:var(--primary);';
-            let passText = p.pass ? p.pass : 'لا يوجد (Non disponible)';
-
+        const personId = parseInt(new URLSearchParams(window.location.search).get('id'));
+        const p = APP.getDB().find(x => x.id === personId);
+        
+        if(p) {
             document.getElementById('profileContent').innerHTML = `
-                <div class="profile-header">
-                    <h1>${p.nomAr}</h1>
-                    <p class="fr-text" style="text-align:center; direction:ltr;">${p.nomFr}</p>
+                <div style="text-align: center; border-bottom: 2px solid var(--gn-yellow); padding-bottom: 20px; margin-bottom: 20px;">
+                    <img src="image_5321de.png" width="80" style="margin-bottom: 10px;">
+                    <h1 style="margin:0; color:var(--gn-green);">${p.nomAr}</h1>
+                    <h2 class="fr-text" style="margin:5px 0 0 0; color:#555; text-align:center;">${p.nomFr}</h2>
                 </div>
-                <div class="profile-body">
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label">رقم التسجيل (ID) / العائلة</span>
-                            <span class="info-value fr">${p.id} - ${p.family}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">حالة الجواز (Statut du Passeport)</span>
-                            <span class="status-badge" style="${passColor}">${p.statut}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">اسم الأب (Nom du Père)</span>
-                            <span class="info-value fr">${p.pere}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">اسم الأم (Nom de la Mère)</span>
-                            <span class="info-value fr">${p.mere}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">تاريخ الولادة (Date de Naissance)</span>
-                            <span class="info-value fr">${p.dob}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">مكان الولادة (Lieu de Naissance)</span>
-                            <span class="info-value fr">${p.pob}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">رقم الجواز (N° de Passeport)</span>
-                            <span class="info-value fr">${passText}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">العنوان في سوريا (Adresse)</span>
-                            <span class="info-value">${p.address}</span>
-                        </div>
-                    </div>
-
-                    <div class="no-print" style="text-align: center; margin-top: 20px;">
-                        <a href="card.html?id=${p.id}" class="btn btn-primary" style="padding: 12px 25px; font-size: 16px;">
-                            📄 استخراج البطاقة القنصلية
-                        </a>
-                        <button class="btn btn-dark" style="padding: 12px 25px; font-size: 16px;" onclick="window.print()">
-                            🖨️ طباعة الملف الكامل
-                        </button>
-                    </div>
+                <div class="form-grid">
+                    <div><b>العائلة / Famille:</b> <span class="fr-text">${p.family}</span></div>
+                    <div><b>تاريخ ومكان الولادة:</b> <span class="fr-text">${p.dob} - ${p.pob}</span></div>
+                    <div><b>اسم الأب:</b> <span class="fr-text">${p.pere}</span></div>
+                    <div><b>اسم الأم:</b> <span class="fr-text">${p.mere}</span></div>
+                    <div><b>رقم الجواز:</b> <span class="fr-text">${p.pass || 'N/A'}</span></div>
+                    <div><b>حالة الجواز:</b> <span class="fr-text" style="color: ${p.statut.includes('Valide')?'green':'red'}; font-weight:bold;">${p.statut}</span></div>
+                    <div style="grid-column: span 2;"><b>العنوان في سوريا:</b> ${p.address}</div>
+                </div>
+                <div class="no-print" style="margin-top: 30px; text-align: center;">
+                    <a href="card.html?id=${p.id}" class="btn btn-primary">إصدار البطاقة القنصلية</a>
+                    <button class="btn btn-dark" onclick="window.print()">طباعة البروفايل</button>
                 </div>
             `;
-        } else {
-            document.getElementById('profileContent').innerHTML = "<div class='card'><h3 style='text-align:center;'>لم يتم العثور على بيانات هذا المواطن.</h3></div>";
         }
     </script>
 </body>
