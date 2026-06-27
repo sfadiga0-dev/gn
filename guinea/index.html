@@ -5,19 +5,28 @@
     <title>البوابة القنصلية - غينيا</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .login-box { max-width: 400px; margin: 100px auto; text-align: center; }
-        .login-box input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-        .login-box button { width: 95%; padding: 10px; font-size: 16px; margin-top: 10px; }
+        .login-wrapper { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-box { text-align: center; max-width: 450px; width: 100%; border-top: 5px solid var(--gn-red); }
+        .login-box img { width: 100px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
-    <div class="container login-box">
-        <h2 style="color: var(--primary);">🇬🇳 النظام القنصلي 🇬🇳</h2>
-        <p>الجمهورية الغينية - الجالية في سوريا</p>
-        
-        <input type="text" id="username" placeholder="اسم المستخدم (مثال: admin أو اسم العائلة)">
-        <input type="password" id="password" placeholder="كلمة المرور">
-        <button class="btn btn-primary" onclick="login()">تسجيل الدخول</button>
+    <div class="login-wrapper">
+        <div class="card-glass login-box">
+            <img src="image_5321de.png" alt="شعار غينيا">
+            <h2 style="color: var(--gn-green); margin-bottom: 5px;">الجمهورية الغينية</h2>
+            <p style="margin-top: 0; color: #555;">النظام القنصلي في سوريا</p>
+            
+            <div class="form-group" style="margin-top: 25px; text-align: right;">
+                <label>اسم المستخدم (admin / consul / اسم العائلة)</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم">
+            </div>
+            <div class="form-group" style="margin-top: 15px; text-align: right;">
+                <label>كلمة المرور</label>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 12px; font-size: 16px;" onclick="login()">تسجيل الدخول</button>
+        </div>
     </div>
 
     <script src="app.js"></script>
@@ -25,19 +34,15 @@
         function login() {
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value.trim();
-
             if (u === 'admin' && p === 'admin123') {
-                sessionStorage.setItem('sessionUser', JSON.stringify({role: 'admin', name: 'Hassan Jawad'}));
+                sessionStorage.setItem('sessionUser', JSON.stringify({role: 'admin', name: 'الآدمن العام'}));
                 window.location.href = 'admin.html';
             } else if (u === 'consul' && p === 'consul123') {
-                sessionStorage.setItem('sessionUser', JSON.stringify({role: 'consul', name: 'Consulat'}));
+                sessionStorage.setItem('sessionUser', JSON.stringify({role: 'consul', name: 'القنصل'}));
                 window.location.href = 'consul.html';
-            } else if (p === '1234' && u !== '') { 
-                // العائلات تدخل باسم العائلة (مثل: Camara) وكلمة السر 1234
+            } else if (p === '1234' && u !== '') {
                 sessionStorage.setItem('sessionUser', JSON.stringify({role: 'family', name: u}));
                 window.location.href = 'family.html';
-            } else {
-                alert("بيانات الدخول غير صحيحة!");
             }
         }
     </script>
