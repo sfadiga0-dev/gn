@@ -1,70 +1,81 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة الإدارة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Consular Admin</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="top-nav">
-            <h2 data-i18n="title_admin" style="margin:0; color:var(--gn-green);">لوحة الإدارة - الصلاحيات الكاملة</h2>
-            <select class="lang-selector no-print" onchange="APP.setLang(this.value)">
-                <option value="ar">العربية</option>
-                <option value="fr">Français</option>
-                <option value="en">English</option>
-            </select>
-        </div>
 
-        <div class="card">
-            <div class="no-print" style="margin-bottom: 15px;">
-                <button class="btn btn-primary" onclick="alert('سيتم فتح نافذة الإضافة')"><span data-i18n="add">إضافة</span> +</button>
+    <div class="container">
+        <nav class="navbar glass-card">
+            <div>
+                <h2 data-i18n="greeting" style="margin:0; background: -webkit-linear-gradient(#FCD116, #CE1126); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">مرحباً، حسن جواد</h2>
+                <p data-i18n="subtitle" style="margin:5px 0 0 0; color: var(--text-muted); font-size: 14px;">نظام الإدارة القنصلية الفاخر</p>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th data-i18n="family">العائلة</th>
-                        <th data-i18n="name">الاسم</th>
-                        <th data-i18n="dob">تاريخ الولادة</th>
-                        <th>Statut</th>
-                        <th data-i18n="actions" class="no-print">إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="adminTableBody"></tbody>
-            </table>
-        </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" onclick="SYSTEM.toggleTheme()">🌓 <span data-i18n="light">فاتح</span></button>
+                <select class="btn" style="background:transparent;" onchange="SYSTEM.applyLang(this.value)">
+                    <option value="ar" style="color:#000;">العربية</option>
+                    <option value="fr" style="color:#000;">Français</option>
+                    <option value="en" style="color:#000;">English</option>
+                </select>
+            </div>
+        </nav>
+
+        <main class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 15px;">
+                <input type="text" data-i18n="search" placeholder="ابحث عن مواطن، جواز سفر..." 
+                       style="padding: 12px 20px; width: 300px; max-width: 100%; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 100px; color: var(--text-main); outline: none; backdrop-filter: blur(10px);">
+                
+                <button class="btn" style="border-color: var(--gn-yellow);">+ إضافة سجل جديد</button>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>العائلة (Famille)</th>
+                            <th>الاسم (Nom)</th>
+                            <th>حالة الجواز (Statut)</th>
+                            <th>الإجراءات (Actions)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>01</b></td>
+                            <td style="color: var(--gn-yellow); font-weight: 600;">CAMARA</td>
+                            <td>
+                                <strong style="font-size: 1.1rem; display: block;">كرفالا كمارا</strong>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Kerfalla CAMARA</span>
+                            </td>
+                            <td><span style="background: rgba(0, 119, 73, 0.2); color: #10b981; padding: 5px 12px; border-radius: 100px; font-size: 0.85rem;">Valide / ساري</span></td>
+                            <td>
+                                <button class="btn" style="padding: 5px 15px; font-size: 0.8rem;">تعديل</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>02</b></td>
+                            <td style="color: var(--gn-yellow); font-weight: 600;">KOUYATE</td>
+                            <td>
+                                <strong style="font-size: 1.1rem; display: block;">انفالي كوياتي</strong>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">N'faly KOUYATE</span>
+                            </td>
+                            <td><span style="background: rgba(206, 17, 38, 0.2); color: #ef4444; padding: 5px 12px; border-radius: 100px; font-size: 0.85rem;">À renouveler</span></td>
+                            <td>
+                                <button class="btn" style="padding: 5px 15px; font-size: 0.8rem;">تعديل</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
+
     <script src="app.js"></script>
-    <script>
-        function renderTable() {
-            const db = APP.getDB();
-            const tbody = document.getElementById('adminTableBody');
-            tbody.innerHTML = '';
-            db.forEach(p => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${p.id}</td>
-                        <td><strong>${p.family}</strong></td>
-                        <td><a href="profile.html?id=${p.id}" style="color:var(--dark); text-decoration:none;">${p.nom}</a></td>
-                        <td>${p.dob}</td>
-                        <td>${p.statut}</td>
-                        <td class="no-print">
-                            <button class="btn btn-warning btn-sm" data-i18n="edit">تعديل</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteRecord(${p.id})" data-i18n="delete">حذف</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            APP.setLang(localStorage.getItem('lang') || 'ar'); // تحديث النصوص
-        }
-        function deleteRecord(id) {
-            if(confirm('تأكيد الحذف؟')) {
-                APP.saveDB(APP.getDB().filter(x => x.id !== id));
-                renderTable();
-            }
-        }
-        window.onload = renderTable;
-    </script>
 </body>
 </html>
