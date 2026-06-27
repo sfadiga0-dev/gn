@@ -2,60 +2,42 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>سجل القنصلية - العرض الرسمي</title>
+    <title>سجل القنصلية الرسمي</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div>
-                <h2>سجل الجالية الغينية في سوريا</h2>
-                <span class="fr-text" style="display:block; color:#ddd;">Registre de la Communauté Guinéenne en Syrie</span>
+        <div class="card-glass">
+            <div class="header-panel">
+                <div>
+                    <h2>السجل القنصلي الرسمي</h2>
+                    <p class="fr-text" style="margin:0;">Registre Consulaire Officiel</p>
+                </div>
+                <div class="no-print">
+                    <button class="btn btn-primary" onclick="window.print()">طباعة السجل كامل</button>
+                    <button class="btn btn-dark" onclick="APP.logout()">خروج</button>
+                </div>
             </div>
-            <div class="no-print">
-                <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة السجل (PDF)</button>
-                <button class="btn btn-dark" onclick="APP.logout()">خروج</button>
-            </div>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>العائلة</th><th>الاسم</th><th>الأب والأم</th><th>الجواز</th></tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
         </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>العائلة (Famille)</th>
-                    <th>الاسم (عربي)</th>
-                    <th class="fr-text">Nom (Français)</th>
-                    <th>الأب والأم</th>
-                    <th>التولد ومكان الولادة</th>
-                    <th>الجواز والحالة</th>
-                    <th>العنوان</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-        </table>
     </div>
-
     <script src="app.js"></script>
     <script>
-        APP.checkAuth('consul'); // حماية الصفحة
-
+        APP.checkAuth('consul');
         const db = APP.getDB();
         const tbody = document.getElementById('tableBody');
-        
         db.forEach(p => {
-            let passDisplay = p.pass ? p.pass : '<span style="color:red">Pas de passeport / لا يوجد</span>';
-            tbody.innerHTML += `
-                <tr>
-                    <td>${p.id}</td>
-                    <td class="fr-text"><strong>${p.family}</strong></td>
-                    <td>${p.nomAr}</td>
-                    <td class="fr-text">${p.nomFr}</td>
-                    <td class="fr-text">${p.pere} & ${p.mere}</td>
-                    <td class="fr-text">${p.dob} - ${p.pob}</td>
-                    <td class="fr-text">${passDisplay}<br><b>${p.statut}</b></td>
-                    <td>${p.address}</td>
-                </tr>
-            `;
+            tbody.innerHTML += `<tr>
+                <td>${p.id}</td><td class="fr-text"><b>${p.family}</b></td>
+                <td><a href="profile.html?id=${p.id}">${p.nomAr}</a></td>
+                <td class="fr-text">${p.pere} & ${p.mere}</td>
+                <td class="fr-text">${p.pass || 'N/A'}<br><b>${p.statut}</b></td>
+            </tr>`;
         });
     </script>
 </body>
