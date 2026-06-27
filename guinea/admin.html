@@ -1,115 +1,70 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة القنصلية - تحكم كامل</title>
+    <title>لوحة الإدارة</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div class="card-glass">
-            <div class="header-panel">
-                <div>
-                    <h2>لوحة الإدارة الشاملة</h2>
-                    <p style="margin:0; font-size: 14px;">صلاحيات الآدمن (إضافة، تعديل، حذف)</p>
-                </div>
-                <div class="no-print">
-                    <button class="btn btn-primary" onclick="openModal()">+ إضافة سجل</button>
-                    <button class="btn btn-dark" onclick="APP.logout()">خروج</button>
-                </div>
+        <div class="top-nav">
+            <h2 data-i18n="title_admin" style="margin:0; color:var(--gn-green);">لوحة الإدارة - الصلاحيات الكاملة</h2>
+            <select class="lang-selector no-print" onchange="APP.setLang(this.value)">
+                <option value="ar">العربية</option>
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <div class="card">
+            <div class="no-print" style="margin-bottom: 15px;">
+                <button class="btn btn-primary" onclick="alert('سيتم فتح نافذة الإضافة')"><span data-i18n="add">إضافة</span> +</button>
             </div>
-            
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>العائلة</th>
-                        <th>الاسم (عربي/فرنسي)</th>
-                        <th>الأب والأم</th>
-                        <th>الجواز</th>
-                        <th class="no-print">التحكم</th>
+                        <th data-i18n="family">العائلة</th>
+                        <th data-i18n="name">الاسم</th>
+                        <th data-i18n="dob">تاريخ الولادة</th>
+                        <th>Statut</th>
+                        <th data-i18n="actions" class="no-print">إجراءات</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="adminTableBody"></tbody>
             </table>
         </div>
     </div>
-
-    <!-- نافذة الإضافة/التعديل -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <h3 style="border-bottom: 2px solid var(--gn-green); padding-bottom: 10px;">بيانات المواطن</h3>
-            <input type="hidden" id="f_id">
-            <div class="form-grid">
-                <div class="form-group fr-text"><label>Famille</label><input type="text" id="f_family"></div>
-                <div class="form-group"><label>الاسم الكامل (عربي)</label><input type="text" id="f_nomAr"></div>
-                <div class="form-group fr-text"><label>Nom Complet (FR)</label><input type="text" id="f_nomFr"></div>
-                <div class="form-group fr-text"><label>Nom du Père</label><input type="text" id="f_pere"></div>
-                <div class="form-group fr-text"><label>Nom de la Mère</label><input type="text" id="f_mere"></div>
-                <div class="form-group fr-text"><label>Date de Naissance</label><input type="text" id="f_dob"></div>
-                <div class="form-group fr-text"><label>Lieu de Naissance</label><input type="text" id="f_pob"></div>
-                <div class="form-group fr-text"><label>Passeport</label><input type="text" id="f_pass"></div>
-                <div class="form-group fr-text"><label>Statut</label><input type="text" id="f_statut"></div>
-                <div class="form-group"><label>العنوان</label><input type="text" id="f_address"></div>
-            </div>
-            <div style="margin-top: 20px; text-align: left;">
-                <button class="btn btn-primary" onclick="saveData()">حفظ البيانات</button>
-                <button class="btn btn-dark" onclick="closeModal()">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
     <script src="app.js"></script>
     <script>
-        APP.checkAuth('admin');
-        
         function renderTable() {
             const db = APP.getDB();
-            const tbody = document.getElementById('tableBody');
+            const tbody = document.getElementById('adminTableBody');
             tbody.innerHTML = '';
             db.forEach(p => {
                 tbody.innerHTML += `
                     <tr>
                         <td>${p.id}</td>
-                        <td class="fr-text"><b>${p.family}</b></td>
-                        <td>
-                            <a href="profile.html?id=${p.id}" style="text-decoration:none; color:var(--dark-bg); font-weight:bold;">${p.nomAr}</a>
-                            <br><span class="fr-text" style="font-size:12px; color:#666;">${p.nomFr}</span>
-                        </td>
-                        <td class="fr-text">${p.pere} & ${p.mere}</td>
-                        <td class="fr-text">${p.pass || 'N/A'}<br><span style="color:${p.statut.includes('Valide') ? 'green' : 'red'}">${p.statut}</span></td>
+                        <td><strong>${p.family}</strong></td>
+                        <td><a href="profile.html?id=${p.id}" style="color:var(--dark); text-decoration:none;">${p.nom}</a></td>
+                        <td>${p.dob}</td>
+                        <td>${p.statut}</td>
                         <td class="no-print">
-                            <button class="btn btn-warning" style="padding: 5px 10px;" onclick="editData(${p.id})">تعديل</button>
-                            <button class="btn btn-danger" style="padding: 5px 10px;" onclick="deleteData(${p.id})">حذف</button>
+                            <button class="btn btn-warning btn-sm" data-i18n="edit">تعديل</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteRecord(${p.id})" data-i18n="delete">حذف</button>
                         </td>
-                    </tr>`;
+                    </tr>
+                `;
             });
+            APP.setLang(localStorage.getItem('lang') || 'ar'); // تحديث النصوص
         }
-
-        function openModal() { document.getElementById('editModal').style.display = 'block'; document.querySelectorAll('input').forEach(i => i.value = ''); }
-        function closeModal() { document.getElementById('editModal').style.display = 'none'; }
-        
-        function editData(id) {
-            const p = APP.getDB().find(x => x.id === id);
-            document.getElementById('f_id').value = p.id;
-            ['family', 'nomFr', 'nomAr', 'pere', 'mere', 'dob', 'pob', 'pass', 'statut', 'address'].forEach(k => document.getElementById('f_'+k).value = p[k]);
-            document.getElementById('editModal').style.display = 'block';
+        function deleteRecord(id) {
+            if(confirm('تأكيد الحذف؟')) {
+                APP.saveDB(APP.getDB().filter(x => x.id !== id));
+                renderTable();
+            }
         }
-
-        function saveData() {
-            let db = APP.getDB();
-            let id = document.getElementById('f_id').value;
-            let newData = { id: id ? parseInt(id) : Date.now() }; // إنشاء ID جديد في حال الإضافة
-            ['family', 'nomFr', 'nomAr', 'pere', 'mere', 'dob', 'pob', 'pass', 'statut', 'address'].forEach(k => newData[k] = document.getElementById('f_'+k).value);
-            
-            if(id) { db[db.findIndex(x => x.id == id)] = newData; } else { db.push(newData); }
-            APP.saveDB(db); closeModal(); renderTable();
-        }
-
-        function deleteData(id) {
-            if(confirm('هل أنت متأكد من الحذف؟')) { APP.saveDB(APP.getDB().filter(x => x.id !== id)); renderTable(); }
-        }
-        renderTable();
+        window.onload = renderTable;
     </script>
 </body>
 </html>
