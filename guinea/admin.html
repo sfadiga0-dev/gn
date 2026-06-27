@@ -2,179 +2,113 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة الإدارة - القنصلية</title>
+    <title>إدارة القنصلية - تحكم كامل</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div>
-                <h2>نظام الإدارة القنصلي (Admin)</h2>
-                <span style="color: #64748b; font-size: 14px;">المسؤول: القنصل حسن جواد</span>
+        <div class="card-glass">
+            <div class="header-panel">
+                <div>
+                    <h2>لوحة الإدارة الشاملة</h2>
+                    <p style="margin:0; font-size: 14px;">صلاحيات الآدمن (إضافة، تعديل، حذف)</p>
+                </div>
+                <div class="no-print">
+                    <button class="btn btn-primary" onclick="openModal()">+ إضافة سجل</button>
+                    <button class="btn btn-dark" onclick="APP.logout()">خروج</button>
+                </div>
             </div>
-            <div class="no-print">
-                <button class="btn btn-primary" onclick="openModal()">+ إضافة مواطن جديد</button>
-                <button class="btn btn-dark" onclick="window.print()">🖨️ تصدير PDF</button>
-            </div>
-        </div>
-
-        <div class="card">
-            <!-- شريط البحث الذكي -->
-            <input type="text" id="searchInput" class="search-bar no-print" onkeyup="filterTable()" placeholder="🔍 ابحث بالاسم، العائلة، أو رقم الجواز...">
             
-            <div style="overflow-x: auto;">
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>العائلة (Famille)</th>
-                            <th>الاسم الكامل</th>
-                            <th>الأب والأم</th>
-                            <th>التولد والمكان</th>
-                            <th>حالة الجواز</th>
-                            <th class="no-print">إجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>العائلة</th>
+                        <th>الاسم (عربي/فرنسي)</th>
+                        <th>الأب والأم</th>
+                        <th>الجواز</th>
+                        <th class="no-print">التحكم</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
         </div>
     </div>
 
-    <!-- نافذة الإضافة/التعديل المنبثقة -->
+    <!-- نافذة الإضافة/التعديل -->
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <h2 id="modalTitle" style="margin-top:0; color:var(--dark); border-bottom:2px solid var(--border); padding-bottom:10px;">إضافة / تعديل بيانات</h2>
+            <h3 style="border-bottom: 2px solid var(--gn-green); padding-bottom: 10px;">بيانات المواطن</h3>
             <input type="hidden" id="f_id">
             <div class="form-grid">
-                <div class="form-group fr-text"><label>Groupe Familial</label><input type="text" id="f_family"></div>
-                <div class="form-group fr-text"><label>Nom Complet (FR)</label><input type="text" id="f_nomFr"></div>
+                <div class="form-group fr-text"><label>Famille</label><input type="text" id="f_family"></div>
                 <div class="form-group"><label>الاسم الكامل (عربي)</label><input type="text" id="f_nomAr"></div>
-                <div class="form-group"><label>العنوان في سوريا</label><input type="text" id="f_address"></div>
+                <div class="form-group fr-text"><label>Nom Complet (FR)</label><input type="text" id="f_nomFr"></div>
                 <div class="form-group fr-text"><label>Nom du Père</label><input type="text" id="f_pere"></div>
                 <div class="form-group fr-text"><label>Nom de la Mère</label><input type="text" id="f_mere"></div>
-                <div class="form-group fr-text"><label>Date de Naissance</label><input type="text" id="f_dob" placeholder="Ex: 15/03/1998"></div>
+                <div class="form-group fr-text"><label>Date de Naissance</label><input type="text" id="f_dob"></div>
                 <div class="form-group fr-text"><label>Lieu de Naissance</label><input type="text" id="f_pob"></div>
-                <div class="form-group fr-text"><label>N° de Passeport</label><input type="text" id="f_pass"></div>
-                <div class="form-group fr-text"><label>Statut</label><input type="text" id="f_statut" placeholder="Valide / À renouveler"></div>
+                <div class="form-group fr-text"><label>Passeport</label><input type="text" id="f_pass"></div>
+                <div class="form-group fr-text"><label>Statut</label><input type="text" id="f_statut"></div>
+                <div class="form-group"><label>العنوان</label><input type="text" id="f_address"></div>
             </div>
-            <div style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 10px;">
+            <div style="margin-top: 20px; text-align: left;">
+                <button class="btn btn-primary" onclick="saveData()">حفظ البيانات</button>
                 <button class="btn btn-dark" onclick="closeModal()">إلغاء</button>
-                <button class="btn btn-primary" onclick="saveData()">💾 حفظ البيانات</button>
             </div>
         </div>
     </div>
 
     <script src="app.js"></script>
     <script>
+        APP.checkAuth('admin');
+        
         function renderTable() {
             const db = APP.getDB();
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-            
             db.forEach(p => {
-                let passColor = p.statut.includes('renouveler') ? 'color: var(--danger); font-weight: bold;' : 'color: var(--primary); font-weight: bold;';
-                let passDisplay = p.pass ? p.pass : '<span style="color:var(--danger)">لا يوجد</span>';
-                
                 tbody.innerHTML += `
                     <tr>
                         <td>${p.id}</td>
-                        <td class="fr-text" style="font-weight:bold;">${p.family}</td>
+                        <td class="fr-text"><b>${p.family}</b></td>
                         <td>
-                            <a href="profile.html?id=${p.id}" style="color:var(--dark); text-decoration:none; font-weight:bold;">${p.nomAr}</a><br>
-                            <span class="fr-text" style="font-size:12px; color:#64748b;">${p.nomFr}</span>
+                            <a href="profile.html?id=${p.id}" style="text-decoration:none; color:var(--dark-bg); font-weight:bold;">${p.nomAr}</a>
+                            <br><span class="fr-text" style="font-size:12px; color:#666;">${p.nomFr}</span>
                         </td>
                         <td class="fr-text">${p.pere} & ${p.mere}</td>
-                        <td class="fr-text">${p.dob}<br><span style="font-size:12px; color:#64748b;">${p.pob}</span></td>
-                        <td class="fr-text">${passDisplay}<br><span style="${passColor}">${p.statut}</span></td>
+                        <td class="fr-text">${p.pass || 'N/A'}<br><span style="color:${p.statut.includes('Valide') ? 'green' : 'red'}">${p.statut}</span></td>
                         <td class="no-print">
-                            <button class="btn btn-edit" onclick="editData(${p.id})">تعديل</button>
-                            <button class="btn btn-delete" onclick="deleteData(${p.id})">حذف</button>
+                            <button class="btn btn-warning" style="padding: 5px 10px;" onclick="editData(${p.id})">تعديل</button>
+                            <button class="btn btn-danger" style="padding: 5px 10px;" onclick="deleteData(${p.id})">حذف</button>
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
             });
         }
 
-        // محرك البحث الذكي الفوري
-        function filterTable() {
-            let input = document.getElementById("searchInput").value.toUpperCase();
-            let table = document.getElementById("dataTable");
-            let tr = table.getElementsByTagName("tr");
-
-            for (let i = 1; i < tr.length; i++) {
-                let textValue = tr[i].textContent || tr[i].innerText;
-                if (textValue.toUpperCase().indexOf(input) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-        }
-
-        // وظائف النافذة المنبثقة (Modals)
-        function openModal() {
-            document.getElementById('editModal').style.display = 'block';
-            document.querySelectorAll('.form-group input').forEach(inpt => inpt.value = '');
-            document.getElementById('f_id').value = '';
-        }
-
+        function openModal() { document.getElementById('editModal').style.display = 'block'; document.querySelectorAll('input').forEach(i => i.value = ''); }
         function closeModal() { document.getElementById('editModal').style.display = 'none'; }
-
+        
         function editData(id) {
-            const db = APP.getDB();
-            const p = db.find(item => item.id === id);
+            const p = APP.getDB().find(x => x.id === id);
             document.getElementById('f_id').value = p.id;
-            document.getElementById('f_family').value = p.family;
-            document.getElementById('f_nomFr').value = p.nomFr;
-            document.getElementById('f_nomAr').value = p.nomAr;
-            document.getElementById('f_pere').value = p.pere;
-            document.getElementById('f_mere').value = p.mere;
-            document.getElementById('f_dob').value = p.dob;
-            document.getElementById('f_pob').value = p.pob;
-            document.getElementById('f_pass').value = p.pass;
-            document.getElementById('f_statut').value = p.statut;
-            document.getElementById('f_address').value = p.address;
+            ['family', 'nomFr', 'nomAr', 'pere', 'mere', 'dob', 'pob', 'pass', 'statut', 'address'].forEach(k => document.getElementById('f_'+k).value = p[k]);
             document.getElementById('editModal').style.display = 'block';
         }
 
         function saveData() {
             let db = APP.getDB();
-            const idVal = document.getElementById('f_id').value;
-            const newData = {
-                id: idVal ? parseInt(idVal) : (db.length > 0 ? Math.max(...db.map(x => x.id)) + 1 : 1),
-                family: document.getElementById('f_family').value,
-                nomFr: document.getElementById('f_nomFr').value,
-                nomAr: document.getElementById('f_nomAr').value,
-                pere: document.getElementById('f_pere').value,
-                mere: document.getElementById('f_mere').value,
-                dob: document.getElementById('f_dob').value,
-                pob: document.getElementById('f_pob').value,
-                pass: document.getElementById('f_pass').value,
-                statut: document.getElementById('f_statut').value,
-                address: document.getElementById('f_address').value
-            };
-
-            if (idVal) {
-                const index = db.findIndex(x => x.id === parseInt(idVal));
-                db[index] = newData;
-            } else {
-                db.push(newData);
-            }
-            APP.saveDB(db);
-            closeModal();
-            renderTable();
+            let id = document.getElementById('f_id').value;
+            let newData = { id: id ? parseInt(id) : Date.now() }; // إنشاء ID جديد في حال الإضافة
+            ['family', 'nomFr', 'nomAr', 'pere', 'mere', 'dob', 'pob', 'pass', 'statut', 'address'].forEach(k => newData[k] = document.getElementById('f_'+k).value);
+            
+            if(id) { db[db.findIndex(x => x.id == id)] = newData; } else { db.push(newData); }
+            APP.saveDB(db); closeModal(); renderTable();
         }
 
         function deleteData(id) {
-            if(confirm('هل أنت متأكد من حذف هذا السجل نهائياً؟')) {
-                let db = APP.getDB();
-                db = db.filter(x => x.id !== id);
-                APP.saveDB(db);
-                renderTable();
-            }
+            if(confirm('هل أنت متأكد من الحذف؟')) { APP.saveDB(APP.getDB().filter(x => x.id !== id)); renderTable(); }
         }
-
         renderTable();
     </script>
 </body>
