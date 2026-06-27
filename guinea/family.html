@@ -4,53 +4,87 @@
     <meta charset="UTF-8">
     <title>ملف العائلة</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .family-card {
-            border: 1px solid #ddd; padding: 15px; margin-bottom: 15px;
-            border-radius: 8px; display: flex; justify-content: space-between;
-            align-items: center; background: #fafafa;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h2>ملف مجموعة عائلة: <span id="familyNameDisplay"></span></h2>
-            <button class="btn btn-dark no-print" onclick="APP.logout()">تسجيل الخروج</button>
+        <div class="card-glass">
+            <div class="header-panel">
+                <h2>إدارة عائلة: <span id="famName" class="fr-text"></span></h2>
+                <div class="no-print">
+                    <button class="btn btn-primary" onclick="openAddModal()">+ إضافة فرد للعائلة</button>
+                    <button class="btn btn-dark" onclick="APP.logout()">خروج</button>
+                </div>
+            </div>
+            <div id="familyList"></div>
         </div>
+    </div>
 
-        <div id="membersList"></div>
+    <!-- نافذة إضافة فرد للعائلة -->
+    <div id="addFamModal" class="modal">
+        <div class="modal-content">
+            <h3>إضافة فرد جديد</h3>
+            <div class="form-grid">
+                <div class="form-group"><label>الاسم الكامل (عربي)</label><input type="text" id="fm_nomAr"></div>
+                <div class="form-group fr-text"><label>Nom Complet (FR)</label><input type="text" id="fm_nomFr"></div>
+                <div class="form-group fr-text"><label>Date de Naissance</label><input type="text" id="fm_dob"></div>
+            </div>
+            <div style="margin-top: 20px; text-align: left;">
+                <button class="btn btn-primary" onclick="saveFamilyMember()">حفظ</button>
+                <button class="btn btn-dark" onclick="document.getElementById('addFamModal').style.display='none'">إلغاء</button>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>
     <script>
         const user = APP.checkAuth('family');
-        document.getElementById('familyNameDisplay').innerText = user.name.toUpperCase();
-
-        const db = APP.getDB();
-        // تصفية البيانات لتطابق اسم العائلة المسجل دخوله (غير حساس لحالة الأحرف)
-        const myFamily = db.filter(p => p.family.toLowerCase() === user.name.toLowerCase());
+        document.getElementById('famName').innerText = user.name;
         
-        const list = document.getElementById('membersList');
-        
-        if (myFamily.length === 0) {
-            list.innerHTML = "<p>لا يوجد بيانات مسجلة لهذه العائلة.</p>";
-        } else {
+        function renderFamily() {
+            const db = APP.getDB();
+            const myFamily = db.filter(p => p.family.toLowerCase() === user.name.toLowerCase());
+            const list = document.getElementById('familyList');
+            list.innerHTML = '';
             myFamily.forEach(p => {
-                let statusColor = p.statut.includes('À renouveler') ? 'red' : 'green';
                 list.innerHTML += `
-                    <div class="family-card">
-                        <div>
-                            <h3 style="margin:0 0 5px 0;">${p.nomAr} <span class="fr-text" style="font-size:14px; color:#555;">(${p.nomFr})</span></h3>
-                            <p style="margin:5px 0; font-size:14px;">الجواز: <strong>${p.pass || 'لا يوجد'}</strong> | الحالة: <span style="color:${statusColor}; font-weight:bold;">${p.statut}</span></p>
-                        </div>
-                        <div class="no-print">
-                            <a href="card.html?id=${p.id}" class="btn btn-primary" target="_blank">📄 عرض البطاقة القنصلية</a>
-                        </div>
+                <div style="border: 1px solid var(--border-color); padding: 15px; margin-bottom: 10px; border-radius: 8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3 style="margin:0;">${p.nomAr} <span class="fr-text" style="font-size:14px;">(${p.nomFr})</span></h3>
+                        <p style="margin:5px 0; font-size:14px;">تاريخ الولادة: ${p.dob} | الجواز: ${p.pass || 'لا يوجد'}</p>
                     </div>
-                `;
+                    <div class="no-print">
+                        <a href="card.html?id=${p.id}" class="btn btn-primary" style="padding: 6px 12px;">البطاقة</a>
+                        <button class="btn btn-danger" style="padding: 6px 12px;" onclick="removeMember(${p.id})">حذف</button>
+                    </div>
+                </div>`;
             });
         }
+
+        function openAddModal() { document.getElementById('addFamModal').style.display = 'block'; }
+        
+        function saveFamilyMember() {
+            const db = APP.getDB();
+            const newMem = {
+                id: Date.now(),
+                family: user.name, // يُجبر على اسم العائلة المسجل دخوله
+                nomAr: document.getElementById('fm_nomAr').value,
+                nomFr: document.getElementById('fm_nomFr').value,
+                dob: document.getElementById('fm_dob').value,
+                pere: "", mere: "", pob: "", pass: "", statut: "À renouveler", address: ""
+            };
+            db.push(newMem);
+            APP.saveDB(db);
+            document.getElementById('addFamModal').style.display = 'none';
+            renderFamily();
+        }
+
+        function removeMember(id) {
+            if(confirm('هل تريد إزالة هذا الفرد؟')) {
+                APP.saveDB(APP.getDB().filter(x => x.id !== id));
+                renderFamily();
+            }
+        }
+        renderFamily();
     </script>
 </body>
 </html>
