@@ -6,64 +6,50 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .id-card {
-            width: 85mm; height: 55mm; /* حجم بطاقة الهوية القياسي */
-            border: 2px solid var(--primary);
-            border-radius: 10px;
-            padding: 10px;
-            margin: 20px auto;
-            background: white;
-            position: relative;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-            background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('image_5321de.png');
-            background-size: cover;
-            background-position: center;
+            width: 85.6mm; height: 53.98mm; /* حجم البطاقة العالمية القياسي */
+            border: 2px solid var(--gn-green); border-radius: 8px;
+            background: white url('image_5321de.png') no-repeat center center;
+            background-size: 50%; padding: 10px; margin: 20px auto;
+            position: relative; box-sizing: border-box; overflow: hidden;
         }
-        .card-header { text-align: center; border-bottom: 2px solid var(--danger); padding-bottom: 5px; margin-bottom: 10px; }
-        .card-header h4 { margin: 0; color: var(--primary); font-size: 12px; }
-        .card-header p { margin: 0; font-size: 10px; color: var(--dark); direction: ltr; }
-        .card-body { font-size: 11px; line-height: 1.5; }
-        .row { display: flex; justify-content: space-between; margin-bottom: 4px; border-bottom: 1px dotted #ccc;}
-        .label { font-weight: bold; color: var(--dark); }
-        .val.fr { direction: ltr; text-align: left; }
+        /* تبييض الخلفية وجعل اللوغو مائي */
+        .id-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 1; }
+        .id-card-content { position: relative; z-index: 2; font-size: 11px; line-height: 1.4; }
+        .card-header { text-align: center; border-bottom: 2px solid var(--gn-red); margin-bottom: 5px; padding-bottom: 3px; }
+        .card-header h4 { margin: 0; color: var(--gn-green); font-size: 12px; }
+        .row-data { display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; margin-bottom: 3px; }
+        .row-label { font-weight: bold; color: var(--text-main); }
+        .row-val { font-weight: bold; }
     </style>
 </head>
-<body>
-    <div class="container no-print" style="text-align: center; margin-bottom: 20px;">
-        <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة البطاقة</button>
-        <button class="btn btn-dark" onclick="window.close()">إغلاق</button>
+<body style="background: white;">
+    <div class="no-print" style="text-align: center; margin: 20px;">
+        <button class="btn btn-primary" onclick="window.print()">طباعة البطاقة</button>
+        <button class="btn btn-dark" onclick="window.history.back()">رجوع</button>
     </div>
 
-    <div class="id-card" id="cardArea">
-        <!-- سيتم حقن البيانات هنا -->
-    </div>
+    <div class="id-card" id="cardData"></div>
 
     <script src="app.js"></script>
     <script>
-        // استخراج الـ ID من الرابط (مثال: card.html?id=3)
-        const urlParams = new URLSearchParams(window.location.search);
-        const personId = parseInt(urlParams.get('id'));
+        const personId = parseInt(new URLSearchParams(window.location.search).get('id'));
+        const p = APP.getDB().find(x => x.id === personId);
         
-        const db = APP.getDB();
-        const person = db.find(p => p.id === personId);
-
-        if (person) {
-            document.getElementById('cardArea').innerHTML = `
-                <div class="card-header">
-                    <h4>الجمهورية الغينية - الجالية في سوريا</h4>
-                    <p>République de Guinée - Carte Consulaire</p>
-                </div>
-                <div class="card-body">
-                    <div class="row"><span class="label">الاسم الكامل:</span> <span class="val">${person.nomAr}</span></div>
-                    <div class="row"><span class="label">Nom complet:</span> <span class="val fr"><strong>${person.nomFr}</strong></span></div>
-                    <div class="row"><span class="label">الأب والأم:</span> <span class="val fr">${person.pere} & ${person.mere}</span></div>
-                    <div class="row"><span class="label">تاريخ ومكان الولادة:</span> <span class="val fr">${person.dob} - ${person.pob}</span></div>
-                    <div class="row"><span class="label">رقم الجواز:</span> <span class="val fr">${person.pass || 'N/A'}</span></div>
-                    <div class="row"><span class="label">العائلة:</span> <span class="val fr">${person.family}</span></div>
+        if(p) {
+            document.getElementById('cardData').innerHTML = `
+                <div class="id-card-content">
+                    <div class="card-header">
+                        <h4>الجمهورية الغينية - الجالية في سوريا</h4>
+                        <span class="fr-text" style="font-size:10px;">Carte Consulaire - Syrie</span>
+                    </div>
+                    <div class="row-data"><span class="row-label">الاسم:</span> <span class="row-val">${p.nomAr}</span></div>
+                    <div class="row-data"><span class="row-label">Nom:</span> <span class="row-val fr-text">${p.nomFr}</span></div>
+                    <div class="row-data"><span class="row-label">العائلة/Famille:</span> <span class="row-val fr-text">${p.family}</span></div>
+                    <div class="row-data"><span class="row-label">تاريخ الولادة/Né le:</span> <span class="row-val fr-text">${p.dob}</span></div>
+                    <div class="row-data"><span class="row-label">رقم الجواز:</span> <span class="row-val fr-text">${p.pass || 'N/A'}</span></div>
+                    <div style="text-align:center; margin-top:5px; color:var(--gn-red); font-size:9px; font-weight:bold;">هذه البطاقة صادرة عن القنصلية وغير قابلة للتحويل</div>
                 </div>
             `;
-        } else {
-            document.getElementById('cardArea').innerHTML = "<p style='text-align:center;'>لم يتم العثور على المواطن</p>";
         }
     </script>
 </body>
