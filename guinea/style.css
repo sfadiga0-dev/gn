@@ -1,131 +1,121 @@
-/* style.css - V2 Premium */
 :root {
-    --primary: #008542; /* أخضر غيني داكن ورسمي */
-    --danger: #ce1126;  /* أحمر غيني */
-    --warning: #fcd116; /* أصفر غيني */
-    --dark: #1e293b;
-    --light: #f8fafc;
-    --border: #e2e8f0;
+    --gn-green: #009460;
+    --gn-yellow: #FCD116;
+    --gn-red: #CE1126;
+    --dark-bg: #1a1e23;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --border-color: #e2e8f0;
+    --text-main: #2d3748;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #eef2f6;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     direction: rtl;
-    color: #334155;
+    background-color: #f0f4f8;
+    color: var(--text-main);
+    position: relative;
+    min-height: 100vh;
+}
+
+/* الخلفية المائية للوغو الدولة */
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60vw;
+    height: 60vw;
+    background-image: url('image_5321de.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.05;
+    z-index: -1;
 }
 
 .container {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 40px auto;
+    padding: 0 20px;
 }
 
-/* الترويسة (Header) */
-.header {
-    background: white;
-    padding: 20px 30px;
+.card-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
     border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border-top: 4px solid var(--gn-green);
     margin-bottom: 25px;
+}
+
+.header-panel {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border-top: 4px solid var(--primary);
-}
-
-.header h2 { margin: 0; color: var(--dark); }
-
-/* البطاقات (Cards) */
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
     margin-bottom: 20px;
 }
 
-/* شريط البحث الذكي */
-.search-bar {
-    width: 100%;
-    padding: 12px 20px;
-    font-size: 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
+.header-panel h2 {
+    margin: 0;
+    color: var(--gn-green);
 }
-.search-bar:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,133,66,0.1); }
 
-/* الجداول (Tables) */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary { background: var(--gn-green); color: white; }
+.btn-primary:hover { background: #007a4f; }
+.btn-danger { background: var(--gn-red); color: white; }
+.btn-warning { background: var(--gn-yellow); color: #333; }
+.btn-dark { background: var(--dark-bg); color: white; }
+
 table {
     width: 100%;
     border-collapse: collapse;
     background: white;
-    font-size: 14.5px;
+    border-radius: 8px;
+    overflow: hidden;
 }
-th, td { 
-    padding: 15px; 
-    text-align: center; 
-    border-bottom: 1px solid var(--border);
-}
-th { 
-    background: var(--light); 
-    color: var(--dark); 
-    font-weight: 600; 
-    border-bottom: 2px solid var(--border);
-}
-tr:hover { background-color: var(--light); transition: 0.2s; }
 
-/* الأزرار (Buttons) */
-.btn {
-    padding: 10px 20px;
-    cursor: pointer;
-    border: none;
-    border-radius: 6px;
+th, td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background: var(--dark-bg);
     color: white;
     font-weight: 600;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
 }
-.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-.btn-primary { background: var(--primary); }
-.btn-dark { background: var(--dark); }
-.btn-edit { background: #f59e0b; padding: 6px 12px; font-size: 13px; }
-.btn-delete { background: var(--danger); padding: 6px 12px; font-size: 13px; }
 
-/* النصوص الفرنسية */
+tr:hover { background: #f8fafc; }
 .fr-text { direction: ltr; text-align: left; font-family: Arial, sans-serif; }
 
 /* النوافذ المنبثقة (Modals) */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 1000; }
-.modal-content { 
-    background: white; 
-    width: 85%; 
-    max-width: 800px; 
-    margin: 40px auto; 
-    padding: 30px; 
-    border-radius: 16px; 
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); 
-    animation: slideIn 0.3s ease-out;
-}
-@keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; backdrop-filter: blur(5px); }
+.modal-content { background: white; width: 90%; max-width: 800px; margin: 5vh auto; padding: 30px; border-radius: 12px; border-top: 5px solid var(--gn-yellow); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+.form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
 
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-.form-group { display: flex; flex-direction: column; }
-.form-group label { margin-bottom: 8px; font-weight: 600; color: var(--dark); font-size: 14px; }
-.form-group input { padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; transition: 0.3s; }
-.form-group input:focus { outline: none; border-color: var(--primary); }
-
-/* إعدادات الطباعة */
 @media print {
-    body { background: white; padding: 0; }
-    .btn, .search-bar, .no-print { display: none !important; }
-    .header, .card { box-shadow: none; border: none; padding: 0; margin-bottom: 10px; }
+    body::before { opacity: 0.1; }
+    .no-print, .btn { display: none !important; }
+    .card-glass { box-shadow: none; border: none; background: transparent; }
     th { background: #eee !important; color: black !important; }
 }
