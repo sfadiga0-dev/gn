@@ -1,5 +1,5 @@
 // data.js
-const jaliyaDB = [
+const defaultDB = [
     { id: 1, family: "Camara", nameFr: "Kerfalla CAMARA", nameAr: "كرفالا كمارا", pere: "Ibrahim", mere: "Yari", dob: "1976 - Kindia", passport: "91", status: "موجود", address: "دف الشوك، دمشق", phone: "0932779075", marital: "متزوج" },
     { id: 2, family: "Camara", nameFr: "Adama CAMARA", nameAr: "آدم كمارا", pere: "Mohamed", mere: "Anser", dob: "1969 - Conakry", passport: "92", status: "موجود (بدو تدقيق)", address: "دف الشوك، دمشق", phone: "---", marital: "متزوجة" },
     { id: 3, family: "Camara", nameFr: "Nsira CAMARA", nameAr: "انسرا كامارا", pere: "Kerfalla", mere: "Adama", dob: "15/03/1998 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
@@ -7,35 +7,45 @@ const jaliyaDB = [
     { id: 5, family: "Camara", nameFr: "Mouhamed Lamine CAMARA", nameAr: "محمد أمين كمارا", pere: "Kerfalla", mere: "Adama", dob: "15/10/2001 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "أعزب" },
     { id: 6, family: "Camara", nameFr: "Aboubacar CAMARA", nameAr: "أبوبكر كمارا", pere: "Kerfalla", mere: "Adama", dob: "21/11/2006 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "أعزب" },
     { id: 7, family: "Camara", nameFr: "Aicha CAMARA", nameAr: "عائشة كمارا", pere: "Kerfalla", mere: "Adama", dob: "12/05/2010 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "قاصر" },
-    
     { id: 8, family: "Kouyate", nameFr: "N'faly KOUYATE", nameAr: "انفالي كوياتي", pere: "Moussa", mere: "Mariama", dob: "13/04/1964 - Kankan", passport: "105", status: "غير مبين (بدو تدقيق)", address: "ركن الدين، دمشق", phone: "---", marital: "متزوج" },
     { id: 9, family: "Kouyate", nameFr: "Adama KABA", nameAr: "ادما كابا", pere: "Mamadi", mere: "Roukiatou", dob: "04/04/1981 - Kankan", passport: "لا يوجد", status: "غير مبين (بدو تدقيق)", address: "ركن الدين، دمشق", phone: "---", marital: "متزوجة" },
     { id: 10, family: "Kouyate", nameFr: "Souleyman KOUYATE", nameAr: "سليمان كوياتي", pere: "N'faly", mere: "Adama", dob: "04/09/2002 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "ركن الدين، دمشق", phone: "---", marital: "أعزب" },
     { id: 11, family: "Kouyate", nameFr: "Zeinab KOUYATE", nameAr: "زينب كوياتي", pere: "N'faly", mere: "Adama", dob: "09/04/2007 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "ركن الدين، دمشق", phone: "---", marital: "عزباء" },
-    
     { id: 12, family: "Soumah", nameFr: "Alseny SOUMAH", nameAr: "الحسين موسى سوما", pere: "Moussa", mere: "Hawa", dob: "01/01/1978 - Guinée", passport: "RO 00252379", status: "تم تجديده مسبقاً", address: "دف الشوك، دمشق", phone: "0934229739", marital: "متزوج" },
     { id: 13, family: "Soumah", nameFr: "Fatoumata KAMANO", nameAr: "فاتوماتا كامانو", pere: "Kikoura", mere: "Wata", dob: "20/01/1985 - Guinée", passport: "173494", status: "تم تجديده لسنتين", address: "دف الشوك، دمشق", phone: "---", marital: "متزوجة" },
     { id: 14, family: "Soumah", nameFr: "Hawa SOUMAH", nameAr: "حواء سوما", pere: "Alseny", mere: "Fatoumata", dob: "07/11/2004 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
     { id: 15, family: "Soumah", nameFr: "Mariam SOUMAH", nameAr: "مريم سوما", pere: "Alseny", mere: "Fatoumata", dob: "06/10/2005 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
     { id: 16, family: "Soumah", nameFr: "Aminata SOUMAH", nameAr: "آمنة سوما", pere: "Alseny", mere: "Fatoumata", dob: "24/07/2007 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
     { id: 17, family: "Soumah", nameFr: "Mousah SOUMAH", nameAr: "موسى سوما", pere: "Alseny", mere: "Fatoumata", dob: "09/10/2019 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "قاصر" },
-    
     { id: 18, family: "Diassy", nameFr: "Hassimou DIASSY", nameAr: "هاشمي جاسي", pere: "Aboubacar", mere: "Salima", dob: "07/01/1981 - Boké", passport: "RO 080958", status: "منتهي الصلاحية", address: "الميدان، دمشق", phone: "0936864671", marital: "متزوج" },
     { id: 19, family: "Diassy", nameFr: "Halimatou DIASSY", nameAr: "حليمة جاسي", pere: "---", mere: "---", dob: "05/11/2000 - Boké", passport: "موجود", status: "بدو تجديد", address: "الميدان، دمشق", phone: "---", marital: "متزوجة" },
     { id: 20, family: "Diassy", nameFr: "Aboubacar DIASSY", nameAr: "أبوبكر جاسي", pere: "Hassimou", mere: "Halimatou", dob: "28/01/2020 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "الميدان، دمشق", phone: "---", marital: "قاصر" },
     { id: 21, family: "Diassy", nameFr: "Abdallah DIASSY", nameAr: "عبد الله جاسي", pere: "Hassimou", mere: "Halimatou", dob: "2023 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "الميدان، دمشق", phone: "---", marital: "قاصر" },
     { id: 22, family: "Diassy", nameFr: "Salima DIASSY", nameAr: "سليمة جاسي", pere: "Hassimou", mere: "Halimatou", dob: "2025 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "الميدان، دمشق", phone: "---", marital: "قاصر" },
-    
     { id: 23, family: "Suleiman Fadiga", nameFr: "Aicha FADIGA", nameAr: "عائشة فاديغا", pere: "Mohamed Lamine", mere: "Bentouba", dob: "16/11/1979 - Guinée", passport: "72", status: "موجود ساري", address: "دف الشوك، دمشق", phone: "0999373093", marital: "متزوجة" },
     { id: 24, family: "Suleiman Fadiga", nameFr: "Hawa FADIGA", nameAr: "حواء فاديغا", pere: "Suleiman", mere: "Aicha", dob: "01/01/1999 - Damas", passport: "73", status: "ساري الصلاحية", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
     { id: 25, family: "Suleiman Fadiga", nameFr: "Sankoumba FADIGA", nameAr: "سنكونبا فاديغا", pere: "Suleiman", mere: "Aicha", dob: "07/10/2000 - Damas", passport: "74", status: "بدو تجديد", address: "دف الشوك، دمشق", phone: "---", marital: "أعزب" },
     { id: 26, family: "Suleiman Fadiga", nameFr: "Bentouba FADIGA", nameAr: "بنتوبا فاديغا", pere: "Suleiman", mere: "Aicha", dob: "2008 - Damas", passport: "75", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
     { id: 27, family: "Suleiman Fadiga", nameFr: "Khadiga FADIGA", nameAr: "كديجا فاديغا", pere: "Suleiman", mere: "Aicha", dob: "2009 - Damas", passport: "76", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "قاصر" },
-    
     { id: 28, family: "Youssef Fadiga", nameFr: "Safiatou KABA", nameAr: "صفية كابا", pere: "Mamadi", mere: "Roukiatou", dob: "02/10/1972 - Guinée", passport: "102", status: "ساري (يخلص قريباً)", address: "دف الشوك، دمشق", phone: "---", marital: "متزوجة" },
     { id: 29, family: "Youssef Fadiga", nameFr: "Fatoumata FADIGA", nameAr: "فاطمة فاديغا", pere: "Youssef", mere: "Safiatou", dob: "12/02/1995 - Damas", passport: "110", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
     { id: 30, family: "Youssef Fadiga", nameFr: "Rokiatou FADIGA", nameAr: "رقية فاديغا", pere: "Youssef", mere: "Safiatou", dob: "22/01/1997 - Damas", passport: "111", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
     { id: 31, family: "Youssef Fadiga", nameFr: "Mariam FADIGA", nameAr: "مريم فاديغا", pere: "Youssef", mere: "Safiatou", dob: "16/12/2004 - Damas", passport: "157", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
     { id: 32, family: "Youssef Fadiga", nameFr: "Mamadi FADIGA", nameAr: "مامادي فاديغا", pere: "Youssef", mere: "Safiatou", dob: "30/11/2001 - Damas", passport: "156", status: "ساري (ما بدو تجديد)", address: "دف الشوك، دمشق", phone: "---", marital: "أعزب" },
     { id: 33, family: "Youssef Fadiga", nameFr: "Alpha Sanoussy FADIGA", nameAr: "ألفا سنسي فاديغا", pere: "Youssef", mere: "Safiatou", dob: "30/09/2010 - Damas", passport: "116", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "قاصر" }
-];  
+];
+
+// تهيئة الذاكرة المحلية إذا كانت فارغة
+if (!localStorage.getItem('jaliyaData')) {
+    localStorage.setItem('jaliyaData', JSON.stringify(defaultDB));
+}
+
+// دالة لجلب البيانات من الذاكرة
+function getDB() {
+    return JSON.parse(localStorage.getItem('jaliyaData'));
+}
+
+// دالة لحفظ البيانات في الذاكرة
+function saveDB(data) {
+    localStorage.setItem('jaliyaData', JSON.stringify(data));
+}
