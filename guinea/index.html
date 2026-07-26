@@ -2,47 +2,189 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>البوابة القنصلية - غينيا</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الجالية - سفارة غينيا</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .login-wrapper { display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .login-box { text-align: center; max-width: 450px; width: 100%; border-top: 5px solid var(--gn-red); }
-        .login-box img { width: 100px; margin-bottom: 15px; }
-    </style>
 </head>
-<body>
-    <div class="login-wrapper">
-        <div class="card-glass login-box">
-            <img src="image_5321de.png" alt="شعار غينيا">
-            <h2 style="color: var(--gn-green); margin-bottom: 5px;">الجمهورية الغينية</h2>
-            <p style="margin-top: 0; color: #555;">النظام القنصلي في سوريا</p>
-            
-            <div class="form-group" style="margin-top: 25px; text-align: right;">
-                <label>اسم المستخدم (admin / consul / اسم العائلة)</label>
-                <input type="text" id="username" placeholder="أدخل اسم المستخدم">
-            </div>
-            <div class="form-group" style="margin-top: 15px; text-align: right;">
-                <label>كلمة المرور</label>
-                <input type="password" id="password" placeholder="أدخل كلمة المرور">
-            </div>
-            <button class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 12px; font-size: 16px;" onclick="login()">تسجيل الدخول</button>
-        </div>
-    </div>
+<body x-data="consularSystem()">
 
-    <script src="app.js"></script>
+    <!-- العلامة المائية الشاملة -->
+    <img src="image_5321de.png" class="global-watermark" alt="Watermark">
+
+    <!-- شريط التنقل العُلوي -->
+    <nav class="glass-panel sticky top-4 z-50 max-w-6xl mx-auto flex items-center justify-between p-4 mb-8 no-print">
+        <div class="flex items-center gap-4">
+            <img src="image_5321de.png" class="h-10 object-contain" alt="Logo">
+            <div>
+                <h1 class="text-xl font-bold text-white">الجمهورية الغينية</h1>
+                <p class="text-xs text-green-400">السجل القنصلي الرقمي</p>
+            </div>
+        </div>
+        <div class="flex gap-4">
+            <button @click="view = 'list'" class="text-gray-300 hover:text-white transition-colors">قائمة الجالية</button>
+        </div>
+    </nav>
+
+    <!-- 1. قائمة عرض الجالية -->
+    <main x-show="view === 'list'" class="max-w-6xl mx-auto px-4 w-full">
+        <div class="glass-panel p-6 mb-8">
+            <input type="text" x-model="search" placeholder="ابحث بالاسم أو العائلة أو رقم الجواز..." class="input-field text-lg py-3">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="person in filteredList" :key="person.id">
+                <div class="glass-panel p-6 hover:border-green-500 transition-colors cursor-pointer group" @click="openProfile(person)">
+                    <h3 class="text-xl font-bold text-white group-hover:text-green-400" x-text="person.nameAr"></h3>
+                    <p class="text-sm text-gray-400 mb-2" x-text="person.nameFr"></p>
+                    <div class="flex justify-between items-center mt-4 border-t border-white/10 pt-4">
+                        <span class="text-yellow-500 text-sm" x-text="person.family"></span>
+                        <span class="px-2 py-1 bg-white/10 rounded text-xs" x-text="person.passport"></span>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </main>
+
+    <!-- 2. صفحة البروفايل (مع إمكانية التعديل للمسؤول) -->
+    <main x-show="view === 'profile' && activePerson" class="max-w-4xl mx-auto px-4 w-full pb-10" style="display: none;">
+        <div class="flex justify-between items-center mb-6 no-print">
+            <button @click="view = 'list'" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white">العودة للقائمة</button>
+            <div class="flex gap-2">
+                <button @click="view = 'card'" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 rounded-lg text-white font-bold">عرض البطاقة للطباعة</button>
+                <!-- زر التعديل يظهر فقط إذا لم يكن المستخدم هو القنصل -->
+                <button x-show="!isConsulView" @click="editMode = !editMode" class="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-white font-bold" x-text="editMode ? 'حفظ التعديلات' : 'تعديل البيانات'"></button>
+            </div>
+        </div>
+
+        <div class="glass-panel p-8">
+            <div class="border-b border-white/20 pb-4 mb-6 flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-white" x-text="activePerson?.nameAr"></h2>
+                    <h3 class="text-xl text-gray-400" x-text="activePerson?.nameFr"></h3>
+                </div>
+                <span class="text-2xl font-bold text-yellow-500" x-text="'ID: ' + activePerson?.id"></span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <template x-for="(value, key) in fieldsMap" :key="key">
+                    <div class="space-y-1">
+                        <label class="text-xs text-gray-400 uppercase" x-text="value.label"></label>
+                        
+                        <!-- وضع القراءة -->
+                        <div x-show="!editMode" class="text-lg text-white font-semibold bg-white/5 px-3 py-2 rounded border border-transparent" x-text="activePerson[key]"></div>
+                        
+                        <!-- وضع التعديل (مخفي للقنصل) -->
+                        <input x-show="editMode" type="text" x-model="activePerson[key]" class="input-field text-lg">
+                    </div>
+                </template>
+            </div>
+        </div>
+    </main>
+
+    <!-- 3. صفحة البطاقة (للطباعة الرسمية) -->
+    <main x-show="view === 'card' && activePerson" class="max-w-3xl mx-auto px-4 w-full pb-10" style="display: none;">
+        <div class="flex justify-between items-center mb-6 no-print">
+            <button @click="view = 'profile'" class="px-4 py-2 bg-gray-700 rounded-lg text-white">رجوع للبروفايل</button>
+            <button onclick="window.print()" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-bold">طباعة الوثيقة</button>
+        </div>
+
+        <div class="glass-panel p-10 print-card bg-white text-black relative">
+            <div class="flex justify-between items-start border-b-2 border-black pb-4 mb-6">
+                <div class="flex flex-col items-center">
+                    <img src="image_5321de.png" class="h-20 mb-2" alt="Logo">
+                    <span class="text-xs font-bold">RÉPUBLIQUE DE GUINÉE</span>
+                </div>
+                <div class="text-center flex-grow">
+                    <h1 class="text-2xl font-bold mb-1 uppercase">Fiche Consulaire</h1>
+                    <h2 class="text-xl font-bold">البطاقة القنصلية</h2>
+                </div>
+                <div class="w-24 h-32 border-2 border-gray-400 flex items-center justify-center text-gray-400 text-sm">
+                    الصورة
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-x-8 gap-y-6 text-black">
+                <div>
+                    <span class="text-sm font-bold block border-b border-gray-300">الاسم الكامل / Nom Complet</span>
+                    <div class="text-lg pt-1" x-text="activePerson?.nameFr + ' - ' + activePerson?.nameAr"></div>
+                </div>
+                <div>
+                    <span class="text-sm font-bold block border-b border-gray-300">العائلة / Famille</span>
+                    <div class="text-lg pt-1" x-text="activePerson?.family"></div>
+                </div>
+                <div>
+                    <span class="text-sm font-bold block border-b border-gray-300">الأب والأم / Père & Mère</span>
+                    <div class="text-lg pt-1" x-text="activePerson?.pere + ' & ' + activePerson?.mere"></div>
+                </div>
+                <div>
+                    <span class="text-sm font-bold block border-b border-gray-300">التولد / Date et Lieu</span>
+                    <div class="text-lg pt-1" x-text="activePerson?.dob"></div>
+                </div>
+                <div>
+                    <span class="text-sm font-bold block border-b border-gray-300">رقم الجواز / N° Passeport</span>
+                    <div class="text-lg pt-1 font-mono" x-text="activePerson?.passport"></div>
+                </div>
+                <div>
+                    <span class="text-sm font-bold block border-b border-gray-300">الحالة القنصلية / Statut</span>
+                    <div class="text-lg pt-1" x-text="activePerson?.status"></div>
+                </div>
+                <div class="col-span-2">
+                    <span class="text-sm font-bold block border-b border-gray-300">العنوان في سوريا / Adresse</span>
+                    <div class="text-lg pt-1" x-text="activePerson?.address"></div>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-end text-sm font-bold pt-4 border-t-2 border-black">
+                Signature Consulaire / توقيع القنصلية
+            </div>
+        </div>
+    </main>
+
+    <!-- استدعاء البيانات -->
+    <script src="data.js"></script>
     <script>
-        function login() {
-            const u = document.getElementById('username').value.trim();
-            const p = document.getElementById('password').value.trim();
-            if (u === 'admin' && p === 'admin123') {
-                sessionStorage.setItem('sessionUser', JSON.stringify({role: 'admin', name: 'الآدمن العام'}));
-                window.location.href = 'admin.html';
-            } else if (u === 'consul' && p === 'consul123') {
-                sessionStorage.setItem('sessionUser', JSON.stringify({role: 'consul', name: 'القنصل'}));
-                window.location.href = 'consul.html';
-            } else if (p === '1234' && u !== '') {
-                sessionStorage.setItem('sessionUser', JSON.stringify({role: 'family', name: u}));
-                window.location.href = 'family.html';
+        function consularSystem() {
+            return {
+                db: jaliyaDB,
+                view: 'list', // list, profile, card
+                search: '',
+                activePerson: null,
+                editMode: false,
+                
+                // النظام يقرأ الرابط، إذا كان فيه ?role=consul يلغي التعديل
+                isConsulView: new URLSearchParams(window.location.search).get('role') === 'consul',
+
+                fieldsMap: {
+                    family: { label: "المجموعة العائلية" },
+                    nameAr: { label: "الاسم (عربي)" },
+                    nameFr: { label: "الاسم (فرنسي)" },
+                    pere: { label: "اسم الأب" },
+                    mere: { label: "اسم الأم" },
+                    dob: { label: "مكان وتاريخ التولد" },
+                    passport: { label: "رقم الجواز" },
+                    status: { label: "الحالة القنصلية" },
+                    address: { label: "العنوان في سوريا" },
+                    phone: { label: "رقم الهاتف" },
+                    marital: { label: "الحالة الاجتماعية" }
+                },
+
+                get filteredList() {
+                    if (this.search === '') return this.db;
+                    return this.db.filter(p => 
+                        p.nameAr.includes(this.search) || 
+                        p.nameFr.toLowerCase().includes(this.search.toLowerCase()) ||
+                        p.family.toLowerCase().includes(this.search.toLowerCase()) ||
+                        p.passport.includes(this.search)
+                    );
+                },
+
+                openProfile(person) {
+                    this.activePerson = person;
+                    this.editMode = false;
+                    this.view = 'profile';
+                }
             }
         }
     </script>
