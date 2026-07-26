@@ -1,134 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Poppins:wght@300;500;700&display=swap');
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap');
 
 :root {
-    /* ألوان ملكية فاخرة */
-    --gn-green: #007749;
+    --gn-green: #009460;
     --gn-red: #CE1126;
     --gn-yellow: #FCD116;
-    
-    /* الوضع الداكن الفاخر (افتراضي) */
-    --bg-base: #0f172a;
-    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-/* الوضع الفاتح (Light Mode) ذكي */
-[data-theme="light"] {
-    --bg-base: #f8fafc;
-    --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.4);
-    --text-main: #0f172a;
-    --text-muted: #475569;
-    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
 
 body {
-    margin: 0;
-    font-family: 'Cairo', 'Poppins', sans-serif;
-    background: var(--bg-gradient);
-    color: var(--text-main);
+    font-family: 'Cairo', sans-serif;
+    background-color: #0f172a;
+    color: #f8fafc;
     min-height: 100vh;
-    overflow-x: hidden;
-    transition: background 0.5s ease, color 0.5s ease;
-}
-
-/* خلفية سائلة (Fluid Animated Blob) لعمق 3D */
-body::before, body::after {
-    content: '';
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(100px);
-    z-index: -1;
-    animation: float 15s infinite alternate;
-}
-body::before {
-    width: 40vw; height: 40vw;
-    background: rgba(0, 119, 73, 0.15); /* أخضر غيني متوهج */
-    top: -10%; left: -10%;
-}
-body::after {
-    width: 30vw; height: 30vw;
-    background: rgba(206, 17, 38, 0.1); /* أحمر متوهج */
-    bottom: -10%; right: -10%;
-    animation-delay: -5s;
-}
-
-@keyframes float {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(50px, 50px) scale(1.1); }
-}
-
-.container { width: 90%; max-width: 1400px; margin: 0 auto; padding: 2rem 0; }
-
-/* تأثير Glassmorphism الفاخر للبطاقات */
-.glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 2.5rem;
-    box-shadow: var(--card-shadow);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.glass-card:hover { transform: translateY(-5px); }
-
-/* الترويسة العلوية */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    margin-bottom: 3rem;
-    border-radius: 100px;
-}
-
-/* أزرار تفاعلية (Micro-interactions) */
-.btn {
-    background: transparent;
-    color: var(--text-main);
-    border: 1px solid var(--glass-border);
-    padding: 0.8rem 1.5rem;
-    border-radius: 100px;
-    font-family: inherit;
-    font-weight: 600;
-    cursor: pointer;
     position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(5px);
+    overflow-x: hidden;
 }
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 0; height: 0;
-    background: var(--gn-green);
-    border-radius: 50%;
+
+/* العلامة المائية الثابتة في كل الصفحات */
+.global-watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    transition: width 0.4s ease, height 0.4s ease;
+    width: 60vh;
+    opacity: 0.05; /* شفافية عالية لتبقى كخلفية فخمة */
+    pointer-events: none;
     z-index: -1;
+    filter: grayscale(100%) brightness(200%);
 }
-.btn:hover::before { width: 300px; height: 300px; }
-.btn:hover { color: white; border-color: var(--gn-green); box-shadow: 0 0 15px rgba(0, 119, 73, 0.4); }
 
-/* جداول بتخطيط شبكي مبتكر (Modern Grids) */
-.modern-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-.modern-table th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; padding: 1rem; border-bottom: 1px solid var(--glass-border); }
-.modern-table td { padding: 1.2rem 1rem; background: var(--glass-bg); backdrop-filter: blur(5px); transition: 0.3s; }
-.modern-table tr td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; border-left: 3px solid transparent; }
-.modern-table tr td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
-.modern-table tr:hover td { background: rgba(255,255,255,0.08); }
-.modern-table tr:hover td:first-child { border-left: 3px solid var(--gn-yellow); }
+/* الزجاج الفاخر */
+.glass-panel {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+}
 
-/* متجاوب تماماً */
-@media (max-width: 768px) {
-    .container { width: 95%; }
-    .glass-card { padding: 1.5rem; }
-    .navbar { flex-direction: column; gap: 15px; border-radius: 20px; }
+.input-field {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    outline: none;
+    transition: all 0.3s ease;
+}
+.input-field:focus {
+    border-color: var(--gn-green);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* تصميم الطباعة لصفحة البطاقة */
+@media print {
+    body { background: white !important; color: black !important; }
+    .no-print { display: none !important; }
+    .glass-panel { 
+        background: white !important; 
+        border: 2px solid #333 !important; 
+        box-shadow: none !important; 
+        backdrop-filter: none !important;
+        color: black !important;
+    }
+    .text-white { color: black !important; }
+    .global-watermark { opacity: 0.1; filter: grayscale(0%); } /* الشعار يظهر ملون وخفيف في الطباعة */
 }
