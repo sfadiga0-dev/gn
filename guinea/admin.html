@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body x-data="adminSystem()">
+    <div class="flag-strip"></div>
     <img src="image_5321de.png" class="global-watermark" alt="Watermark">
 
     <nav class="glass-panel sticky top-4 z-50 max-w-6xl mx-auto flex items-center justify-between p-4 mb-8 no-print">
@@ -16,27 +17,26 @@
             <img src="image_5321de.png" class="h-10 object-contain" alt="Logo">
             <div>
                 <h1 class="text-xl font-bold text-white">لوحة الإدارة الشاملة</h1>
-                <p class="text-xs text-red-400">صلاحيات التعديل والإضافة</p>
+                <p class="text-xs" style="color: var(--gn-red);">صلاحيات التعديل والإضافة</p>
             </div>
         </div>
         <div class="flex gap-4">
-            <button @click="view = 'list'" class="text-white bg-gray-700 px-4 py-2 rounded">القائمة</button>
-            <button @click="openAddForm()" class="text-white bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-bold">+ إضافة شخص جديد</button>
+            <button @click="view = 'list'" class="text-white hover:text-gray-300 transition-colors bg-white/10 px-4 py-2 rounded">القائمة</button>
+            <button @click="openAddForm()" class="bg-gn-green text-white px-4 py-2 rounded font-bold">+ إضافة شخص جديد</button>
         </div>
     </nav>
 
-    <!-- قائمة الأفراد -->
     <main x-show="view === 'list'" class="max-w-6xl mx-auto px-4 w-full">
         <div class="glass-panel p-6 mb-8">
             <input type="text" x-model="search" placeholder="ابحث بالاسم أو العائلة أو رقم الجواز..." class="input-field text-lg py-3">
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <template x-for="person in filteredList" :key="person.id">
-                <div class="glass-panel p-6 hover:border-green-500 transition-colors cursor-pointer group" @click="openEditForm(person)">
-                    <h3 class="text-xl font-bold text-white group-hover:text-green-400" x-text="person.nameAr"></h3>
+                <div class="glass-panel p-6 hover:border-red-500 transition-colors cursor-pointer group" @click="openEditForm(person)">
+                    <h3 class="text-xl font-bold text-white group-hover:text-red-400" x-text="person.nameAr"></h3>
                     <p class="text-sm text-gray-400 mb-2" x-text="person.nameFr"></p>
                     <div class="flex justify-between items-center mt-4 border-t border-white/10 pt-4">
-                        <span class="text-yellow-500 text-sm" x-text="person.family"></span>
+                        <span class="text-sm font-bold" style="color: var(--gn-yellow);" x-text="person.family"></span>
                         <span class="px-2 py-1 bg-white/10 rounded text-xs" x-text="person.passport"></span>
                     </div>
                 </div>
@@ -44,13 +44,12 @@
         </div>
     </main>
 
-    <!-- فورم الإضافة والتعديل -->
     <main x-show="view === 'form' && activePerson" class="max-w-4xl mx-auto px-4 w-full pb-10" style="display: none;">
         <div class="flex justify-between items-center mb-6 no-print">
-            <button @click="view = 'list'" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white">إلغاء والعودة</button>
+            <button @click="view = 'list'" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white font-bold">إلغاء والعودة</button>
             <div class="flex gap-2">
-                <button x-show="activePerson.id" @click="view = 'card'" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 rounded-lg text-white font-bold">عرض البطاقة للطباعة</button>
-                <button @click="savePerson()" class="px-6 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-white font-bold">حفظ البيانات</button>
+                <button x-show="activePerson.id" @click="view = 'card'" class="px-4 py-2 bg-gn-yellow rounded-lg font-bold">عرض الوثيقة للطباعة</button>
+                <button @click="savePerson()" class="px-6 py-2 bg-gn-red rounded-lg text-white font-bold">حفظ البيانات</button>
             </div>
         </div>
 
@@ -67,57 +66,41 @@
         </div>
     </main>
 
-    <!-- صفحة البطاقة (للطباعة) -->
+    <!-- البطاقة المطابقة لنسخة القنصل -->
     <main x-show="view === 'card' && activePerson" class="max-w-3xl mx-auto px-4 w-full pb-10" style="display: none;">
         <div class="flex justify-between items-center mb-6 no-print">
-            <button @click="view = 'form'" class="px-4 py-2 bg-gray-700 rounded-lg text-white">رجوع للبيانات</button>
-            <button onclick="window.print()" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-bold">طباعة الوثيقة</button>
+            <button @click="view = 'form'" class="px-4 py-2 bg-gray-700 rounded-lg text-white font-bold">رجوع للبيانات</button>
+            <button onclick="window.print()" class="px-6 py-2 bg-gn-green rounded-lg text-white font-bold">طباعة الوثيقة كاملة</button>
         </div>
 
-        <div class="glass-panel p-10 print-card bg-white text-black relative">
+        <div class="glass-panel p-10 print-card bg-white text-black relative border-t-8" style="border-top-color: var(--gn-red);">
             <div class="flex justify-between items-start border-b-2 border-black pb-4 mb-6">
                 <div class="flex flex-col items-center">
                     <img src="image_5321de.png" class="h-20 mb-2" alt="Logo">
-                    <span class="text-xs font-bold">RÉPUBLIQUE DE GUINÉE</span>
+                    <span class="text-xs font-bold text-center">RÉPUBLIQUE DE GUINÉE</span>
                 </div>
                 <div class="text-center flex-grow">
                     <h1 class="text-2xl font-bold mb-1 uppercase">Fiche Consulaire</h1>
-                    <h2 class="text-xl font-bold">البطاقة القنصلية</h2>
+                    <h2 class="text-xl font-bold">البطاقة القنصلية الشاملة</h2>
                 </div>
-                <div class="w-24 h-32 border-2 border-gray-400 flex items-center justify-center text-gray-400 text-sm">
-                    الصورة
-                </div>
+                <div class="w-24 h-32 border-2 border-gray-400 flex items-center justify-center text-gray-400 text-sm">الصورة</div>
             </div>
 
             <div class="grid grid-cols-2 gap-x-8 gap-y-6 text-black">
-                <div>
-                    <span class="text-sm font-bold block border-b border-gray-300">الاسم الكامل / Nom Complet</span>
-                    <div class="text-lg pt-1" x-text="activePerson?.nameFr + ' - ' + activePerson?.nameAr"></div>
-                </div>
-                <div>
-                    <span class="text-sm font-bold block border-b border-gray-300">العائلة / Famille</span>
-                    <div class="text-lg pt-1" x-text="activePerson?.family"></div>
-                </div>
-                <div>
-                    <span class="text-sm font-bold block border-b border-gray-300">الأب والأم / Père & Mère</span>
-                    <div class="text-lg pt-1" x-text="activePerson?.pere + ' & ' + activePerson?.mere"></div>
-                </div>
-                <div>
-                    <span class="text-sm font-bold block border-b border-gray-300">التولد / Date et Lieu</span>
-                    <div class="text-lg pt-1" x-text="activePerson?.dob"></div>
-                </div>
-                <div>
-                    <span class="text-sm font-bold block border-b border-gray-300">رقم الجواز / N° Passeport</span>
-                    <div class="text-lg pt-1 font-mono" x-text="activePerson?.passport"></div>
-                </div>
-                <div>
-                    <span class="text-sm font-bold block border-b border-gray-300">الحالة القنصلية / Statut</span>
-                    <div class="text-lg pt-1" x-text="activePerson?.status"></div>
-                </div>
-                <div class="col-span-2">
-                    <span class="text-sm font-bold block border-b border-gray-300">العنوان في سوريا / Adresse</span>
-                    <div class="text-lg pt-1" x-text="activePerson?.address"></div>
-                </div>
+                <div><span class="text-sm font-bold block border-b border-gray-300">الاسم الكامل / Nom Complet</span><div class="text-lg pt-1" x-text="activePerson?.nameFr + ' - ' + activePerson?.nameAr"></div></div>
+                <div><span class="text-sm font-bold block border-b border-gray-300">العائلة / Famille</span><div class="text-lg pt-1" x-text="activePerson?.family"></div></div>
+                <div><span class="text-sm font-bold block border-b border-gray-300">الأب والأم / Père & Mère</span><div class="text-lg pt-1" x-text="activePerson?.pere + ' & ' + activePerson?.mere"></div></div>
+                <div><span class="text-sm font-bold block border-b border-gray-300">التولد / Date et Lieu</span><div class="text-lg pt-1" x-text="activePerson?.dob"></div></div>
+                <div><span class="text-sm font-bold block border-b border-gray-300">رقم الجواز / N° Passeport</span><div class="text-lg pt-1 font-mono" x-text="activePerson?.passport"></div></div>
+                <div><span class="text-sm font-bold block border-b border-gray-300">الحالة القنصلية / Statut</span><div class="text-lg pt-1" x-text="activePerson?.status"></div></div>
+                <div><span class="text-sm font-bold block border-b border-gray-300">رقم الهاتف / Téléphone</span><div class="text-lg pt-1 font-mono" x-text="activePerson?.phone"></div></div>
+                <div><span class="text-sm font-bold block border-b border-gray-300">الحالة الاجتماعية / État Civil</span><div class="text-lg pt-1" x-text="activePerson?.marital"></div></div>
+                <div class="col-span-2"><span class="text-sm font-bold block border-b border-gray-300">العنوان في سوريا / Adresse</span><div class="text-lg pt-1" x-text="activePerson?.address"></div></div>
+            </div>
+            
+            <div class="mt-12 flex justify-between items-end border-t-2 border-black pt-4">
+                <span class="text-sm font-bold">التاريخ / Date: ........................</span>
+                <span class="text-sm font-bold">Signature Consulaire / توقيع القنصل</span>
             </div>
         </div>
     </main>
@@ -133,34 +116,31 @@
                 fieldsMap: {
                     family: { label: "المجموعة العائلية" }, nameAr: { label: "الاسم (عربي)" }, nameFr: { label: "الاسم (فرنسي)" },
                     pere: { label: "اسم الأب" }, mere: { label: "اسم الأم" }, dob: { label: "مكان وتاريخ التولد" },
-                    passport: { label: "رقم الجواز" }, status: { label: "الحالة القنصلية" }, address: { label: "العنوان في سوريا" },
-                    phone: { label: "رقم الهاتف" }, marital: { label: "الحالة الاجتماعية" }
+                    passport: { label: "رقم الجواز" }, status: { label: "الحالة القنصلية" }, phone: { label: "رقم الهاتف" },
+                    marital: { label: "الحالة الاجتماعية" }, address: { label: "العنوان في سوريا" }
                 },
                 get filteredList() {
                     if (this.search === '') return this.db;
                     return this.db.filter(p => p.nameAr.includes(this.search) || p.nameFr.toLowerCase().includes(this.search.toLowerCase()) || p.family.toLowerCase().includes(this.search.toLowerCase()) || p.passport.includes(this.search));
                 },
                 openAddForm() {
-                    this.activePerson = { id: null, family: "", nameFr: "", nameAr: "", pere: "", mere: "", dob: "", passport: "", status: "", address: "", phone: "", marital: "" };
+                    this.activePerson = { id: null, family: "", nameFr: "", nameAr: "", pere: "", mere: "", dob: "", passport: "", status: "", phone: "", marital: "", address: "" };
                     this.view = 'form';
                 },
                 openEditForm(person) {
-                    // إنشاء نسخة لتجنب التعديل المباشر قبل الحفظ
                     this.activePerson = JSON.parse(JSON.stringify(person));
                     this.view = 'form';
                 },
                 savePerson() {
                     if (!this.activePerson.id) {
-                        // إضافة شخص جديد وإعطائه ID جديد
                         const maxId = this.db.reduce((max, p) => p.id > max ? p.id : max, 0);
                         this.activePerson.id = maxId + 1;
                         this.db.push(this.activePerson);
                     } else {
-                        // تحديث شخص موجود
                         const index = this.db.findIndex(p => p.id === this.activePerson.id);
                         if (index !== -1) this.db[index] = this.activePerson;
                     }
-                    saveDB(this.db); // حفظ في الذاكرة
+                    saveDB(this.db);
                     this.view = 'list';
                     alert('تم حفظ البيانات بنجاح!');
                 }
