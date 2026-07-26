@@ -2,9 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap');
 
 :root {
-    --gn-green: #009460;
+    /* الألوان الرسمية لعلم غينيا */
     --gn-red: #CE1126;
     --gn-yellow: #FCD116;
+    --gn-green: #009460;
 }
 
 body {
@@ -14,22 +15,32 @@ body {
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
+    padding-top: 8px; /* مساحة لشريط العلم */
 }
 
-/* العلامة المائية الثابتة في كل الصفحات */
+/* شريط علم غينيا في أعلى الموقع */
+.flag-strip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(to right, var(--gn-red) 33.33%, var(--gn-yellow) 33.33%, var(--gn-yellow) 66.66%, var(--gn-green) 66.66%);
+    z-index: 9999;
+}
+
 .global-watermark {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 60vh;
-    opacity: 0.05; /* شفافية عالية لتبقى كخلفية فخمة */
+    opacity: 0.05;
     pointer-events: none;
     z-index: -1;
     filter: grayscale(100%) brightness(200%);
 }
 
-/* الزجاج الفاخر */
 .glass-panel {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(16px);
@@ -48,15 +59,24 @@ body {
     outline: none;
     transition: all 0.3s ease;
 }
+
 .input-field:focus {
     border-color: var(--gn-green);
     background: rgba(0, 0, 0, 0.4);
 }
 
-/* تصميم الطباعة لصفحة البطاقة */
+/* ألوان مخصصة للأزرار مستوحاة من العلم */
+.bg-gn-red { background-color: var(--gn-red); }
+.bg-gn-red:hover { background-color: #a80e1e; }
+.bg-gn-yellow { background-color: var(--gn-yellow); color: #000 !important; }
+.bg-gn-yellow:hover { background-color: #dcb30f; }
+.bg-gn-green { background-color: var(--gn-green); }
+.bg-gn-green:hover { background-color: #00764c; }
+
 @media print {
-    body { background: white !important; color: black !important; }
+    body { background: white !important; color: black !important; padding-top: 0; }
     .no-print { display: none !important; }
+    .flag-strip { position: absolute; }
     .glass-panel { 
         background: white !important; 
         border: 2px solid #333 !important; 
@@ -65,5 +85,5 @@ body {
         color: black !important;
     }
     .text-white { color: black !important; }
-    .global-watermark { opacity: 0.1; filter: grayscale(0%); } /* الشعار يظهر ملون وخفيف في الطباعة */
+    .global-watermark { opacity: 0.1; filter: grayscale(0%); }
 }
