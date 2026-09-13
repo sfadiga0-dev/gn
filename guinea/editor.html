@@ -70,13 +70,57 @@
             font-size: 14pt;
         }
 
-        @media print {
-            body { background-color: #fff; }
-            #control-panel, .word-toolbar, .no-print-btn { display: none !important; }
-            #paper-container { margin: 0 !important; padding: 0 !important; width: 100%; display: block; }
-            #paper { box-shadow: none !important; width: 100% !important; height: auto !important; padding: 0 !important; }
-            @page { size: A4; margin: 15mm; }
-        }
+       @media print {
+    body { background-color: #fff; }
+    #control-panel, .word-toolbar, .no-print-btn { display: none !important; }
+    #paper-container { margin: 0 !important; padding: 0 !important; width: 100%; display: block; }
+    #paper { 
+        box-shadow: none !important; 
+        width: 100% !important; 
+        height: auto !important; 
+        padding: 0 !important; 
+        /* إجبار المتصفح على إظهار العلامة المائية في الطباعة */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    @page { size: A4; margin: 15mm; }
+}
+        #paper { 
+    width: 210mm; 
+    min-height: 297mm; 
+    background-color: #ffffff; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+    padding: 20mm 15mm; 
+    box-sizing: border-box; 
+    outline: none; 
+    /* الخصائص الثلاثة التالية أساسية لتثبيت الخلفية */
+    position: relative; 
+    z-index: 1;
+    display: flex; 
+    flex-direction: column;
+    font-size: 12pt; 
+    line-height: 1.6;
+}
+        /* برمجة اللوغو كعلامة مائية شفافة في المنتصف */
+#paper::before {
+    content: "";
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0;
+    /* مسار اللوغو الخاص بك */
+    background-image: url('/logo.png.webp');
+    background-position: center 45%;
+    background-repeat: no-repeat;
+    /* التحكم بحجم اللوغو في الورقة */
+    background-size: 55%; 
+    /* التحكم بشفافية اللوغو (0.08 تعني شفافية 8% ليكون مريحاً للعين) */
+    opacity: 0.08; 
+    z-index: -1;
+    /* منع تفاعل الماوس مع الخلفية لتسهيل تحديد النصوص */
+    pointer-events: none; 
+}
     </style>
 </head>
 <body class="editor-mode">
