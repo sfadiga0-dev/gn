@@ -28,7 +28,21 @@
             <button @click="openAddForm()" class="bg-gn-green hover:bg-green-600 text-white px-4 py-2 rounded font-bold">+ شخص جديد</button>
             <a href="index.html" class="bg-gn-red text-white px-4 py-2 rounded font-bold">خروج</a>
         </div>
-    </nav>
+    </nav> 
+    <!-- هذا هو جزء الـ Navbar داخل ملف admin.html -->
+<nav class="bg-gray-800 text-white p-4 flex justify-between items-center shadow-lg">
+    <div class="font-bold text-xl tracking-wide">
+        🛡️ لوحة تحكم الإدارة (الآدمن)
+    </div>
+    <div class="flex gap-3">
+        <!-- الزر الجديد الخاص بمحرر الوثائق (أضف هذا السطر) -->
+        <a href="editor.html" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold transition-colors text-sm text-center decoration-none inline-block">📝 محرر الوثائق الرسمي</a>
+        
+        <!-- أزرارك السابقة تبقى كما هي (هذه مجرد أمثلة) -->
+        <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold transition-colors text-sm">📊 تصدير إكسل</button>
+        <a href="index.html" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded font-bold transition-colors text-sm text-center decoration-none inline-block">🚪 تسجيل الخروج</a>
+    </div>
+</nav>
 
     <!-- لوحة الإحصائيات -->
     <div x-show="view === 'list'" class="max-w-6xl mx-auto px-4 w-full mb-6 grid grid-cols-3 gap-4 no-print">
