@@ -27,6 +27,20 @@
             <a href="index.html" class="bg-gray-700 text-white px-4 py-2 rounded">خروج</a>
         </div>
     </nav>
+    <!-- هذا هو جزء الـ Navbar داخل ملف consul.html -->
+<nav class="bg-gray-800 text-white p-4 flex justify-between items-center shadow-lg">
+    <div class="font-bold text-xl text-yellow-400 tracking-wide">
+        ⚖️ اللوحة التنفيذية للقنصل
+    </div>
+    <div class="flex gap-3">
+        <!-- الزر الجديد الخاص بمحرر الوثائق (أضف هذا السطر) -->
+        <a href="editor.html" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold transition-colors text-sm text-center decoration-none inline-block">📝 محرر الوثائق الرسمي</a>
+        
+        <!-- أزرارك السابقة تبقى كما هي (هذه مجرد أمثلة) -->
+        <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold transition-colors text-sm">🖨️ طباعة السجل</button>
+        <a href="index.html" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded font-bold transition-colors text-sm text-center decoration-none inline-block">🚪 تسجيل الخروج</a>
+    </div>
+</nav>
 
     <main x-show="view === 'list'" class="max-w-6xl mx-auto px-4 w-full">
         <div class="glass-panel p-6 mb-8">
