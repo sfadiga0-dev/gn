@@ -46,15 +46,23 @@
         .word-toolbar button, .word-toolbar select { padding: 6px; background: white; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; font-size: 12px; }
         .tool-separator { color: #ced6e0; margin: 0 4px; }
         
-        #paper-container { margin-left: var(--panel-width); flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 65px 20px 30px 20px; min-height: 100vh; }
+        #paper-container { 
+            margin-left: var(--panel-width); 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 65px 20px 40px 20px; 
+            min-height: 100vh; 
+        }
         
-        /* تعديل حواف الورقة الداخلية لتوفير مساحة عمودية */
+        /* تحسين أبعاد الورقة لاستيعاب النصوص الطويلة في صفحة واحدة A4 */
         #paper { 
             width: 210mm; 
             min-height: 297mm; 
             background-color: #ffffff; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            padding: 12mm 15mm 15mm 15mm; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
+            padding: 8mm 12mm 10mm 12mm; 
             box-sizing: border-box; 
             outline: none; 
             position: relative; 
@@ -62,7 +70,7 @@
             display: flex; 
             flex-direction: column;
             font-size: 12pt; 
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         #paper::before {
@@ -70,26 +78,26 @@
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background-image: url('image_5321dee.png'); 
-            background-position: center 45%;
+            background-position: center 50%;
             background-repeat: no-repeat;
-            background-size: 55%; 
+            background-size: 60%; 
             opacity: 0.10; 
             z-index: -1;
             pointer-events: none; 
         }
 
-        /* تكبير الترويسة العلوية لتبدو أوضح */
+        /* تكبير صورة الترويسة العلوية بشكل ممتاز وواضح */
         .letterhead-header { 
             text-align: center; 
             border-bottom: 2px solid #000; 
-            padding-bottom: 8px; 
-            margin-bottom: 18px; 
+            padding-bottom: 6px; 
+            margin-bottom: 12px; 
         }
         #header-image { 
             width: 100%; 
             max-width: 100%; 
             height: auto; 
-            max-height: 160px; 
+            max-height: 210px; 
             object-fit: contain;
             display: block; 
             margin: 0 auto; 
@@ -97,11 +105,19 @@
 
         .rtl { direction: rtl; text-align: right; }
         .ltr { direction: ltr; text-align: left; }
-        .document-body { flex-grow: 1; outline: none; } 
+        .document-body { 
+            flex-grow: 1; 
+            outline: none; 
+        } 
+
+        .document-body p {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
         
-        /* تقليل الهامش العلوي للتوقيع لرفعه للأعلى ومنع الانتقال لصفحة ثانية */
+        /* ضبط مسافة التوقيع لمنع الانتقال لصفحة جديدة */
         .signature-wrapper {
-            margin-top: 25px;
+            margin-top: 15px;
             width: 100%;
             page-break-inside: avoid;
         }
@@ -109,9 +125,9 @@
         .signature-content {
             display: inline-block;
             text-align: center;
-            font-size: 14pt;
+            font-size: 13.5pt;
             font-weight: bold;
-            line-height: 1.4;
+            line-height: 1.35;
         }
 
         @media print {
@@ -121,12 +137,13 @@
             #paper { 
                 box-shadow: none !important; 
                 width: 100% !important; 
-                height: auto !important; 
-                padding: 10mm 15mm !important; 
+                height: 100% !important;
+                min-height: 297mm !important;
+                padding: 6mm 10mm !important; 
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            @page { size: A4; margin: 8mm; }
+            @page { size: A4 portrait; margin: 6mm; }
         }
     </style>
 </head>
@@ -252,11 +269,11 @@
             blank: { lang: 'ar', content: '<p></p>' },
             report_min_ar: {
                 lang: 'ar',
-                content: '<table style="width: 100%; border: none; margin-bottom: 15px;"><tr><td style="text-align: right; font-size: 13px;"><b>الرقم:</b> Ref.N199/MIN</td><td style="text-align: left; font-size: 13px;"><b>التاريخ:</b> 31 / 07 / 2026</td></tr></table><div style="text-align: center; margin-bottom: 20px; line-height: 1.5;"><span style="font-size: 17px; font-weight: bold;">معالي الدكتور موريساندا كوياتي</span><br><span style="font-size: 14px; font-weight: bold;">وزير الشؤون الخارجية والاندماج الأفريقي والغينيين في الخارج</span></div><p><b>الموضوع: التقرير الدوري لأعمال القنصلية الفخرية...</b></p><p>نص التقرير يكتب هنا...</p>'
+                content: '<table style="width: 100%; border: none; margin-bottom: 12px;"><tr><td style="text-align: right; font-size: 13px;"><b>الرقم:</b> Ref.N199/MIN</td><td style="text-align: left; font-size: 13px;"><b>التاريخ:</b> 31 / 07 / 2026</td></tr></table><div style="text-align: center; margin-bottom: 16px; line-height: 1.4;"><span style="font-size: 16px; font-weight: bold;">معالي الدكتور موريساندا كوياتي</span><br><span style="font-size: 14px; font-weight: bold;">وزير الشؤون الخارجية والاندماج الأفريقي والغينيين في الخارج</span></div><p><b>الموضوع: التقرير الدوري لأعمال القنصلية الفخرية...</b></p><p>نص التقرير يكتب هنا...</p>'
             },
             report_min_fr: {
                 lang: 'fr',
-                content: '<table style="width: 100%; border: none; margin-bottom: 15px;"><tr><td style="text-align: left; font-size: 13px;"><b>Réf:</b> N199/MIN</td><td style="text-align: right; font-size: 13px;"><b>Date:</b> 31 / 07 / 2026</td></tr></table><div style="text-align: center; margin-bottom: 20px; line-height: 1.5;"><span style="font-size: 17px; font-weight: bold;">S.E. Dr. Morissanda Kouyaté</span><br><span style="font-size: 14px; font-weight: bold;">Ministre des Affaires Etrangères</span></div><p><b>Objet: Rapport Périodique...</b></p><p>Le contenu du rapport est écrit ici...</p>'
+                content: '<table style="width: 100%; border: none; margin-bottom: 12px;"><tr><td style="text-align: left; font-size: 13px;"><b>Réf:</b> N199/MIN</td><td style="text-align: right; font-size: 13px;"><b>Date:</b> 31 / 07 / 2026</td></tr></table><div style="text-align: center; margin-bottom: 16px; line-height: 1.4;"><span style="font-size: 16px; font-weight: bold;">S.E. Dr. Morissanda Kouyaté</span><br><span style="font-size: 14px; font-weight: bold;">Ministre des Affaires Etrangères</span></div><p><b>Objet: Rapport Périodique...</b></p><p>Le contenu du rapport est écrit ici...</p>'
             }
         };
 
