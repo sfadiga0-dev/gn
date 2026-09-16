@@ -46,14 +46,15 @@
         .word-toolbar button, .word-toolbar select { padding: 6px; background: white; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; font-size: 12px; }
         .tool-separator { color: #ced6e0; margin: 0 4px; }
         
-        #paper-container { margin-left: var(--panel-width); flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 75px 20px 40px 20px; min-height: 100vh; }
+        #paper-container { margin-left: var(--panel-width); flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 65px 20px 30px 20px; min-height: 100vh; }
         
+        /* تعديل حواف الورقة الداخلية لتوفير مساحة عمودية */
         #paper { 
             width: 210mm; 
             min-height: 297mm; 
             background-color: #ffffff; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            padding: 20mm 15mm; 
+            padding: 12mm 15mm 15mm 15mm; 
             box-sizing: border-box; 
             outline: none; 
             position: relative; 
@@ -61,7 +62,7 @@
             display: flex; 
             flex-direction: column;
             font-size: 12pt; 
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
         #paper::before {
@@ -77,26 +78,40 @@
             pointer-events: none; 
         }
 
-        .letterhead-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 25px; }
-        #header-image { max-height: 120px; display: block; margin: 0 auto; }
+        /* تكبير الترويسة العلوية لتبدو أوضح */
+        .letterhead-header { 
+            text-align: center; 
+            border-bottom: 2px solid #000; 
+            padding-bottom: 8px; 
+            margin-bottom: 18px; 
+        }
+        #header-image { 
+            width: 100%; 
+            max-width: 100%; 
+            height: auto; 
+            max-height: 160px; 
+            object-fit: contain;
+            display: block; 
+            margin: 0 auto; 
+        }
+
         .rtl { direction: rtl; text-align: right; }
         .ltr { direction: ltr; text-align: left; }
         .document-body { flex-grow: 1; outline: none; } 
         
-        /* === التنسيقات الجديدة لحل مشكلة التوقيع === */
-        /* الحاوية: مسؤولة عن إزاحة التوقيع لليسار أو اليمين */
+        /* تقليل الهامش العلوي للتوقيع لرفعه للأعلى ومنع الانتقال لصفحة ثانية */
         .signature-wrapper {
-            margin-top: 50px;
+            margin-top: 25px;
             width: 100%;
+            page-break-inside: avoid;
         }
         
-        /* المحتوى: مسؤول عن جعل النص بحد ذاته موسطاً وعريضاً كما في الصورة */
         .signature-content {
             display: inline-block;
             text-align: center;
-            font-size: 15pt;
+            font-size: 14pt;
             font-weight: bold;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         @media print {
@@ -107,11 +122,11 @@
                 box-shadow: none !important; 
                 width: 100% !important; 
                 height: auto !important; 
-                padding: 0 !important; 
+                padding: 10mm 15mm !important; 
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            @page { size: A4; margin: 15mm; }
+            @page { size: A4; margin: 8mm; }
         }
     </style>
 </head>
@@ -193,7 +208,6 @@
             var paper = document.getElementById('paper');
             var buttons = document.querySelectorAll('.btn-lang');
             
-            // تعريف الحاوية ومحتوى التوقيع
             var sigWrapper = document.getElementById('signature-wrapper');
             var sigContent = document.getElementById('official-signature');
 
@@ -204,19 +218,16 @@
             if (lang === 'ar') {
                 paper.className = 'rtl';
                 paper.style.textAlign = 'right';
-                // التوقيع يسار الصفحة، والنص موسط داخلياً
                 sigWrapper.style.textAlign = 'left';
                 sigContent.innerHTML = 'د. حسن جواد<br>القنصل الفخري لجمهورية غينيا';
             } else if (lang === 'fr') {
                 paper.className = 'ltr';
                 paper.style.textAlign = 'left';
-                // التوقيع يمين الصفحة، والنص موسط داخلياً
                 sigWrapper.style.textAlign = 'right';
                 sigContent.innerHTML = 'Dr Hassan Jawad<br>Consul Honoraire de la République de Guinée';
             } else if (lang === 'en') {
                 paper.className = 'ltr';
                 paper.style.textAlign = 'left';
-                // التوقيع يمين الصفحة، والنص موسط داخلياً
                 sigWrapper.style.textAlign = 'right';
                 sigContent.innerHTML = 'Dr. Hassan Jawad<br>Honorary Consul of the Republic of Guinea';
             }
@@ -241,11 +252,11 @@
             blank: { lang: 'ar', content: '<p></p>' },
             report_min_ar: {
                 lang: 'ar',
-                content: '<table style="width: 100%; border: none; margin-bottom: 20px;"><tr><td style="text-align: right; font-size: 13px;"><b>الرقم:</b> Ref.N199/MIN</td><td style="text-align: left; font-size: 13px;"><b>التاريخ:</b> 31 / 07 / 2026</td></tr></table><div style="text-align: center; margin-bottom: 30px; line-height: 1.6;"><span style="font-size: 18px; font-weight: bold;">معالي الدكتور موريساندا كوياتي</span><br><span style="font-size: 15px; font-weight: bold;">وزير الشؤون الخارجية والاندماج الأفريقي والغينيين في الخارج</span></div><p><b>الموضوع: التقرير الدوري لأعمال القنصلية الفخرية...</b></p><p>نص التقرير يكتب هنا...</p>'
+                content: '<table style="width: 100%; border: none; margin-bottom: 15px;"><tr><td style="text-align: right; font-size: 13px;"><b>الرقم:</b> Ref.N199/MIN</td><td style="text-align: left; font-size: 13px;"><b>التاريخ:</b> 31 / 07 / 2026</td></tr></table><div style="text-align: center; margin-bottom: 20px; line-height: 1.5;"><span style="font-size: 17px; font-weight: bold;">معالي الدكتور موريساندا كوياتي</span><br><span style="font-size: 14px; font-weight: bold;">وزير الشؤون الخارجية والاندماج الأفريقي والغينيين في الخارج</span></div><p><b>الموضوع: التقرير الدوري لأعمال القنصلية الفخرية...</b></p><p>نص التقرير يكتب هنا...</p>'
             },
             report_min_fr: {
                 lang: 'fr',
-                content: '<table style="width: 100%; border: none; margin-bottom: 20px;"><tr><td style="text-align: left; font-size: 13px;"><b>Réf:</b> N199/MIN</td><td style="text-align: right; font-size: 13px;"><b>Date:</b> 31 / 07 / 2026</td></tr></table><div style="text-align: center; margin-bottom: 30px; line-height: 1.6;"><span style="font-size: 18px; font-weight: bold;">S.E. Dr. Morissanda Kouyaté</span><br><span style="font-size: 15px; font-weight: bold;">Ministre des Affaires Etrangères</span></div><p><b>Objet: Rapport Périodique...</b></p><p>Le contenu du rapport est écrit ici...</p>'
+                content: '<table style="width: 100%; border: none; margin-bottom: 15px;"><tr><td style="text-align: left; font-size: 13px;"><b>Réf:</b> N199/MIN</td><td style="text-align: right; font-size: 13px;"><b>Date:</b> 31 / 07 / 2026</td></tr></table><div style="text-align: center; margin-bottom: 20px; line-height: 1.5;"><span style="font-size: 17px; font-weight: bold;">S.E. Dr. Morissanda Kouyaté</span><br><span style="font-size: 14px; font-weight: bold;">Ministre des Affaires Etrangères</span></div><p><b>Objet: Rapport Périodique...</b></p><p>Le contenu du rapport est écrit ici...</p>'
             }
         };
 
