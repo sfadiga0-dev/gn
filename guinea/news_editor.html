@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محرر الأخبار والموجزات - جمهورية غينيا</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --guinea-red: #CE1126;
+            --guinea-yellow: #FCD116;
+            --guinea-green: #009460;
+            --bg-color: #f0f2f5;
+            --panel-bg: #ffffff;
+            --text-dark: #2c3e50;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* --- Header / Branding --- */
+        .app-header {
+            background-color: var(--panel-bg);
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 4px solid var(--guinea-yellow);
+            z-index: 10;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-section img.coat-of-arms { height: 50px; }
+        .brand-section img.guinea-logo { height: 40px; }
+        
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--guinea-green);
+            margin: 0;
+        }
+
+        /* --- Main Layout --- */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* --- Right Sidebar (Tools) --- */
+        .tools-sidebar {
+            width: 250px;
+            background: var(--panel-bg);
+            border-left: 1px solid #ddd;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-back { background-color: #34495e; color: white; }
+        .btn-back:hover { background-color: #2c3e50; }
+        
+        .btn-publish { background-color: var(--guinea-green); color: white; margin-top: 20px;}
+        .btn-publish:hover { background-color: #007a4f; }
+
+        .btn-word { background-color: #2980b9; color: white; }
+        .btn-word:hover { background-color: #2471a3; }
+
+        .toolbar-group {
+            margin-top: 20px;
+            border-top: 2px dashed #eee;
+            padding-top: 15px;
+        }
+
+        .toolbar-group h4 { margin-top: 0; color: var(--guinea-red); font-size: 15px;}
+        
+        .format-btn {
+            padding: 8px;
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 2px;
+            font-weight: bold;
+        }
+        .format-btn:hover { background: #e2e6ea; }
+
+        /* --- Editor Area --- */
+        .editor-container {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #news-paper {
+            background: #fff;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            direction: rtl;
+            font-size: 16px;
+            line-height: 1.8;
+            outline: none;
+        }
+
+        #news-paper img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .news-header {
+            text-align: center;
+            border-bottom: 3px solid var(--guinea-red);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .news-title {
+            font-size: 28px;
+            color: var(--guinea-red);
+            margin-bottom: 5px;
+        }
+
+        .news-date {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* --- Left Sidebar (Media Library) --- */
+        .media-sidebar {
+            width: 300px;
+            background: var(--panel-bg);
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .media-sidebar h3 {
+            color: var(--guinea-green);
+            margin-top: 0;
+            border-bottom: 2px solid var(--guinea-yellow);
+            padding-bottom: 10px;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .media-item {
+            position: relative;
+            cursor: pointer;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+
+        .media-item:hover {
+            border-color: var(--guinea-green);
+            transform: scale(1.02);
+        }
+
+        .media-item img {
+            width: 100%;
+            height: 90px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .media-hint {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        @media print {
+            .app-header, .tools-sidebar, .media-sidebar { display: none !important; }
+            .editor-container { padding: 0; background: #fff; }
+            #news-paper { box-shadow: none; width: 100%; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الترويسة العلوية للمنصة -->
+    <header class="app-header">
+        <div class="brand-section">
+            <img src="IMG_5442-750x750.jpeg" alt="Guinea Logo" class="guinea-logo">
+            <h1 class="header-title">نظام إدارة الأخبار والموجزات</h1>
+        </div>
+        <div class="brand-section">
+            <img src="images.jfif" alt="Guinea Map" class="guinea-logo" style="border-radius: 5px;">
+            <img src="Coat_of_Arms_of_Guinea.svg_2.webp" alt="Coat of Arms" class="coat-of-arms">
+        </div>
+    </header>
+
+    <div class="main-container">
+        
+        <!-- القائمة اليمنى (أدوات التحرير) -->
+        <aside class="tools-sidebar">
+            <a href="admin.html" class="btn btn-back">🔙 العودة للوحة الإدارة</a>
+            
+            <div class="toolbar-group">
+                <h4>📝 أدوات التنسيق</h4>
+                <div>
+                    <button class="format-btn" onclick="formatDoc('bold')"><b>B</b></button>
+                    <button class="format-btn" onclick="formatDoc('italic')"><i>I</i></button>
+                    <button class="format-btn" onclick="formatDoc('underline')"><u>U</u></button>
+                </div>
+                <div style="margin-top: 5px;">
+                    <button class="format-btn" onclick="formatDoc('justifyRight')">يمين</button>
+                    <button class="format-btn" onclick="formatDoc('justifyCenter')">توسيط</button>
+                    <button class="format-btn" onclick="formatDoc('justifyLeft')">يسار</button>
+                </div>
+                <div style="margin-top: 5px;">
+                    <select onchange="formatDoc('formatBlock', this.value); this.selectedIndex=0;" style="width:100%; padding: 5px;">
+                        <option value="">-- نوع النص --</option>
+                        <option value="H2">عنوان رئيسي (H2)</option>
+                        <option value="H3">عنوان فرعي (H3)</option>
+                        <option value="P">فقرة عادية</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-publish" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
+            <button class="btn btn-word" onclick="exportToWord()">📄 تصدير كملف Word</button>
+        </aside>
+
+        <!-- منطقة التحرير (الورقة) -->
+        <main class="editor-container">
+            <div id="news-paper" contenteditable="true">
+                <div class="news-header" contenteditable="false">
+                    <div class="news-title" contenteditable="true">عنوان الموجز الإخباري يكتب هنا...</div>
+                    <div class="news-date" id="current-date"></div>
+                </div>
+                <p>ابدأ بكتابة تفاصيل الخبر هنا. يمكنك الاستعانة بالصور من القائمة الجانبية بالضغط عليها لإدراجها مباشرة في النص...</p>
+            </div>
+        </main>
+
+        <!-- القائمة اليسرى (مكتبة الهوية البصرية والوسائط) -->
+        <aside class="media-sidebar">
+            <h3>🖼️ مكتبة الوسائط</h3>
+            <p class="media-hint">اضغط على أي صورة لإدراجها في مكان المؤشر داخل الخبر.</p>
+            
+            <div class="media-grid">
+                <div class="media-item" onclick="insertImage('Gemini_Generated_Image_kxwti9kxwti9kxwt (3).jfif')">
+                    <img src="Gemini_Generated_Image_kxwti9kxwti9kxwt (3).jfif" alt="Monument Sunset">
+                </div>
+                <div class="media-item" onclick="insertImage('Gemini_Generated_Image_oy0l8aoy0l8aoy0l.jfif')">
+                    <img src="Gemini_Generated_Image_oy0l8aoy0l8aoy0l.jfif" alt="Monument Wide">
+                </div>
+                <div class="media-item" onclick="insertImage('Gemini_Generated_Image_5cl5a35cl5a35cl5.jfif')">
+                    <img src="Gemini_Generated_Image_5cl5a35cl5a35cl5.jfif" alt="Village Waterfall">
+                </div>
+                <div class="media-item" onclick="insertImage('Gemini_Generated_Image_mugsglmugsglmugs.jfif')">
+                    <img src="Gemini_Generated_Image_mugsglmugsglmugs.jfif" alt="Cultural Group">
+                </div>
+                <div class="media-item" onclick="insertImage('Gemini_Generated_Image_kxwti9kxwti9kxwt.jfif')">
+                    <img src="Gemini_Generated_Image_kxwti9kxwti9kxwt.jfif" alt="Dance Drums">
+                </div>
+                <div class="media-item" onclick="insertImage('Gemini_Generated_Image_7ugffs7ugffs7ugf.jfif')">
+                    <img src="Gemini_Generated_Image_7ugffs7ugffs7ugf.jfif" alt="Cultural Mask">
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <script>
+        // تعيين تاريخ اليوم تلقائياً
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('ar-SY', dateOptions);
+
+        // دوال تنسيق النص
+        function formatDoc(command, value) {
+            document.getElementById('news-paper').focus();
+            document.execCommand(command, false, value || null);
+        }
+
+        // دالة إدراج الصورة من المعرض إلى المحرر
+        function insertImage(imageSrc) {
+            document.getElementById('news-paper').focus();
+            // إضافة سطر جديد قبل الصورة لترتيب أفضل
+            document.execCommand('insertHTML', false, '<br><img src="' + imageSrc + '" style="max-width:100%; border-radius: 8px;"><br><p>&#8203;</p>');
+        }
+
+        // دالة تصدير الخبر لملف وورد
+        function exportToWord() {
+            var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>News Export</title></head><body>";
+            var footer = "</body></html>";
+            var sourceHTML = header + document.getElementById("news-paper").innerHTML + footer;
+            
+            var source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+            var fileDownload = document.createElement("a");
+            document.body.appendChild(fileDownload);
+            fileDownload.href = source;
+            fileDownload.download = 'Guinea_News_Bulletin.doc';
+            fileDownload.click();
+            document.body.removeChild(fileDownload);
+        }
+    </script>
+</body>
+</html>
