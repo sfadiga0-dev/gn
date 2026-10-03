@@ -1,64 +1,59 @@
-// app.js - The Core Engine
-const SYSTEM = {
-    // القاموس الذكي المدمج (يمكن توسعته بسهولة)
-    i18n: {
-        ar: { dir: 'rtl', font: 'Cairo', greeting: 'مرحباً، حسن جواد', subtitle: 'نظام الإدارة القنصلية الفاخر', search: 'ابحث عن مواطن، جواز سفر...', dark: 'داكن', light: 'فاتح' },
-        fr: { dir: 'ltr', font: 'Poppins', greeting: 'Bonjour, Hassan Jawad', subtitle: 'Système Consulaire Premium', search: 'Rechercher un citoyen...', dark: 'Sombre', light: 'Clair' },
-        en: { dir: 'ltr', font: 'Poppins', greeting: 'Welcome, Hassan Jawad', subtitle: 'Premium Consular System', search: 'Search citizens...', dark: 'Dark', light: 'Light' }
-    },
+// --- app.js ---
+
+// 1. عرض البيانات في الجدول
+function renderTable() {
+    const tableBody = document.getElementById('table-body');
+    if(!tableBody) return; // تأكد أننا في الصفحة التي تحتوي الجدول
     
-    init: function() {
-        this.currentLang = localStorage.getItem('lang') || 'ar';
-        this.currentTheme = localStorage.getItem('theme') || 'dark';
-        this.applyTheme(this.currentTheme);
-        this.applyLang(this.currentLang);
-        this.animateIn();
-    },
+    tableBody.innerHTML = ""; // تفريغ الجدول أولاً
+    const citizens = getCitizensData(); // قراءة البيانات من data.js
+    
+    citizens.forEach(citizen => {
+        let row = `<tr>
+            <td>${citizen.id}</td>
+            <td>${citizen.family}</td>
+            <td>${citizen.nameAr} <br> <small>${citizen.nameFr}</small></td>
+            <td>${citizen.passport}</td>
+            <td>${citizen.status}</td>
+            <td>
+                <a href="profile.html?id=${citizen.id}" class="btn btn-warning" style="padding: 5px 10px; font-size: 12px;">ملف</a>
+                <a href="card.html?id=${citizen.id}" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">بطاقة</a>
+            </td>
+        </tr>`;
+        tableBody.innerHTML += row;
+    });
+}
 
-    // تغيير اللغة ذكياً مع أنيميشن ناعم
-    applyLang: function(lang) {
-        this.currentLang = lang;
-        localStorage.setItem('lang', lang);
-        
-        const dict = this.i18n[lang];
-        document.documentElement.dir = dict.dir;
-        document.documentElement.lang = lang;
-        document.body.style.fontFamily = `'${dict.font}', sans-serif`;
+// 2. تفعيل نموذج الإضافة (Form)
+document.addEventListener('DOMContentLoaded', () => {
+    renderTable(); // عرض الجدول عند تحميل الصفحة
 
-        // تأثير بهتان عند تغيير اللغة
-        gsap.to("[data-i18n]", { 
-            opacity: 0, y: -5, duration: 0.2, 
-            onComplete: () => {
-                document.querySelectorAll('[data-i18n]').forEach(el => {
-                    const key = el.getAttribute('data-i18n');
-                    if(dict[key]) {
-                        if(el.tagName === 'INPUT') el.placeholder = dict[key];
-                        else el.innerText = dict[key];
-                    }
-                });
-                gsap.to("[data-i18n]", { opacity: 1, y: 0, duration: 0.3, stagger: 0.02 });
-            }
+    const addForm = document.getElementById('add-citizen-form');
+    if(addForm) {
+        addForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // منع تحديث الصفحة عند الضغط على زر الإضافة
+            
+            // جمع البيانات من الحقول
+            let newCitizen = {
+                family: document.getElementById('input-family').value,
+                nameFr: document.getElementById('input-name-fr').value,
+                nameAr: document.getElementById('input-name-ar').value,
+                pere: document.getElementById('input-pere').value,
+                mere: document.getElementById('input-mere').value,
+                dob: document.getElementById('input-dob').value,
+                passport: document.getElementById('input-passport').value,
+                status: document.getElementById('input-status').value,
+                address: document.getElementById('input-address').value,
+                phone: document.getElementById('input-phone').value,
+                marital: document.getElementById('input-marital').value
+            };
+            
+            // استدعاء دالة الإضافة من data.js
+            addNewCitizen(newCitizen);
+            
+            alert("تمت إضافة الشخص بنجاح وحفظه في النظام!");
+            addForm.reset(); // تفريغ الحقول
+            renderTable(); // تحديث الجدول ليظهر الشخص الجديد فوراً
         });
-    },
-
-    // الوضع الفاخر الداكن/الفاتح
-    toggleTheme: function() {
-        this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
-        this.applyTheme(this.currentTheme);
-    },
-    
-    applyTheme: function(theme) {
-        localStorage.setItem('theme', theme);
-        document.documentElement.setAttribute('data-theme', theme);
-    },
-
-    // حركات GSAP الفيزيائية للظهور
-    animateIn: function() {
-        if(typeof gsap !== 'undefined') {
-            gsap.from(".glass-card", { y: 50, opacity: 0, duration: 1, ease: "power3.out", stagger: 0.2 });
-            gsap.from(".modern-table tr", { x: -20, opacity: 0, duration: 0.6, stagger: 0.05, ease: "back.out(1.7)", delay: 0.5 });
-        }
     }
-};
-
-document.addEventListener('DOMContentLoaded', () => SYSTEM.init());
+});
