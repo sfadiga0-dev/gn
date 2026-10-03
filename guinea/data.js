@@ -1,5 +1,7 @@
-// data.js
-const defaultDB = [
+// --- data.js ---
+
+// القائمة الأساسية التي أرسلتها
+const initialData = [
     { id: 1, family: "Camara", nameFr: "Kerfalla CAMARA", nameAr: "كرفالا كمارا", pere: "Ibrahim", mere: "Yari", dob: "1976 - Kindia", passport: "91", status: "موجود", address: "دف الشوك، دمشق", phone: "0932779075", marital: "متزوج" },
     { id: 2, family: "Camara", nameFr: "Adama CAMARA", nameAr: "آدم كمارا", pere: "Mohamed", mere: "Anser", dob: "1969 - Conakry", passport: "92", status: "موجود (بدو تدقيق)", address: "دف الشوك، دمشق", phone: "---", marital: "متزوجة" },
     { id: 3, family: "Camara", nameFr: "Nsira CAMARA", nameAr: "انسرا كامارا", pere: "Kerfalla", mere: "Adama", dob: "15/03/1998 - Damas", passport: "لا يوجد", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "عزباء" },
@@ -35,17 +37,35 @@ const defaultDB = [
     { id: 33, family: "Youssef Fadiga", nameFr: "Alpha Sanoussy FADIGA", nameAr: "ألفا سنسي فاديغا", pere: "Youssef", mere: "Safiatou", dob: "30/09/2010 - Damas", passport: "116", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "قاصر" }
 ];
 
-// تهيئة الذاكرة المحلية إذا كانت فارغة
-if (!localStorage.getItem('jaliyaData')) {
-    localStorage.setItem('jaliyaData', JSON.stringify(defaultDB));
+// دالة لجلب البيانات: تفحص إذا كانت مسجلة في المتصفح، وإلا تعطي القائمة الأساسية وتخزنها
+function getCitizensData() {
+    let storedData = localStorage.getItem('guineaCitizens');
+    if (!storedData) {
+        // الحفظ لأول مرة
+        localStorage.setItem('guineaCitizens', JSON.stringify(initialData));
+        return initialData;
+    }
+    return JSON.parse(storedData);
 }
 
-// دالة لجلب البيانات من الذاكرة
-function getDB() {
-    return JSON.parse(localStorage.getItem('jaliyaData'));
+// دالة لحفظ القائمة المحدثة بالكامل
+function saveCitizensData(dataArray) {
+    localStorage.setItem('guineaCitizens', JSON.stringify(dataArray));
 }
 
-// دالة لحفظ البيانات في الذاكرة
-function saveDB(data) {
-    localStorage.setItem('jaliyaData', JSON.stringify(data));
+// دالة لإضافة شخص جديد
+function addNewCitizen(newPersonData) {
+    let currentData = getCitizensData();
+    
+    // إعطاء الشخص الجديد ID تلقائي (أكبر ID موجود + 1)
+    let maxId = currentData.length > 0 ? Math.max(...currentData.map(c => c.id)) : 0;
+    newPersonData.id = maxId + 1;
+    
+    // إضافة الشخص لقائمة البيانات
+    currentData.push(newPersonData);
+    
+    // حفظ القائمة في ذاكرة المتصفح
+    saveCitizensData(currentData);
+    
+    return true; // تمت الإضافة بنجاح
 }
