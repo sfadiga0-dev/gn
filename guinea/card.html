@@ -3,54 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <title>البطاقة القنصلية</title>
-    <link rel="stylesheet" href="style.css">
     <style>
-        .id-card {
-            width: 85.6mm; height: 53.98mm; /* حجم البطاقة العالمية القياسي */
-            border: 2px solid var(--gn-green); border-radius: 8px;
-            background: white url('image_5321de.png') no-repeat center center;
-            background-size: 50%; padding: 10px; margin: 20px auto;
-            position: relative; box-sizing: border-box; overflow: hidden;
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+        body {
+            background-color: #e0e0e0;
+            font-family: 'Cairo', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
         }
-        /* تبييض الخلفية وجعل اللوغو مائي */
-        .id-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 1; }
-        .id-card-content { position: relative; z-index: 2; font-size: 11px; line-height: 1.4; }
-        .card-header { text-align: center; border-bottom: 2px solid var(--gn-red); margin-bottom: 5px; padding-bottom: 3px; }
-        .card-header h4 { margin: 0; color: var(--gn-green); font-size: 12px; }
-        .row-data { display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; margin-bottom: 3px; }
-        .row-label { font-weight: bold; color: var(--text-main); }
-        .row-val { font-weight: bold; }
+        /* تصميم البطاقة بحجم البطاقة الشخصية */
+        .id-card {
+            background: url('images') no-repeat center center; /* استخدمت مجلد images كخلفية لو أردت، أو اتركها بيضاء */
+            background-color: white;
+            width: 8.5cm;
+            height: 5.4cm;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #CE1126;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        /* شريط ألوان علم غينيا أعلى البطاقة */
+        .id-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 8px;
+            background: linear-gradient(to right, #CE1126 33.3%, #FCD116 33.3%, #FCD116 66.6%, #009460 66.6%);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-top: 5px;
+        }
+        .header img {
+            height: 35px; /* الشعار الرسمي */
+        }
+        .header-titles {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .header-titles h4 {
+            margin: 0; font-size: 10px; color: #009460; font-weight: bold;
+        }
+        .header-titles h5 {
+            margin: 0; font-size: 8px; color: #CE1126;
+        }
+        .content {
+            display: flex;
+            margin-top: 10px;
+        }
+        .photo {
+            width: 70px;
+            height: 90px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            /* استخدمت إحدى الصور التي رفعتها كصورة افتراضية مؤقتة */
+            background: url('Gemini_Generated_Image_5cl5a35cl5a35cl5') no-repeat center;
+            background-size: cover;
+        }
+        .details {
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+        .details p {
+            margin: 2px 0;
+            font-size: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        .details span {
+            color: #CE1126;
+        }
+        .print-btn {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background-color: #009460;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cairo';
+            font-size: 16px;
+        }
+        @media print {
+            .print-btn { display: none; } /* إخفاء زر الطباعة عند الطباعة */
+            body { background-color: white; }
+            .id-card { box-shadow: none; }
+        }
     </style>
 </head>
-<body style="background: white;">
-    <div class="no-print" style="text-align: center; margin: 20px;">
-        <button class="btn btn-primary" onclick="window.print()">طباعة البطاقة</button>
-        <button class="btn btn-dark" onclick="window.history.back()">رجوع</button>
+<body>
+
+    <div class="id-card">
+        <div class="header">
+            <img src="Coat_of_Arms_of_Guinea.svg" alt="Coat of Arms">
+            <div class="header-titles">
+                <h4>RÉPUBLIQUE DE GUINÉE</h4>
+                <h5>Consulat de Guinée en Syrie</h5>
+                <h4 style="color:#000;">بطاقة قنصلية / Carte Consulaire</h4>
+            </div>
+        </div>
+        <div class="content">
+            <div class="details">
+                <p>الاسم: <span id="card-name-ar"></span></p>
+                <p>Nom: <span id="card-name-fr"></span></p>
+                <p>تاريخ الولادة: <span id="card-dob"></span></p>
+                <p>جواز السفر: <span id="card-passport"></span></p>
+                <p>العنوان: <span id="card-address"></span></p>
+            </div>
+            <!-- الصورة الشخصية -->
+            <div class="photo"></div>
+        </div>
     </div>
 
-    <div class="id-card" id="cardData"></div>
+    <button class="print-btn" onclick="window.print()">طباعة البطاقة الآن</button>
 
-    <script src="app.js"></script>
+    <script src="data.js"></script>
     <script>
-        const personId = parseInt(new URLSearchParams(window.location.search).get('id'));
-        const p = APP.getDB().find(x => x.id === personId);
-        
-        if(p) {
-            document.getElementById('cardData').innerHTML = `
-                <div class="id-card-content">
-                    <div class="card-header">
-                        <h4>الجمهورية الغينية - الجالية في سوريا</h4>
-                        <span class="fr-text" style="font-size:10px;">Carte Consulaire - Syrie</span>
-                    </div>
-                    <div class="row-data"><span class="row-label">الاسم:</span> <span class="row-val">${p.nomAr}</span></div>
-                    <div class="row-data"><span class="row-label">Nom:</span> <span class="row-val fr-text">${p.nomFr}</span></div>
-                    <div class="row-data"><span class="row-label">العائلة/Famille:</span> <span class="row-val fr-text">${p.family}</span></div>
-                    <div class="row-data"><span class="row-label">تاريخ الولادة/Né le:</span> <span class="row-val fr-text">${p.dob}</span></div>
-                    <div class="row-data"><span class="row-label">رقم الجواز:</span> <span class="row-val fr-text">${p.pass || 'N/A'}</span></div>
-                    <div style="text-align:center; margin-top:5px; color:var(--gn-red); font-size:9px; font-weight:bold;">هذه البطاقة صادرة عن القنصلية وغير قابلة للتحويل</div>
-                </div>
-            `;
-        }
+        // سحب البيانات تلقائياً بناءً على الرابط (مثال: card.html?id=3)
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const citizenId = parseInt(params.get('id'));
+            
+            if(citizenId) {
+                const citizens = getCitizensData();
+                const person = citizens.find(c => c.id === citizenId);
+                
+                if(person) {
+                    document.getElementById('card-name-ar').innerText = person.nameAr;
+                    document.getElementById('card-name-fr').innerText = person.nameFr;
+                    document.getElementById('card-dob').innerText = person.dob;
+                    document.getElementById('card-passport').innerText = person.passport;
+                    document.getElementById('card-address').innerText = person.address;
+                } else {
+                    alert("المواطن غير موجود!");
+                }
+            }
+        });
     </script>
 </body>
 </html>
