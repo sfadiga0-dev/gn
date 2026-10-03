@@ -3,317 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البوابة الدبلوماسية - جمهورية غينيا</title>
-    <!-- استدعاء خطوط عصرية -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <!-- استدعاء أيقونات -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>محرر الأخبار والبيانات الصحفية</title>
     <style>
-        /* الألوان الرسمية لغينيا والتصميم العصري */
         :root {
-            --red: #CE1126;
-            --yellow: #FCD116;
-            --green: #009460;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --gray: #cbd5e1;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --panel-width: 320px;
+            --primary: #c0392b; /* أحمر يعكس هوية غينيا */
+            --secondary: #2c3e50;
+            --bg-color: #f4f6f7;
+            --guinea-red: #CE1126;
+            --guinea-yellow: #FCD116;
+            --guinea-green: #009460;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+        }
+
+        /* اللوحة الجانبية */
+        #control-panel {
+            width: var(--panel-width);
+            background: var(--secondary);
+            color: white;
+            height: 100vh;
+            position: fixed; top: 0; left: 0;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        .panel-section { margin-bottom: 25px; background: rgba(0,0,0,0.1); padding: 15px; border-radius: 8px; }
+        .panel-section h3 { margin-top: 0; font-size: 15px; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px; }
         
-        body { background-color: #f1f5f9; color: var(--dark); overflow-x: hidden; }
-
-        /* الشاشة الرئيسية - تقسيم لوحة التحكم */
-        .app-container { display: flex; min-height: 100vh; }
-
-        /* القائمة الجانبية (Sidebar) */
-        .sidebar {
-            width: 280px; background: #ffffff; padding: 30px 20px;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.03); z-index: 10;
-            display: flex; flex-direction: column; gap: 20px;
+        .btn-action { 
+            display: block; width: 100%; padding: 10px; margin-bottom: 10px; 
+            border: none; border-radius: 4px; cursor: pointer; font-weight: bold; 
+            transition: 0.3s; color: white; text-align: center; text-decoration: none;
         }
-        .brand { text-align: center; margin-bottom: 30px; }
-        .brand img { width: 80px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
-        .brand h2 { color: var(--dark); font-size: 1.2rem; margin-top: 10px; }
-        
-        .nav-btn {
-            background: transparent; border: none; padding: 15px 20px;
-            text-align: right; font-size: 1.1rem; font-weight: 600;
-            border-radius: 12px; cursor: pointer; transition: var(--transition);
-            display: flex; align-items: center; gap: 15px; color: #64748b;
-        }
-        .nav-btn:hover { background: #f1f5f9; color: var(--dark); }
-        .nav-btn.active { background: var(--green); color: white; box-shadow: 0 4px 15px rgba(0, 148, 96, 0.3); }
+        .btn-back { background: var(--guinea-red); }
+        .btn-print { background: var(--guinea-green); }
+        .btn-word { background: #2980b9; }
+        .btn-action:hover { filter: brightness(1.1); }
 
-        /* منطقة المحتوى */
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-        .tab-content { display: none; animation: fadeIn 0.5s ease; }
-        .tab-content.active { display: block; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .form-input {
+            width: 100%; padding: 8px; margin-bottom: 12px;
+            border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+        }
 
-        /* =========================================
-           1. نظام إصدار الوثائق (تم تطويره)
-        ========================================= */
-        .toolbar {
-            background: white; padding: 15px 25px; border-radius: 15px;
-            box-shadow: var(--shadow); margin-bottom: 25px; display: flex; gap: 15px;
-            justify-content: center; flex-wrap: wrap; align-items: center;
-        }
-        .tool-btn {
-            background: #f8fafc; border: 1px solid var(--gray); padding: 8px 15px;
-            border-radius: 8px; cursor: pointer; transition: var(--transition); font-size: 1rem;
-        }
-        .tool-btn:hover { background: var(--gray); }
-        .btn-print { background: var(--red); color: white; border: none; font-weight: bold; padding: 10px 25px; }
-        .btn-print:hover { background: #a80e1f; box-shadow: 0 4px 12px rgba(206, 17, 38, 0.3); }
-
-        /* ورقة العمل */
-        .editor-container { 
-            margin: 0 auto; width: 21cm; min-height: 29.7cm; background: #fff; 
-            padding: 2cm; box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
-            border-radius: 5px; border: 1px solid #e2e8f0;
-        }
-        table.print-wrapper { width: 100%; border-collapse: collapse; }
-        thead.print-header { display: table-header-group; } 
-        .header-content { text-align: center; border-bottom: 4px double var(--green); padding-bottom: 15px; margin-bottom: 30px; }
-        .header-content h3 { color: var(--red); margin: 8px 0; font-weight: 800; letter-spacing: 1px; }
-        .header-content h4 { color: var(--dark); font-weight: 600; }
-        .document-body { outline: none; font-size: 1.1rem; line-height: 2; min-height: 500px; text-align: justify; }
-
-        /* =========================================
-           2. نظام الأخبار والمقالات (توزيع الصور الذكي)
-        ========================================= */
-        .news-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px;
-        }
-        .news-header h1 { font-size: 2rem; color: var(--dark); border-right: 5px solid var(--yellow); padding-right: 15px; }
-        
-        /* شبكة عرض الصور العصرية (Bento Box / Masonry) */
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            grid-auto-rows: 250px; /* الارتفاع الأساسي */
+        /* مساحة العمل */
+        #paper-container { 
+            margin-left: var(--panel-width); 
+            flex-grow: 1; 
+            display: flex; flex-direction: column; align-items: center; 
+            padding: 75px 20px 40px 20px; 
         }
         
-        .news-card {
-            background: white; border-radius: 20px; overflow: hidden;
-            box-shadow: var(--shadow); position: relative; transition: var(--transition);
-            display: flex; flex-direction: column; cursor: pointer;
+        /* شريط الأدوات */
+        .word-toolbar {
+            position: fixed; top: 0; left: var(--panel-width); right: 0; height: 55px; 
+            background: white; border-bottom: 1px solid #ddd; 
+            display: flex; align-items: center; padding: 0 15px; gap: 8px; z-index: 99;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .news-card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
-        
-        .news-image {
-            width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;
-        }
-        .news-card:hover .news-image { transform: scale(1.05); }
-        
-        .news-content {
-            position: absolute; bottom: 0; width: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            padding: 30px 20px 20px; color: white;
-        }
-        .news-tag {
-            background: var(--red); color: white; padding: 4px 12px;
-            border-radius: 20px; font-size: 0.8rem; font-weight: bold;
-            display: inline-block; margin-bottom: 10px;
-        }
-        .news-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; line-height: 1.4; }
-        .news-date { font-size: 0.85rem; color: #cbd5e1; }
+        .word-toolbar button { padding: 6px 10px; background: #eee; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
+        .word-toolbar button:hover { background: var(--primary); color: white; }
 
-        /* التوزيع الذكي للصور (أحجام مختلفة تندمج بشكل مثالي) */
-        .featured-large { grid-column: span 2; grid-row: span 2; }
-        .featured-tall { grid-row: span 2; }
-        .featured-wide { grid-column: span 2; }
-        
-        /* ضبط الشاشات الصغيرة */
-        @media (max-width: 900px) {
-            .featured-large, .featured-wide { grid-column: span 1; }
-            .editor-container { width: 100%; padding: 1cm; }
+        /* الورقة A4 */
+        #paper { 
+            width: 210mm; min-height: 297mm; 
+            background-color: #ffffff; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
+            padding: 15mm; box-sizing: border-box; 
+            position: relative; z-index: 1;
+            display: flex; flex-direction: column;
+            font-size: 13pt; line-height: 1.6;
         }
 
-        /* =========================================
-           إعدادات الطباعة المطلقة
-        ========================================= */
+        /* العلامة المائية (خريطة غينيا) */
+        #paper::before {
+            content: ""; position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('images_2.jfif'); /* تم استخدام صورة الخريطة هنا */
+            background-position: center; background-repeat: no-repeat;
+            background-size: 50%; opacity: 0.05; z-index: -1; pointer-events: none; 
+        }
+
+        /* الترويسة المخصصة باستخدام الصور المطلوبة */
+        .custom-letterhead {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px double var(--guinea-red);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .header-left img {
+            width: 90px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 2px solid #ddd;
+        }
+
+        .header-center {
+            text-align: center;
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+        .header-center h2 { margin: 0; font-size: 16pt; color: #222; font-family: 'Times New Roman', serif; letter-spacing: 1px;}
+        .motto { font-size: 10pt; font-weight: bold; margin: 5px 0; }
+        .motto .red { color: var(--guinea-red); }
+        .motto .yellow { color: #d4ac0d; } /* لون أصفر غامق قليلاً ليكون مقروءاً */
+        .motto .green { color: var(--guinea-green); }
+        
+        .header-center .coat-of-arms { width: 70px; height: auto; margin: 5px 0; }
+        
+        .header-center h3 { margin: 0; font-size: 14pt; color: #333; }
+        .header-center h4 { margin: 2px 0 0 0; font-size: 11pt; color: #555; font-weight: normal;}
+
+        .header-right img {
+            width: 100px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* محتوى الخبر */
+        .news-title-display {
+            text-align: center;
+            font-size: 18pt;
+            font-weight: bold;
+            color: var(--guinea-red);
+            margin-bottom: 15px;
+            text-decoration: underline;
+        }
+        
+        .news-date-display {
+            text-align: left;
+            font-size: 11pt;
+            color: #666;
+            margin-bottom: 20px;
+            direction: ltr;
+        }
+
+        .document-body { flex-grow: 1; outline: none; text-align: justify; }
+
         @media print {
-            body, html { background: white; margin: 0; padding: 0; }
-            .no-print, .sidebar, .toolbar { display: none !important; }
-            .app-container { display: block; }
-            .main-content { padding: 0; width: 100%; }
-            .editor-container { border: none; box-shadow: none; width: 100%; margin: 0; padding: 0; }
-            
-            /* إجبار إخفاء قسم الأخبار وعرض الوثيقة فقط عند الطباعة */
-            #news-section { display: none !important; }
-            #docs-section { display: block !important; }
+            body { background-color: #fff; }
+            #control-panel, .word-toolbar, .no-print-btn { display: none !important; }
+            #paper-container { margin: 0 !important; padding: 0 !important; width: 100%; display: block; }
+            #paper { box-shadow: none !important; width: 100% !important; padding: 10mm !important; }
+            @page { size: A4 portrait; margin: 5mm; }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    
-    <!-- القائمة الجانبية (لن تظهر بالطباعة) -->
-    <aside class="sidebar no-print">
-        <div class="brand">
-            <!-- يمكنك استبدال الرابط بمسار شعار غينيا لديك -->
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Coat_of_arms_of_Guinea.svg" alt="شعار غينيا">
-            <h2>القنصلية الفخرية لجمهورية غينيا</h2>
+    <div id="control-panel" class="no-print-btn">
+        <div class="panel-section" style="background: none; padding: 0;">
+            <a href="admin.html" class="btn-action btn-back">🔙 العودة للوحة الإدارة</a>
         </div>
+
+        <div class="panel-section">
+            <h3>📰 إعدادات الخبر / البيان</h3>
+            <label>عنوان الخبر (الرئيسي):</label>
+            <input type="text" id="news-title-input" class="form-input" placeholder="مثال: زيارة وفد دبلوماسي..." onkeyup="updateNewsFields()">
+            
+            <label>التاريخ:</label>
+            <input type="date" id="news-date-input" class="form-input" onchange="updateNewsFields()">
+            
+            <label>نوع الإصدار:</label>
+            <select class="form-input" id="news-type" onchange="updateNewsFields()">
+                <option value="بيان صحفي">بيان صحفي</option>
+                <option value="خبر عاجل">خبر عاجل</option>
+                <option value="إعلان هام">إعلان هام</option>
+                <option value="تعميم">تعميم</option>
+            </select>
+        </div>
+
+        <div class="panel-section">
+            <h3>🖨️ التصدير والطباعة</h3>
+            <button onclick="window.print()" class="btn-action btn-print">🖨️ طباعة أو تصدير PDF</button>
+            <button onclick="exportToWord()" class="btn-action btn-word">📝 تصدير كملف Word</button>
+        </div>
+    </div>
+
+    <div id="paper-container">
         
-        <button class="nav-btn active" onclick="switchTab('docs-section', this)">
-            <i class="fa-solid fa-file-signature"></i> إصدار الوثائق
-        </button>
-        <button class="nav-btn" onclick="switchTab('news-section', this)">
-            <i class="fa-solid fa-newspaper"></i> المركز الإعلامي
-        </button>
-    </aside>
+        <div class="word-toolbar no-print-btn">
+            <button onclick="formatDoc('bold')" title="عريض"><b>B</b></button>
+            <button onclick="formatDoc('italic')" title="مائل"><i>I</i></button>
+            <button onclick="formatDoc('underline')" title="تسطير"><u>U</u></button>
+            <span style="color:#ccc">|</span>
+            <button onclick="formatDoc('justifyLeft')">يسار</button>
+            <button onclick="formatDoc('justifyCenter')">وسط</button>
+            <button onclick="formatDoc('justifyRight')">يمين</button>
+            <button onclick="formatDoc('justifyFull')">ضبط (Justify)</button>
+            <span style="color:#ccc">|</span>
+            <button onclick="formatDoc('insertUnorderedList')">قائمة نقطية</button>
+            <button onclick="formatDoc('insertOrderedList')">قائمة رقمية</button>
+        </div>
 
-    <!-- منطقة المحتوى الرئيسية -->
-    <main class="main-content">
-        
-        <!-- القسم الأول: إصدار الوثائق -->
-        <section id="docs-section" class="tab-content active">
-            <!-- شريط أدوات التحرير الذكي -->
-            <div class="toolbar no-print">
-                <button class="tool-btn" onclick="execCmd('bold')" title="عريض"><i class="fa-solid fa-bold"></i></button>
-                <button class="tool-btn" onclick="execCmd('italic')" title="مائل"><i class="fa-solid fa-italic"></i></button>
-                <button class="tool-btn" onclick="execCmd('underline')" title="تسطير"><i class="fa-solid fa-underline"></i></button>
-                <span style="color: #cbd5e1;">|</span>
-                <button class="tool-btn" onclick="execCmd('justifyRight')" title="يمين"><i class="fa-solid fa-align-right"></i></button>
-                <button class="tool-btn" onclick="execCmd('justifyCenter')" title="توسيط"><i class="fa-solid fa-align-center"></i></button>
-                <button class="tool-btn" onclick="execCmd('justifyLeft')" title="يسار"><i class="fa-solid fa-align-left"></i></button>
-                <span style="color: #cbd5e1;">|</span>
-                <button class="tool-btn btn-print" onclick="window.print()">
-                    <i class="fa-solid fa-print"></i> طباعة واعتماد الوثيقة
-                </button>
+        <div id="paper">
+            
+            <!-- الترويسة المبنية من الصور (الهوية البصرية المطلوبة) -->
+            <div class="custom-letterhead" contenteditable="false">
+                <div class="header-left">
+                    <img src="IMG_5442-750x750_3.jpeg" alt="صورة فخامة الرئيس">
+                </div>
+                <div class="header-center">
+                    <h2>RÉPUBLIQUE DE GUINÉE</h2>
+                    <div class="motto">
+                        <span class="red">Travail</span> - <span class="yellow">Justice</span> - <span class="green">Solidarité</span>
+                    </div>
+                    <img src="Coat_of_Arms_of_Guinea.svg_3.webp" alt="شعار غينيا" class="coat-of-arms">
+                    <h3>القنصلية الفخرية لجمهورية غينيا بدمشق</h3>
+                    <h4>Consulat Honoraire de la République de Guinée à Damas</h4>
+                </div>
+                <div class="header-right">
+                    <img src="image_f24543.png" alt="شعار إضافي أو علم">
+                </div>
             </div>
 
-            <!-- هيكل الوثيقة القابل للطباعة -->
-            <div class="editor-container">
-                <table class="print-wrapper">
-                    <thead class="print-header">
-                        <tr>
-                            <td>
-                                <div class="header-content">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Coat_of_arms_of_Guinea.svg" alt="شعار غينيا" style="width: 80px;">
-                                    <h3>RÉPUBLIQUE DE GUINÉE</h3>
-                                    <h4>القنصلية الفخرية لجمهورية غينيا في سوريا</h4>
-                                </div>
-                            </td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div contenteditable="true" class="document-body">
-                                    <h2 style="text-align: center;">إخراج قيد مدني / Extrait d'état civil</h2>
-                                    <p><br></p>
-                                    <p>بناءً على السجلات القنصلية، نشهد بأن المواطن المذكور أدناه...</p>
-                                    <p>[قم بتحديد النص وتعديله، استخدم شريط الأدوات بالأعلى للتنسيق. عند الطباعة سيتم إخفاء كل شيء عدا الورقة البيضاء والشعار سيتكرر تلقائياً]</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- معلومات الخبر -->
+            <div class="news-date-display" id="display-date">Damas, le: __/__/202_</div>
+            <div class="news-title-display" id="display-title">بيان صحفي</div>
+
+            <!-- جسم الخبر -->
+            <div class="document-body" contenteditable="true">
+                <p>اكتب نص البيان الصحفي أو الخبر هنا...</p>
             </div>
-        </section>
+            
+        </div>
+    </div>
 
-        <!-- القسم الثاني: المركز الإعلامي (الأخبار والصور) -->
-        <section id="news-section" class="tab-content no-print">
-            <div class="news-header">
-                <h1>أحدث الأخبار والفعاليات</h1>
-                <button class="tool-btn btn-print" style="background: var(--green);" onclick="alert('هنا يمكنك ربط زر لإضافة خبر جديد برمجياً')">
-                    <i class="fa-solid fa-plus"></i> إضافة خبر
-                </button>
-            </div>
+    <script>
+        // تحديث العنوان والتاريخ مباشرة على الورقة
+        function updateNewsFields() {
+            let title = document.getElementById('news-title-input').value;
+            let date = document.getElementById('news-date-input').value;
+            let type = document.getElementById('news-type').value;
 
-            <!-- 
-                شبكة الصور: تم التوزيع باستخدام فئات ذكية (featured-large, featured-tall, featured-wide) 
-                استبدل الروابط في (src) بمسارات الصور التي قمت بإرفاقها.
-            -->
-            <div class="news-grid">
-                
-                <!-- صورة بارزة كبيرة (تأخذ مساحة 4 مربعات) -->
-                <div class="news-card featured-large">
-                    <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw3fHxhZnJpY2ElMjBkaXBsb21hY3l8ZW58MHwwfHx8MTY5NjM4MTUwMHww&ixlib=rb-4.0.3&q=80&w=1080" alt="صورة 1" class="news-image">
-                    <div class="news-content">
-                        <span class="news-tag" style="background: var(--red);">مؤتمر دولي</span>
-                        <h3 class="news-title">استقبال الوفد الدبلوماسي لتعزيز العلاقات الثنائية</h3>
-                        <p class="news-date"><i class="fa-regular fa-calendar"></i> 4 أكتوبر 2026</p>
-                    </div>
-                </div>
+            // تنسيق العنوان
+            let displayTitle = type;
+            if (title.trim() !== "") displayTitle += ": " + title;
+            document.getElementById('display-title').innerText = displayTitle;
 
-                <!-- صورة عادية -->
-                <div class="news-card">
-                    <img src="https://images.unsplash.com/photo-1577998474537-88eb7412ae2c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwzfHxhZnJpY2ElMjBjdWx0dXJlfGVufDB8MHx8fDE2OTYzODE2MDB8MA&ixlib=rb-4.0.3&q=80&w=600" alt="صورة 2" class="news-image">
-                    <div class="news-content">
-                        <span class="news-tag" style="background: var(--green);">ثقافة</span>
-                        <h3 class="news-title">احتفالات الجالية بعيد الاستقلال</h3>
-                        <p class="news-date"><i class="fa-regular fa-calendar"></i> 2 أكتوبر 2026</p>
-                    </div>
-                </div>
+            // تنسيق التاريخ
+            if(date) {
+                let d = new Date(date);
+                let formattedDate = d.toLocaleDateString('fr-FR');
+                document.getElementById('display-date').innerText = "Damas, le: " + formattedDate;
+            }
+        }
 
-                <!-- صورة طولية (تأخذ مساحة مربعين بشكل عمودي) -->
-                <div class="news-card featured-tall">
-                    <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxMnx8ZG9jdW1lbnQlMjBvZmZpY2lhbHxlbnwwfDB8fHwxNjk2MzgxNzAwfDA&ixlib=rb-4.0.3&q=80&w=600" alt="صورة 3" class="news-image">
-                    <div class="news-content">
-                        <span class="news-tag" style="background: var(--yellow); color: var(--dark);">إعلانات قنصلية</span>
-                        <h3 class="news-title">تحديث إجراءات إصدار وتجديد جوازات السفر للمواطنين</h3>
-                        <p class="news-date"><i class="fa-regular fa-calendar"></i> 28 سبتمبر 2026</p>
-                    </div>
-                </div>
+        // تنسيق النصوص
+        function formatDoc(command, value) {
+            document.querySelector('.document-body').focus();
+            document.execCommand(command, false, value || null);
+        }
 
-                <!-- صورة عريضة (تأخذ مساحة مربعين بشكل أفقي) -->
-                <div class="news-card featured-wide">
-                    <img src="https://images.unsplash.com/photo-1541872703-74c5e44368f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwyMHx8bWVldGluZyUyMGFmcmljYXxlbnwwfDB8fHwxNjk2MzgxODAwfDA&ixlib=rb-4.0.3&q=80&w=1080" alt="صورة 4" class="news-image">
-                    <div class="news-content">
-                        <span class="news-tag" style="background: var(--green);">اقتصاد</span>
-                        <h3 class="news-title">ملتقى رجال الأعمال المشترك لتعزيز الاستثمار وتسهيل التجارة</h3>
-                        <p class="news-date"><i class="fa-regular fa-calendar"></i> 20 سبتمبر 2026</p>
-                    </div>
-                </div>
-                
-                <!-- صورة عادية -->
-                <div class="news-card">
-                    <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwyNnx8Y29tbXVuaXR5JTIwYWZyaWNhfGVufDB8MHx8fDE2OTYzODE5MDB8MA&ixlib=rb-4.0.3&q=80&w=600" alt="صورة 5" class="news-image">
-                    <div class="news-content">
-                        <span class="news-tag" style="background: var(--red);">مجتمع</span>
-                        <h3 class="news-title">توزيع المنح الدراسية للطلاب المتفوقين</h3>
-                        <p class="news-date"><i class="fa-regular fa-calendar"></i> 15 سبتمبر 2026</p>
-                    </div>
-                </div>
+        // التصدير إلى وورد
+        function exportToWord() {
+            var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export News</title></head><body>";
+            var footer = "</body></html>";
+            var sourceHTML = header + document.getElementById("paper").innerHTML + footer;
+            var source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+            var fileDownload = document.createElement("a");
+            document.body.appendChild(fileDownload);
+            fileDownload.href = source;
+            fileDownload.download = 'News_Press_Release.doc';
+            fileDownload.click();
+            document.body.removeChild(fileDownload);
+        }
 
-            </div>
-        </section>
-
-    </main>
-</div>
-
-<!-- دوال الجافاسكريبت للتحكم بالواجهة والتحرير -->
-<script>
-    // التنقل بين الأقسام (الوثائق - الأخبار)
-    function switchTab(tabId, element) {
-        // إزالة التفعيل عن كل الأزرار والمحتويات
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-        
-        // تفعيل القسم المختار
-        document.getElementById(tabId).classList.add('active');
-        element.classList.add('active');
-    }
-
-    // أوامر تحرير النص المباشر (Bold, Italic, ... )
-    function execCmd(command) {
-        document.execCommand(command, false, null);
-        // إبقاء التركيز على منطقة العمل
-        document.querySelector('.document-body').focus();
-    }
-</script>
-
+        // تعيين تاريخ اليوم كافتراضي عند التحميل
+        window.onload = function() {
+            let today = new Date().toISOString().split('T')[0];
+            document.getElementById('news-date-input').value = today;
+            updateNewsFields();
+        };
+    </script>
 </body>
 </html>
