@@ -2,45 +2,27 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الجالية الغينية في سوريا</title>
+    <title>تسجيل الدخول | القنصلية الفخرية لغينيا</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <!-- الترويسة العلوية -->
-    <nav class="navbar">
-        <div class="navbar-brand">
-            <!-- استخدمنا الشعار الرسمي الذي أضفته -->
-            <img src="Coat_of_Arms_of_Guinea.svg" alt="شعار غينيا">
-            <h1 class="navbar-title">بوابة الجالية الغينية في سوريا</h1>
+    <div class="login-container">
+        <div class="login-box">
+            <img src="Coat_of_Arms_of_Guinea.svg_3.webp" alt="شعار غينيا">
+            <h2 style="color: var(--dark); margin-bottom: 5px;">نظام الإدارة القنصلية</h2>
+            <p style="color: #7f8c8d; font-size: 14px; margin-bottom: 20px;">القنصلية الفخرية لجمهورية غينيا بدمشق</p>
+            
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="اسم المستخدم" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="كلمة المرور" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">دخول النظام</button>
+            </form>
         </div>
-        <div>
-            <a href="admin.html" class="btn btn-warning">إضافة مواطن جديد +</a>
-        </div>
-    </nav>
-
-    <!-- حاوية الجدول -->
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>الرقم التسلسلي</th>
-                    <th>العائلة</th>
-                    <th>الاسم (عربي / فرنسي)</th>
-                    <th>جواز السفر</th>
-                    <th>حالة الجواز</th>
-                    <th>الإجراءات</th>
-                </tr>
-            </thead>
-            <!-- سيتم ملء هذا المكان تلقائياً من خلال ملف app.js -->
-            <tbody id="table-body">
-            </tbody>
-        </table>
     </div>
-
-    <!-- استدعاء ملفات الجافاسكربت -->
-    <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
