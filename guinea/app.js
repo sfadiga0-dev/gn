@@ -1,40 +1,48 @@
-// عرض التاريخ والوقت الحالي في الترويسة
-function updateHeaderDate() {
-    const dateElement = document.getElementById('current-date');
-    if (dateElement) {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateElement.innerText = new Date().toLocaleDateString('ar-SY', options);
-    }
-}
-
-// محاكاة تسجيل الدخول
-function handleLogin(event) {
-    event.preventDefault();
-    // في النظام الحقيقي هنا يتم التحقق من اسم المستخدم وكلمة المرور
+// --- Core Application Logic & UI Handlers ---
+function handleLogin(e) {
+    e.preventDefault();
     window.location.href = 'admin.html';
 }
 
-// محاكاة تسجيل الخروج
 function logout() {
-    if(confirm('هل أنت متأكد من رغبتك في تسجيل الخروج؟')) {
+    if (confirm('هل أنت متأكد من تسجيل الخروج من النظام القنصلي؟')) {
         window.location.href = 'index.html';
     }
 }
 
-// تفعيل العنصر النشط في القائمة الجانبية بناءً على مسار الصفحة
-function setActiveMenu() {
-    const path = window.location.pathname;
-    const page = path.split("/").pop();
-    const links = document.querySelectorAll('.sidebar-menu a');
-    links.forEach(link => {
-        if (link.getAttribute('href') === page) {
+document.addEventListener("DOMContentLoaded", function() {
+    const currentPage = window.location.pathname.split("/").pop();
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+        if (link.getAttribute('href') === currentPage) {
             link.classList.add('active');
         }
     });
-}
 
-// تهيئة الصفحة عند التحميل
-window.onload = function() {
-    updateHeaderDate();
-    setActiveMenu();
-};
+    const tableBody = document.getElementById('table-body');
+    if (tableBody && typeof getCitizensData === 'function') {
+        renderCitizensTable();
+    }
+});
+
+function renderCitizensTable() {
+    const tableBody = document.getElementById('table-body');
+    if (!tableBody) return;
+    tableBody.innerHTML = '';
+    const citizens = getCitizensData();
+    
+    citizens.forEach(c => {
+        let tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${c.id}</td>
+            <td><b>${c.nameAr}</b><br><small style="color:#64748b;">${c.nameFr}</small></td>
+            <td>${c.family}</td>
+            <td>${c.passport}</td>
+            <td>${c.status}</td>
+            <td>
+                <a href="card.html?id=${c.id}" class="btn btn-warning" style="padding: 5px 10px; font-size: 12px;" target="_blank"><i class="fa-solid fa-id-card"></i> بطاقة</a>
+                <a href="profile.html?id=${c.id}" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;"><i class="fa-solid fa-user"></i> ملف</a>
+            </td>
+        `;
+        tableBody.appendChild(tr);
+    });
+}
