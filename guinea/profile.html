@@ -2,54 +2,93 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>السجل المدني | نظام القنصلية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>السجل المدني للأفراد | القنصلية الفخرية لغينيا</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="sidebar">
-        <!-- نفس محتوى القائمة الجانبية الموجود في admin.html -->
-        <div class="sidebar-header"><img src="Coat_of_Arms_of_Guinea.svg_3.webp"><h3>القنصلية الفخرية</h3></div>
-        <ul class="sidebar-menu">
-            <li><a href="admin.html">📊 لوحة التحكم</a></li>
-            <li><a href="profile.html">👤 السجل المدني (الأفراد)</a></li>
-            <li><a href="family.html">👨‍👩‍👧‍👦 دفاتر العائلة</a></li>
-            <li><a href="consul.html">💼 مكتب القنصل</a></li>
-            <li><a href="editor.html" target="_blank">📝 محرر الوثائق</a></li>
-            <li><a href="#" onclick="logout()">🚪 تسجيل الخروج</a></li>
-        </ul>
-    </div>
-
-    <div class="main-content">
-        <div class="page-header">
-            <h2>إدارة ملفات المواطنين</h2>
-            <button class="btn btn-primary">+ تسجيل مواطن جديد</button>
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <img src="Coat_of_Arms_of_Guinea.svg_3.webp" alt="الشعار">
+                <h3>القنصلية الفخرية لغينيا</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="admin.html"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم</a></li>
+                <li><a href="profile.html"><i class="fa-solid fa-users"></i> السجل المدني (الأفراد)</a></li>
+                <li><a href="family.html"><i class="fa-solid fa-people-roof"></i> دفاتر العائلة</a></li>
+                <li><a href="consul.html"><i class="fa-solid fa-user-tie"></i> مكتب القنصل</a></li>
+                <li style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <a href="editor.html" target="_blank"><i class="fa-solid fa-file-signature"></i> محرر الوثائق الرسمية</a>
+                </li>
+                <li><a href="news_editor.html" target="_blank"><i class="fa-solid fa-newspaper"></i> محرر الأخبار والبيانات</a></li>
+            </ul>
         </div>
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn btn-danger" style="width: 100%; justify-content: center;"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
+        </div>
+    </aside>
 
-        <div style="background: #fff; padding: 20px; border-radius: 8px;">
-            <h3>البحث في السجلات</h3>
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <input type="text" class="form-control" placeholder="رقم جواز السفر أو الاسم...">
-                <button class="btn btn-primary">بحث</button>
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h1>السجل المدني الشامل للأفراد</h1>
+                <p style="color: #64748b; font-size: 0.9rem;">بحث، استعراض، وتعديل بيانات المواطنين الغينيين في سوريا</p>
+            </div>
+            <a href="editor.html" target="_blank" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> إضافة وتوثيق مواطن</a>
+        </header>
+
+        <div class="card-box">
+            <div style="display: flex; gap: 12px; margin-bottom: 25px;">
+                <input type="text" id="search-input" class="form-control" placeholder="ابحث باسم المواطن أو رقم جواز السفر..." style="margin-bottom: 0;">
+                <button class="btn btn-primary" onclick="filterCitizens()"><i class="fa-solid fa-search"></i> بحث</button>
             </div>
 
-            <table class="data-table">
-                <tr>
-                    <th>الاسم الكامل</th>
-                    <th>رقم الجواز</th>
-                    <th>تاريخ الميلاد</th>
-                    <th>مكان الإقامة</th>
-                    <th>الإجراءات</th>
-                </tr>
-                <tr>
-                    <td>إبراهيم تراوري</td>
-                    <td>GN123456</td>
-                    <td>1990/05/14</td>
-                    <td>دمشق</td>
-                    <td><button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">عرض الملف</button></td>
-                </tr>
-            </table>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم الكامل (عربي / فرنسي)</th>
+                            <th>اسم الأب والأم</th>
+                            <th>تاريخ ومكان الولادة</th>
+                            <th>رقم الجواز</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="profile-table-body">
+                        <!-- Populated by script -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <script src="data.js"></script>
     <script src="app.js"></script>
+    <script>
+        function loadProfiles() {
+            const tbody = document.getElementById('profile-table-body');
+            tbody.innerHTML = '';
+            const citizens = getCitizensData();
+            citizens.forEach(c => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${c.id}</td>
+                    <td><b>${c.nameAr}</b><br><small style="color:#64748b;">${c.nameFr}</small></td>
+                    <td>أب: ${c.pere} | أم: ${c.mere}</td>
+                    <td>${c.dob}</td>
+                    <td><b>${c.passport}</b></td>
+                    <td>
+                        <a href="card.html?id=${c.id}" target="_blank" class="btn btn-warning" style="padding: 5px 10px; font-size: 12px;"><i class="fa-solid fa-id-card"></i> بطاقة</a>
+                        <a href="editor.html?id=${c.id}" target="_blank" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;"><i class="fa-solid fa-file-lines"></i> إخراج قيد</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        document.addEventListener("DOMContentLoaded", loadProfiles);
+    </script>
 </body>
 </html>
