@@ -2,51 +2,103 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>دفاتر العائلة | نظام القنصلية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دفاتر العائلة والسجلات الأسرية | القنصلية الفخرية لغينيا</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="sidebar">
-        <!-- نفس القائمة الجانبية -->
-        <div class="sidebar-header"><img src="Coat_of_Arms_of_Guinea.svg_3.webp"><h3>القنصلية الفخرية</h3></div>
-        <ul class="sidebar-menu">
-            <li><a href="admin.html">📊 لوحة التحكم</a></li>
-            <li><a href="profile.html">👤 السجل المدني</a></li>
-            <li><a href="family.html">👨‍👩‍👧‍‍👦 دفاتر العائلة</a></li>
-            <li><a href="consul.html">💼 مكتب القنصل</a></li>
-            <li><a href="editor.html" target="_blank">📝 محرر الوثائق</a></li>
-            <li><a href="#" onclick="logout()">🚪 خروج</a></li>
-        </ul>
-    </div>
-
-    <div class="main-content">
-        <div class="page-header">
-            <h2>إدارة السجلات العائلية</h2>
-            <button class="btn btn-primary">+ فتح دفتر عائلة جديد</button>
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <img src="Coat_of_Arms_of_Guinea.svg_3.webp" alt="الشعار">
+                <h3>القنصلية الفخرية لغينيا</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="admin.html"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم</a></li>
+                <li><a href="profile.html"><i class="fa-solid fa-users"></i> السجل المدني (الأفراد)</a></li>
+                <li><a href="family.html"><i class="fa-solid fa-people-roof"></i> دفاتر العائلة</a></li>
+                <li><a href="consul.html"><i class="fa-solid fa-user-tie"></i> مكتب القنصل</a></li>
+                <li style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <a href="editor.html" target="_blank"><i class="fa-solid fa-file-signature"></i> محرر الوثائق الرسمية</a>
+                </li>
+                <li><a href="news_editor.html" target="_blank"><i class="fa-solid fa-newspaper"></i> محرر الأخبار والبيانات</a></li>
+            </ul>
         </div>
-
-        <div style="background: #fff; padding: 20px; border-radius: 8px;">
-            <table class="data-table">
-                <tr>
-                    <th>رقم الدفتر</th>
-                    <th>اسم رب الأسرة</th>
-                    <th>عدد الأفراد</th>
-                    <th>تاريخ الإصدار</th>
-                    <th>الإجراءات</th>
-                </tr>
-                <tr>
-                    <td>FAM-2026-001</td>
-                    <td>إبراهيم تراوري</td>
-                    <td>4</td>
-                    <td>2024/01/10</td>
-                    <td>
-                        <button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;">التفاصيل</button>
-                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;">إضافة فرد</button>
-                    </td>
-                </tr>
-            </table>
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn btn-danger" style="width: 100%; justify-content: center;"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
         </div>
-    </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h1>سجلات دفاتر العائلة</h1>
+                <p style="color: #64748b; font-size: 0.9rem;">إدارة المجموعات والعائلات الغينية المقيمة في سوريا</p>
+            </div>
+            <button class="btn btn-primary"><i class="fa-solid fa-folder-plus"></i> إضافة عائلة جديدة</button>
+        </header>
+
+        <div class="card-box">
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>اسم العائلة (Family Group)</th>
+                            <th>عدد الأفراد المسجلين</th>
+                            <th>عنوان السكن الرئيسي</th>
+                            <th>أبرز أفراد الأسرة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>Camara</b> (عائلة كمارا)</td>
+                            <td>7 أفراد</td>
+                            <td>دف الشوك، دمشق</td>
+                            <td>Kerfalla Camara, Adama Camara, Nsira...</td>
+                            <td><a href="editor.html" target="_blank" class="btn btn-warning" style="padding: 5px 12px; font-size: 12px;"><i class="fa-solid fa-file-lines"></i> بيان العائلة</a></td>
+                        </tr>
+                        <tr>
+                            <td><b>Kouyate</b> (عائلة كوياتي)</td>
+                            <td>4 أفراد</td>
+                            <td>ركن الدين، دمشق</td>
+                            <td>N'faly Kouyate, Adama Kaba, Souleyman...</td>
+                            <td><a href="editor.html" target="_blank" class="btn btn-warning" style="padding: 5px 12px; font-size: 12px;"><i class="fa-solid fa-file-lines"></i> بيان العائلة</a></td>
+                        </tr>
+                        <tr>
+                            <td><b>Soumah</b> (عائلة سوما)</td>
+                            <td>6 أفراد</td>
+                            <td>دف الشوك، دمشق</td>
+                            <td>Alseny Soumah, Fatoumata Kamano, Hawa...</td>
+                            <td><a href="editor.html" target="_blank" class="btn btn-warning" style="padding: 5px 12px; font-size: 12px;"><i class="fa-solid fa-file-lines"></i> بيان العائلة</a></td>
+                        </tr>
+                        <tr>
+                            <td><b>Diassy</b> (عائلة جاسي)</td>
+                            <td>5 أفراد</td>
+                            <td>الميدان، دمشق</td>
+                            <td>Hassimou Diassy, Halimatou, Aboubacar...</td>
+                            <td><a href="editor.html" target="_blank" class="btn btn-warning" style="padding: 5px 12px; font-size: 12px;"><i class="fa-solid fa-file-lines"></i> بيان العائلة</a></td>
+                        </tr>
+                        <tr>
+                            <td><b>Suleiman Fadiga</b> (عائلة فاديغا)</td>
+                            <td>5 أفراد</td>
+                            <td>دف الشوك، دمشق</td>
+                            <td>Aicha Fadiga, Hawa, Sankoumba, Bentouba...</td>
+                            <td><a href="editor.html" target="_blank" class="btn btn-warning" style="padding: 5px 12px; font-size: 12px;"><i class="fa-solid fa-file-lines"></i> بيان العائلة</a></td>
+                        </tr>
+                        <tr>
+                            <td><b>Youssef Fadiga</b> (عائلة يوسف فاديغا)</td>
+                            <td>6 أفراد</td>
+                            <td>دف الشوك، دمشق</td>
+                            <td>Safiatou Kaba, Fatoumata, Rokiatou, Mariam...</td>
+                            <td><a href="editor.html" target="_blank" class="btn btn-warning" style="padding: 5px 12px; font-size: 12px;"><i class="fa-solid fa-file-lines"></i> بيان العائلة</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
     <script src="app.js"></script>
 </body>
 </html>
