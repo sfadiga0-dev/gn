@@ -3,73 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إضافة مواطن - الجالية الغينية</title>
+    <title>لوحة التحكم الرئيسية | القنصلية الفخرية لغينيا</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="navbar-brand">
-            <img src="Coat_of_Arms_of_Guinea.svg" alt="شعار غينيا">
-            <h1 class="navbar-title">إضافة مواطن جديد</h1>
-        </div>
+    <aside class="sidebar">
         <div>
-            <a href="index.html" class="btn btn-primary">العودة للرئيسية</a>
-        </div>
-    </nav>
-
-    <div class="table-container" style="max-width: 800px;">
-        <form id="add-citizen-form">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="form-group">
-                    <label>الاسم بالعربية</label>
-                    <input type="text" id="input-name-ar" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>الاسم بالفرنسية (كما في الجواز)</label>
-                    <input type="text" id="input-name-fr" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>العائلة</label>
-                    <input type="text" id="input-family" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>اسم الأب</label>
-                    <input type="text" id="input-pere" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>اسم الأم</label>
-                    <input type="text" id="input-mere" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>تاريخ ومكان الولادة</label>
-                    <input type="text" id="input-dob" class="form-control" placeholder="مثال: 1999 - Damas">
-                </div>
-                <div class="form-group">
-                    <label>رقم جواز السفر</label>
-                    <input type="text" id="input-passport" class="form-control" value="لا يوجد">
-                </div>
-                <div class="form-group">
-                    <label>حالة الجواز / الإقامة</label>
-                    <input type="text" id="input-status" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>العنوان في سوريا</label>
-                    <input type="text" id="input-address" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>رقم الهاتف</label>
-                    <input type="text" id="input-phone" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>الحالة الاجتماعية</label>
-                    <input type="text" id="input-marital" class="form-control">
-                </div>
+            <div class="sidebar-brand">
+                <img src="Coat_of_Arms_of_Guinea.svg_3.webp" alt="الشعار">
+                <h3>القنصلية الفخرية لغينيا</h3>
+                <span>سكرتارية شؤون الجالية</span>
             </div>
-            <button type="submit" class="btn btn-warning" style="width: 100%; margin-top: 20px; font-size: 18px;">حفظ وإضافة للنظام</button>
-        </form>
-    </div>
+            <ul class="sidebar-menu">
+                <li><a href="admin.html"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم</a></li>
+                <li><a href="profile.html"><i class="fa-solid fa-users"></i> السجل المدني (الأفراد)</a></li>
+                <li><a href="family.html"><i class="fa-solid fa-people-roof"></i> دفاتر العائلة</a></li>
+                <li><a href="consul.html"><i class="fa-solid fa-user-tie"></i> مكتب القنصل</a></li>
+                <li style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <a href="editor.html" target="_blank"><i class="fa-solid fa-file-signature"></i> محرر الوثائق الرسمية</a>
+                </li>
+                <li><a href="news_editor.html" target="_blank"><i class="fa-solid fa-newspaper"></i> محرر الأخبار والبيانات</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn btn-danger" style="width: 100%; justify-content: center;"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
+        </div>
+    </aside>
 
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h1>لوحة القيادة الإدارية</h1>
+                <p style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">إشراف السكرتير الأول - إدارة شؤون الجالية الغينية في سوريا</p>
+            </div>
+            <a href="editor.html" target="_blank" class="btn btn-primary"><i class="fa-solid fa-plus"></i> إصدار مستند جديد</a>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>إجمالي المواطنين المسجلين</h3>
+                <div class="number">33</div>
+            </div>
+            <div class="stat-card yellow">
+                <h3>العائلات الرئيسية المسجلة</h3>
+                <div class="number">6</div>
+            </div>
+            <div class="stat-card red">
+                <h3>جوازات بحاجة لتجديد / تدقيق</h3>
+                <div class="number">12</div>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <h3>سجل أفراد الجالية الغينية (قاعدة البيانات النشطة)</h3>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم الكامل (عربي / فرنسي)</th>
+                            <th>العائلة</th>
+                            <th>جواز السفر</th>
+                            <th>حالة الجواز / الإقامة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Loaded dynamically via app.js & data.js -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
