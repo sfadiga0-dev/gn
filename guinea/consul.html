@@ -2,63 +2,80 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مكتب القنصل | نظام القنصلية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتب القنصل الفخري | القنصلية الفخرية لغينيا</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="sidebar">
-        <!-- نفس القائمة الجانبية -->
-        <div class="sidebar-header"><img src="Coat_of_Arms_of_Guinea.svg_3.webp"><h3>القنصلية الفخرية</h3></div>
-        <ul class="sidebar-menu">
-            <li><a href="admin.html">📊 لوحة التحكم</a></li>
-            <li><a href="profile.html">👤 السجل المدني</a></li>
-            <li><a href="family.html">👨‍👩‍👧‍👦 دفاتر العائلة</a></li>
-            <li><a href="consul.html">💼 مكتب القنصل</a></li>
-            <li><a href="editor.html" target="_blank">📝 محرر الوثائق</a></li>
-            <li><a href="#" onclick="logout()">🚪 خروج</a></li>
-        </ul>
-    </div>
+    <aside class="sidebar">
+        <div>
+            <div class="sidebar-brand">
+                <img src="Coat_of_Arms_of_Guinea.svg_3.webp" alt="الشعار">
+                <h3>القنصلية الفخرية لغينيا</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="admin.html"><i class="fa-solid fa-chart-pie"></i> لوحة التحكم</a></li>
+                <li><a href="profile.html"><i class="fa-solid fa-users"></i> السجل المدني (الأفراد)</a></li>
+                <li><a href="family.html"><i class="fa-solid fa-people-roof"></i> دفاتر العائلة</a></li>
+                <li><a href="consul.html"><i class="fa-solid fa-user-tie"></i> مكتب القنصل</a></li>
+                <li style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <a href="editor.html" target="_blank"><i class="fa-solid fa-file-signature"></i> محرر الوثائق الرسمية</a>
+                </li>
+                <li><a href="news_editor.html" target="_blank"><i class="fa-solid fa-newspaper"></i> محرر الأخبار والبيانات</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn btn-danger" style="width: 100%; justify-content: center;"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
+        </div>
+    </aside>
 
-    <div class="main-content">
-        <div class="page-header">
+    <main class="main-content">
+        <header class="page-header">
             <div>
-                <h2>مكتب القنصل الفخري</h2>
-                <p style="color: #7f8c8d; margin: 0;">مرحباً بك، د. حسن جواد</p>
+                <h1>مكتب القنصل الفخري</h1>
+                <p style="color: #64748b; font-size: 0.95rem; margin-top: 4px;">سعادة الدكتور حسن جواد - Consul Honoraire de la République de Guinée</p>
             </div>
-            <a href="news_editor.html" target="_blank" class="btn btn-danger">إصدار بيان صحفي 📰</a>
+            <a href="news_editor.html" target="_blank" class="btn btn-primary"><i class="fa-solid fa-bullhorn"></i> إصدار بيان وزاري جديد</a>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>المراسلات الواردة من وزارة الخارجية</h3>
+                <div class="number">2 برقيات جديدة</div>
+            </div>
+            <div class="stat-card yellow">
+                <h3>معاملات تنتظر الاعتماد والتوقيع</h3>
+                <div class="number">4 معاملات</div>
+            </div>
         </div>
 
-        <div class="cards-grid">
-            <div class="stat-card" style="border-color: var(--dark);">
-                <h3>بريد الوزارة (وارد)</h3>
-                <div class="number">3 رسائل جديدة</div>
-            </div>
-            <div class="stat-card" style="border-color: var(--yellow);">
-                <h3>موافقات قيد الانتظار للتوقيع</h3>
-                <div class="number">5 طلبات</div>
+        <div class="card-box">
+            <h3>الوثائق والمعاملات الرسمية الجاهزة للاعتماد القنصلي</h3>
+            <div class="data-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>نوع المستند</th>
+                            <th>صاحب العلاقة</th>
+                            <th>التاريخ</th>
+                            <th>الإجراء القنصلي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>إخراج قيد مدني وتعريف رعايا</td>
+                            <td>كرفالا كمارا (Kerfalla Camara)</td>
+                            <td>2026/10/04</td>
+                            <td>
+                                <a href="editor.html" target="_blank" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.85rem;"><i class="fa-solid fa-signature"></i> اعتماد وتوقيع رسمي</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-
-        <div style="background: #fff; padding: 20px; border-radius: 8px;">
-            <h3>الوثائق التي تتطلب تصديق / توقيع</h3>
-            <table class="data-table">
-                <tr>
-                    <th>الوثيقة</th>
-                    <th>صاحب العلاقة</th>
-                    <th>التاريخ</th>
-                    <th>الإجراء</th>
-                </tr>
-                <tr>
-                    <td>تصديق شهادة جامعية</td>
-                    <td>عثمان كمارا</td>
-                    <td>اليوم</td>
-                    <td>
-                        <button class="btn btn-primary" style="padding: 5px 15px;">اعتماد وتوقيع ✔️</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
+    </main>
     <script src="app.js"></script>
 </body>
 </html>
