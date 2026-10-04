@@ -1,6 +1,4 @@
-// --- data.js ---
-
-// القائمة الأساسية التي أرسلتها
+// --- Complete Persistent Database & Registry for Guinean Community in Syria ---
 const initialData = [
     { id: 1, family: "Camara", nameFr: "Kerfalla CAMARA", nameAr: "كرفالا كمارا", pere: "Ibrahim", mere: "Yari", dob: "1976 - Kindia", passport: "91", status: "موجود", address: "دف الشوك، دمشق", phone: "0932779075", marital: "متزوج" },
     { id: 2, family: "Camara", nameFr: "Adama CAMARA", nameAr: "آدم كمارا", pere: "Mohamed", mere: "Anser", dob: "1969 - Conakry", passport: "92", status: "موجود (بدو تدقيق)", address: "دف الشوك، دمشق", phone: "---", marital: "متزوجة" },
@@ -37,35 +35,24 @@ const initialData = [
     { id: 33, family: "Youssef Fadiga", nameFr: "Alpha Sanoussy FADIGA", nameAr: "ألفا سنسي فاديغا", pere: "Youssef", mere: "Safiatou", dob: "30/09/2010 - Damas", passport: "116", status: "لا يوجد جواز سفر", address: "دف الشوك، دمشق", phone: "---", marital: "قاصر" }
 ];
 
-// دالة لجلب البيانات: تفحص إذا كانت مسجلة في المتصفح، وإلا تعطي القائمة الأساسية وتخزنها
 function getCitizensData() {
-    let storedData = localStorage.getItem('guineaCitizens');
-    if (!storedData) {
-        // الحفظ لأول مرة
+    let stored = localStorage.getItem('guineaCitizens');
+    if (!stored) {
         localStorage.setItem('guineaCitizens', JSON.stringify(initialData));
         return initialData;
     }
-    return JSON.parse(storedData);
+    return JSON.parse(stored);
 }
 
-// دالة لحفظ القائمة المحدثة بالكامل
-function saveCitizensData(dataArray) {
-    localStorage.setItem('guineaCitizens', JSON.stringify(dataArray));
+function saveCitizensData(data) {
+    localStorage.setItem('guineaCitizens', JSON.stringify(data));
 }
 
-// دالة لإضافة شخص جديد
-function addNewCitizen(newPersonData) {
-    let currentData = getCitizensData();
-    
-    // إعطاء الشخص الجديد ID تلقائي (أكبر ID موجود + 1)
-    let maxId = currentData.length > 0 ? Math.max(...currentData.map(c => c.id)) : 0;
-    newPersonData.id = maxId + 1;
-    
-    // إضافة الشخص لقائمة البيانات
-    currentData.push(newPersonData);
-    
-    // حفظ القائمة في ذاكرة المتصفح
-    saveCitizensData(currentData);
-    
-    return true; // تمت الإضافة بنجاح
+function addNewCitizen(person) {
+    let data = getCitizensData();
+    let maxId = data.length > 0 ? Math.max(...data.map(c => c.id)) : 0;
+    person.id = maxId + 1;
+    data.push(person);
+    saveCitizensData(data);
+    return person.id;
 }
