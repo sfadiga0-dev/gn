@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محرر الأخبار والبيانات الصحفية</title>
+    <title>محرر الموجز الإخباري والبيانات الصحفية</title>
     <style>
         :root {
             --panel-width: 320px;
-            --primary: #c0392b; /* أحمر يعكس هوية غينيا */
+            --primary: #c0392b;
             --secondary: #2c3e50;
             --bg-color: #f4f6f7;
             --guinea-red: #CE1126;
@@ -35,17 +35,19 @@
             z-index: 100;
         }
 
-        .panel-section { margin-bottom: 25px; background: rgba(0,0,0,0.1); padding: 15px; border-radius: 8px; }
-        .panel-section h3 { margin-top: 0; font-size: 15px; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px; }
+        .panel-section { margin-bottom: 20px; background: rgba(0,0,0,0.15); padding: 15px; border-radius: 8px; }
+        .panel-section h3 { margin-top: 0; font-size: 15px; border-bottom: 1px solid #7f8c8d; padding-bottom: 10px; color: #f1c40f; }
         
         .btn-action { 
             display: block; width: 100%; padding: 10px; margin-bottom: 10px; 
             border: none; border-radius: 4px; cursor: pointer; font-weight: bold; 
             transition: 0.3s; color: white; text-align: center; text-decoration: none;
+            box-sizing: border-box;
         }
         .btn-back { background: var(--guinea-red); }
         .btn-print { background: var(--guinea-green); }
         .btn-word { background: #2980b9; }
+        .btn-template { background: #8e44ad; }
         .btn-action:hover { filter: brightness(1.1); }
 
         .form-input {
@@ -61,7 +63,7 @@
             padding: 75px 20px 40px 20px; 
         }
         
-        /* شريط الأدوات */
+        /* شريط الأدوات العلوي */
         .word-toolbar {
             position: fixed; top: 0; left: var(--panel-width); right: 0; height: 55px; 
             background: white; border-bottom: 1px solid #ddd; 
@@ -79,77 +81,104 @@
             padding: 15mm; box-sizing: border-box; 
             position: relative; z-index: 1;
             display: flex; flex-direction: column;
-            font-size: 13pt; line-height: 1.6;
+            font-size: 12pt; line-height: 1.6;
         }
 
-        /* العلامة المائية (خريطة غينيا) */
+        /* العلامة المائية خلفية الصفحة */
         #paper::before {
             content: ""; position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-image: url('images_2.jfif'); /* تم استخدام صورة الخريطة هنا */
-            background-position: center; background-repeat: no-repeat;
-            background-size: 50%; opacity: 0.05; z-index: -1; pointer-events: none; 
+            background-image: url('/images/images_2.jfif');
+            background-position: center 60%; 
+            background-repeat: no-repeat;
+            background-size: 55%; 
+            opacity: 0.04; 
+            z-index: -1; pointer-events: none; 
         }
 
-        /* الترويسة المخصصة باستخدام الصور المطلوبة */
+        /* الترويسة المخصصة */
         .custom-letterhead {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px double var(--guinea-red);
             padding-bottom: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
+        /* صورة شعار الرؤية الوطنية في الزاوية */
         .header-left img {
-            width: 90px;
-            height: 110px;
-            object-fit: cover;
-            border-radius: 4px;
-            border: 2px solid #ddd;
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            border-radius: 6px;
+            padding: 2px;
+            background: #fff;
         }
 
         .header-center {
             text-align: center;
             flex-grow: 1;
-            padding: 0 15px;
+            padding: 0 10px;
         }
-        .header-center h2 { margin: 0; font-size: 16pt; color: #222; font-family: 'Times New Roman', serif; letter-spacing: 1px;}
-        .motto { font-size: 10pt; font-weight: bold; margin: 5px 0; }
+        .header-center h2 { margin: 0; font-size: 15pt; color: #222; font-family: 'Times New Roman', serif; letter-spacing: 1px;}
+        .motto { font-size: 9.5pt; font-weight: bold; margin: 4px 0; }
         .motto .red { color: var(--guinea-red); }
-        .motto .yellow { color: #d4ac0d; } /* لون أصفر غامق قليلاً ليكون مقروءاً */
+        .motto .yellow { color: #d4ac0d; }
         .motto .green { color: var(--guinea-green); }
         
-        .header-center .coat-of-arms { width: 70px; height: auto; margin: 5px 0; }
+        .header-center .coat-of-arms { width: 65px; height: auto; margin: 4px 0; }
         
-        .header-center h3 { margin: 0; font-size: 14pt; color: #333; }
-        .header-center h4 { margin: 2px 0 0 0; font-size: 11pt; color: #555; font-weight: normal;}
+        .header-center h3 { margin: 0; font-size: 13pt; color: #333; }
+        .header-center h4 { margin: 2px 0 0 0; font-size: 10.5pt; color: #555; font-weight: normal;}
 
         .header-right img {
-            width: 100px;
+            width: 90px;
             height: auto;
             object-fit: contain;
         }
 
-        /* محتوى الخبر */
+        /* عناوين التقرير */
         .news-title-display {
             text-align: center;
-            font-size: 18pt;
+            font-size: 17pt;
             font-weight: bold;
             color: var(--guinea-red);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-decoration: underline;
         }
         
         .news-date-display {
             text-align: left;
-            font-size: 11pt;
-            color: #666;
-            margin-bottom: 20px;
+            font-size: 10.5pt;
+            color: #555;
+            margin-bottom: 15px;
             direction: ltr;
+            font-weight: bold;
         }
 
         .document-body { flex-grow: 1; outline: none; text-align: justify; }
+
+        /* تنسيق أقسام الموجز */
+        .brief-section-title {
+            background: #f2f4f4;
+            color: #2c3e50;
+            padding: 6px 12px;
+            font-weight: bold;
+            font-size: 13pt;
+            border-right: 4px solid var(--guinea-red);
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .source-tag {
+            font-size: 9.5pt;
+            color: #7f8c8d;
+            direction: ltr;
+            display: block;
+            margin-top: 2px;
+            margin-bottom: 10px;
+        }
 
         @media print {
             body { background-color: #fff; }
@@ -164,24 +193,26 @@
 
     <div id="control-panel" class="no-print-btn">
         <div class="panel-section" style="background: none; padding: 0;">
-            <a href="admin.html" class="btn-action btn-back">🔙 العودة للوحة الإدارة</a>
+            <a href="dashboard.html" class="btn-action btn-back">🔙 العودة للوحة الإدارة</a>
         </div>
 
         <div class="panel-section">
-            <h3>📰 إعدادات الخبر / البيان</h3>
-            <label>عنوان الخبر (الرئيسي):</label>
-            <input type="text" id="news-title-input" class="form-input" placeholder="مثال: زيارة وفد دبلوماسي..." onkeyup="updateNewsFields()">
+            <h3>📰 إعدادات التقرير والموجز</h3>
+            <label>عنوان التقرير / الموجز:</label>
+            <input type="text" id="news-title-input" class="form-input" placeholder="مثال: الموجز الإخباري اليومي لحوادث غينيا..." onkeyup="updateNewsFields()">
             
             <label>التاريخ:</label>
             <input type="date" id="news-date-input" class="form-input" onchange="updateNewsFields()">
             
-            <label>نوع الإصدار:</label>
+            <label>نوع التقرير:</label>
             <select class="form-input" id="news-type" onchange="updateNewsFields()">
-                <option value="بيان صحفي">بيان صحفي</option>
-                <option value="خبر عاجل">خبر عاجل</option>
+                <option value="موجز الأخبار اليومي">موجز الأخبار اليومي (للصلة القنصلية)</option>
+                <option value="بيان صحفي">بيان صحفي رسمـي</option>
+                <option value="تقرير متابعة إعلامية">تقرير متابعة إعلامية</option>
                 <option value="إعلان هام">إعلان هام</option>
-                <option value="تعميم">تعميم</option>
             </select>
+            
+            <button onclick="loadBriefTemplate()" class="btn-action btn-template" style="margin-top: 5px;">📋 تحميل قالب الموجز المعتمد</button>
         </div>
 
         <div class="panel-section">
@@ -209,50 +240,47 @@
 
         <div id="paper">
             
-            <!-- الترويسة المبنية من الصور (الهوية البصرية المطلوبة) -->
+            <!-- الترويسة المحدثة مع شعار الرؤية الوطنية وشعار الدولة -->
             <div class="custom-letterhead" contenteditable="false">
-                <div class="header-left">
-                    <img src="IMG_5442-750x750_3.jpeg" alt="صورة فخامة الرئيس">
+                <div class="header-left" title="شعار الرؤية الوطنية">
+                    <img src="/images/IMG_5442-750x750.jpeg" alt="شعار الرؤية الوطنية">
                 </div>
                 <div class="header-center">
                     <h2>RÉPUBLIQUE DE GUINÉE</h2>
                     <div class="motto">
                         <span class="red">Travail</span> - <span class="yellow">Justice</span> - <span class="green">Solidarité</span>
                     </div>
-                    <img src="Coat_of_Arms_of_Guinea.svg.webp" alt="شعار غينيا" class="coat-of-arms">
+                    <img src="/images/Coat_of_Arms_of_Guinea.svg" alt="شعار غينيا" class="coat-of-arms">
                     <h3>القنصلية الفخرية لجمهورية غينيا بدمشق</h3>
                     <h4>Consulat Honoraire de la République de Guinée à Damas</h4>
                 </div>
                 <div class="header-right">
-                    <img src="image_f24543.png" alt="شعار إضافي أو علم">
+                    <img src="/images/image_f24543.png" alt="علم غينيا / شعار إضافي">
                 </div>
             </div>
 
-            <!-- معلومات الخبر -->
-            <div class="news-date-display" id="display-date">Damas, le: __/__/202_</div>
-            <div class="news-title-display" id="display-title">بيان صحفي</div>
+            <!-- معلومات الموجز -->
+            <div class="news-date-display" id="display-date">Damas, le: __/__/2026</div>
+            <div class="news-title-display" id="display-title">موجز الأخبار اليومي</div>
 
-            <!-- جسم الخبر -->
+            <!-- محتوى الموجز قابل للتعديل -->
             <div class="document-body" contenteditable="true">
-                <p>اكتب نص البيان الصحفي أو الخبر هنا...</p>
+                <p>اختر "تحميل قالب الموجز المعتمد" من اللوحة الجانبية لتعبئة التقرير الإخباري اليومي الموجه للقنصل، أو اكتب النص مباشرة هنا...</p>
             </div>
             
         </div>
     </div>
 
     <script>
-        // تحديث العنوان والتاريخ مباشرة على الورقة
         function updateNewsFields() {
             let title = document.getElementById('news-title-input').value;
             let date = document.getElementById('news-date-input').value;
             let type = document.getElementById('news-type').value;
 
-            // تنسيق العنوان
             let displayTitle = type;
             if (title.trim() !== "") displayTitle += ": " + title;
             document.getElementById('display-title').innerText = displayTitle;
 
-            // تنسيق التاريخ
             if(date) {
                 let d = new Date(date);
                 let formattedDate = d.toLocaleDateString('fr-FR');
@@ -260,13 +288,37 @@
             }
         }
 
-        // تنسيق النصوص
         function formatDoc(command, value) {
             document.querySelector('.document-body').focus();
             document.execCommand(command, false, value || null);
         }
 
-        // التصدير إلى وورد
+        function loadBriefTemplate() {
+            const templateHTML = `
+                <p style="font-size: 11pt; color: #333;"><b>إلى السيد القنصل الفخري لجمهورية غينيا بدمشق المحترم،</b></p>
+                <p style="font-size: 11pt; color: #555;">نعرض على معاليكم الموجز الإخباري الدوري لأبرز التطورات والأخبار الرسمية في جمهورية غينيا (كوناكري) التي تم رصدها والتحقق منها عبر المصادر الموثوقة:</p>
+
+                <div class="brief-section-title">📌 1. المستجدات السياسية والحكومية</div>
+                <p><b>• [عنوان الخبر الرئيسي الأول]:</b> اكتب ملخص الخبر السياسي هنا بالتفصيل...</p>
+                <span class="source-tag">🔗 المصدر الأصلي والتحقق: [Guinée News / AGP Guinée]</span>
+
+                <div class="brief-section-title">📊 2. الشؤون الاقتصادية والتنمية (Vision 2040)</div>
+                <p><b>• [مستجدات المشروعات والتنمية]:</b> ملخص الأخبار الاقتصادية والمشاريع التنموية المرتبطة بالرؤية الوطنية...</p>
+                <span class="source-tag">🔗 المصدر الأصلي والتحقق: [Ministère de l'Économie]</span>
+
+                <div class="brief-section-title">🌍 3. العلاقات الخارجية والشؤون الدبلوماسية</div>
+                <p><b>• [نشاط الوزارة أو الدبلوماسية]:</b> ملخص تحركات وزارة الخارجية أو السفارات والغينيين في الخارج...</p>
+                <span class="source-tag">🔗 المصدر الأصلي والتحقق: [MAEX Guinéenne]</span>
+
+                <br>
+                <div style="margin-top: 20px; text-align: left; font-size: 11pt; font-weight: bold;">
+                    إعداد القسم الإداري والدبلوماسي<br>
+                    القنصلية الفخرية بدمشق
+                </div>
+            `;
+            document.querySelector('.document-body').innerHTML = templateHTML;
+        }
+
         function exportToWord() {
             var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export News</title></head><body>";
             var footer = "</body></html>";
@@ -275,12 +327,11 @@
             var fileDownload = document.createElement("a");
             document.body.appendChild(fileDownload);
             fileDownload.href = source;
-            fileDownload.download = 'News_Press_Release.doc';
+            fileDownload.download = 'News_Briefing_Consulate.doc';
             fileDownload.click();
             document.body.removeChild(fileDownload);
         }
 
-        // تعيين تاريخ اليوم كافتراضي عند التحميل
         window.onload = function() {
             let today = new Date().toISOString().split('T')[0];
             document.getElementById('news-date-input').value = today;
