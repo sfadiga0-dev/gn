@@ -330,5 +330,109 @@
                     <div class="motto">
                         <span class="red">Travail</span> - <span class="yellow">Justice</span> - <span class="green">Solidarité</span>
                     </div>
-                    <img src="https://sfadiga0-dev.github.io/gn/guinea/Coat_of_Arms_of_Guinea.svg.webp" alt="شعار غينيا" class="coat-of-arms">
-                    <h3>القنصلية الفخرية لجمهورية غينيا ب
+                    <img src="https://sfadiga0-dev.github.io/gn/guinea/Coat_of_Arms_of_Guinea.svg" alt="شعار غينيا" class="coat-of-arms">
+                    <h3>القنصلية الفخرية لجمهورية غينيا بدمشق</h3>
+                    <h4>Consulat Honoraire de la République de Guinée à Damas</h4>
+                </div>
+                <div class="header-right" title="معالم غينيا الدبلوماسية">
+                    <img src="https://sfadiga0-dev.github.io/gn/guinea/Gemini_Generated_Image_7ugffs7ugffs7ugf.jfif" alt="غينيا">
+                </div>
+            </div>
+
+            <!-- شريط الصور البصري الفاخر (معالم غينيا الطبيعية والحضارية) -->
+            <div class="header-photo-banner" contenteditable="false">
+                <img src="https://sfadiga0-dev.github.io/gn/guinea/Gemini_Generated_Image_kxwti9kxwti9kxwt (3).jfif" alt="معلم غيني">
+                <img src="https://sfadiga0-dev.github.io/gn/guinea/Gemini_Generated_Image_oy0l8aoy0l8aoy0l.jfif" alt="ساحة الاستقلال">
+                <img src="https://sfadiga0-dev.github.io/gn/guinea/Gemini_Generated_Image_5cl5a35cl5a35cl5.jfif" alt="طبيعة غينيا الساحرة">
+            </div>
+
+            <!-- بيانات التقرير -->
+            <div class="news-date-display" id="display-date">Damas, le: 12/10/2026</div>
+            <div class="news-title-display" id="display-title">موجز الأخبار اليومي</div>
+
+            <!-- جسم التقرير قابل للتعديل والتحرير المباشر -->
+            <div class="document-body" contenteditable="true">
+                <p>مرحباً بك. اضغط على زر <b>"تحميل قالب الموجز المعتمد"</b> في القائمة الجانبية لتعبئة التقرير الإخباري اليومي الموجه للقنصل الفخري فوراً، أو ابدأ الكتابة هنا...</p>
+            </div>
+            
+            <!-- تذييل التقرير الدبلوماسي -->
+            <div class="footer-signature" contenteditable="false">
+                <div>
+                    <b>قسم الشؤون السياسية والإعلامية</b><br>
+                    <span style="font-size: 10pt; color: #718093;">مُعتمد ومحقق عبر مصادر الذكاء الاصطناعي والوكالات الرسمية</span>
+                </div>
+                <div style="text-align: left;">
+                    <b>القنصلية الفخرية بدمشق</b><br>
+                    <span style="font-size: 10pt; color: var(--primary-red);">Représentation Diplomatique</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function updateNewsFields() {
+            let title = document.getElementById('news-title-input').value;
+            let date = document.getElementById('news-date-input').value;
+            let type = document.getElementById('news-type').value;
+
+            let displayTitle = type;
+            if (title.trim() !== "") displayTitle += ": " + title;
+            document.getElementById('display-title').innerText = displayTitle;
+
+            if(date) {
+                let d = new Date(date);
+                let formattedDate = d.toLocaleDateString('fr-FR');
+                document.getElementById('display-date').innerText = "Damas, le: " + formattedDate;
+            }
+        }
+
+        function formatDoc(command, value) {
+            document.querySelector('.document-body').focus();
+            document.execCommand(command, false, value || null);
+        }
+
+        function loadBriefTemplate() {
+            const templateHTML = `
+                <p style="font-size: 11.5pt; color: #1e272e;"><b>إلى مقام السيد القنصل الفخري لجمهورية غينيا بدمشق المحترم،</b></p>
+                <p style="font-size: 11pt; color: #4b6584;">يسعدنا أن نرفع إلى معاليكم الموجز الإخباري الدوري والتقرير الاستراتيجي لأبرز المستجدات والتطورات الرسمية في جمهورية غينيا (كوناكري) المرصودة والمدققة عبر المصادر المعتمدة:</p>
+
+                <div class="brief-section-title">📌 أولاً: المستجدات السياسية والأمنية الراهنة</div>
+                <p><b>• التطورات الحكومية والرسمية:</b> [اكتب تفاصيل الخبر السياسي أو القرارات السيادية الصادرة اليوم في كوناكري...]</p>
+                <span class="source-tag">🔗 المصدر والتحقق الذكي: AGP Guinée & Google AI Verified News</span>
+
+                <div class="brief-section-title">📊 ثانياً: الشؤون الاقتصادية ومشاريع التنمية (Vision 2040)</div>
+                <p><b>• المشاريع الاستراتيجية والاقتصادية:</b> [استعراض مستجدات قطاع التعدين، البنية التحتية، أو الرؤية الاقتصادية الوطنية...]</p>
+                <span class="source-tag">🔗 المصدر والتحقق الذكي: Ministère de l'Économie et des Finances</span>
+
+                <div class="brief-section-title">🌍 ثالثاً: العلاقات الدبلوماسية والنشاط الخارجي</div>
+                <p><b>• التحركات الدبلوماسية والتمثيل الخارجي:</b> [أبرز اللقاءات والبيانات الصادرة عن وزارة الخارجية الغينية أو السفارات...]</p>
+                <span class="source-tag">🔗 المصدر والتحقق الذكي: Ministère des Affaires Étrangères</span>
+
+                <br>
+                <p style="font-size: 11pt; color: #2f3640; margin-top: 15px;"><b>توصيات المتابعة القنصلية:</b> تم إعداد هذا التقرير لحياد المعلومات ومتابعة الوضع العام بما يخدم مصالح الجالية ورؤية القنصلية.</p>
+            `;
+            document.querySelector('.document-body').innerHTML = templateHTML;
+        }
+
+        function exportToWord() {
+            var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export News</title></head><body>";
+            var footer = "</body></html>";
+            var sourceHTML = header + document.getElementById("paper").innerHTML + footer;
+            var source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+            var fileDownload = document.createElement("a");
+            document.body.appendChild(fileDownload);
+            fileDownload.href = source;
+            fileDownload.download = 'Diplomatic_Daily_Briefing_Guinea.doc';
+            fileDownload.click();
+            document.body.removeChild(fileDownload);
+        }
+
+        window.onload = function() {
+            let today = new Date().toISOString().split('T')[0];
+            document.getElementById('news-date-input').value = today;
+            updateNewsFields();
+        };
+    </script>
+</body>
+</html>
